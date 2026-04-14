@@ -129,11 +129,25 @@ const navItems: NavItem[] = [
 export function Sidebar({ isMobile = false }: SidebarProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const { expandedItems, toggleItem } = useSidebarStore()
+  const { expandedItems, toggleItem, expandItem } = useSidebarStore()
   const { setSidebarOpen, sidebarWidth, setSidebarWidth } = useUIStore()
   const isResizing = useRef(false)
 
   const isActiveRoute = (path: string) => location.pathname === path
+  
+  const isParentActive = (item: NavItem) => {
+    return item.subItems?.some(sub => sub.path === location.pathname)
+  }
+
+  useEffect(() => {
+    // Find parent of current route and expand it automatically
+    const activeParent = navItems.find(item => 
+      item.subItems?.some(sub => sub.path === location.pathname)
+    )
+    if (activeParent) {
+      expandItem(activeParent.id)
+    }
+  }, [location.pathname, expandItem])
 
   const handleNavigation = (path: string) => {
     navigate(path)
@@ -207,14 +221,26 @@ export function Sidebar({ isMobile = false }: SidebarProps) {
               onOpenChange={() => toggleItem(item.id)}
             >
               <CollapsibleTrigger asChild>
-                <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-slate-900 hover:bg-slate-200 transition-colors duration-200 h-11">
+                <button 
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md transition-all duration-200 h-11 ${
+                    isParentActive(item) 
+                      ? "text-slate-900 bg-slate-200/50" 
+                      : "text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    <div className="text-slate-600 flex-shrink-0">{item.icon}</div>
-                    <span className="text-sm font-medium truncate">{item.label}</span>
+                    <div className={`${isParentActive(item) ? "text-primary" : "text-slate-600"} flex-shrink-0`}>
+                      {item.icon}
+                    </div>
+                    <span className={`text-sm ${isParentActive(item) ? "font-semibold" : "font-medium"} truncate`}>
+                      {item.label}
+                    </span>
                   </div>
                   {item.subItems && (
                     <ChevronDown
-                      className={`h-4 w-4 text-slate-600 transition-transform duration-200 flex-shrink-0 ${
+                      className={`h-4 w-4 transition-transform duration-200 flex-shrink-0 ${
+                        isParentActive(item) ? "text-primary" : "text-slate-600"
+                      } ${
                         expandedItems.has(item.id) ? "rotate-180" : ""
                       }`}
                     />
@@ -231,7 +257,7 @@ export function Sidebar({ isMobile = false }: SidebarProps) {
                       onClick={() => handleNavigation(subItem.path)}
                       className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-200 h-10 flex items-center truncate ${
                         isActiveRoute(subItem.path)
-                          ? "bg-slate-200 text-slate-900 font-medium"
+                          ? "relative bg-slate-200 text-slate-900 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary overflow-hidden"
                           : "text-slate-700 hover:bg-slate-200/50 hover:text-slate-900"
                       }`}
                     >

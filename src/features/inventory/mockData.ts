@@ -59,6 +59,80 @@ export const mockInventory: InventoryItem[] = [
     quantity: 35, minQuantity: 25, unitName: "Hộp", costPrice: 45000,
     updatedAt: "2026-04-06T10:00:00Z", isLowStock: false, isExpiringSoon: true, totalValue: 1575000,
   },
+  {
+    id: 9, productId: 9, productName: "Nước Mắm Nam Ngư", skuCode: "SP009",
+    locationId: 2, warehouseCode: "WH01", shelfCode: "B3",
+    quantity: 120, minQuantity: 40, unitName: "Chai", costPrice: 22000,
+    updatedAt: "2026-04-12T10:30:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 2640000,
+  },
+  {
+    id: 10, productId: 10, productName: "Gạo ST25 (Túi 5kg)", skuCode: "SP010",
+    locationId: 6, warehouseCode: "WH01", shelfCode: "F1",
+    quantity: 80, minQuantity: 30, unitName: "Túi", costPrice: 185000,
+    updatedAt: "2026-04-10T14:20:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 14800000,
+  },
+  {
+    id: 11, productId: 11, productName: "Đường Tinh Luyện Biên Hòa", skuCode: "SP011",
+    locationId: 4, warehouseCode: "WH01", shelfCode: "D2",
+    quantity: 200, minQuantity: 50, unitName: "Gói", costPrice: 20000,
+    updatedAt: "2026-04-11T09:15:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 4000000,
+  },
+  {
+    id: 12, productId: 12, productName: "Muối I-ốt Hảo Hảo", skuCode: "SP012",
+    locationId: 4, warehouseCode: "WH01", shelfCode: "D3",
+    quantity: 15, minQuantity: 50, unitName: "Gói", costPrice: 5000,
+    updatedAt: "2026-04-09T16:45:00Z", isLowStock: true, isExpiringSoon: false, totalValue: 75000,
+  },
+  {
+    id: 13, productId: 13, productName: "Trà Xanh Không Độ", skuCode: "SP013",
+    locationId: 2, warehouseCode: "WH01", shelfCode: "B4",
+    quantity: 300, minQuantity: 100, unitName: "Chai", costPrice: 8000,
+    updatedAt: "2026-04-12T08:00:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 2400000,
+  },
+  {
+    id: 14, productId: 14, productName: "Kem Đánh Răng P/S", skuCode: "SP014",
+    locationId: 5, warehouseCode: "WH01", shelfCode: "E2",
+    quantity: 110, minQuantity: 40, unitName: "Hộp", costPrice: 32000,
+    updatedAt: "2026-04-08T11:30:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 3520000,
+  },
+  {
+    id: 15, productId: 15, productName: "Sữa Tắm Lifebuoy", skuCode: "SP015",
+    locationId: 5, warehouseCode: "WH01", shelfCode: "E3",
+    quantity: 0, minQuantity: 30, unitName: "Chai", costPrice: 75000,
+    updatedAt: "2026-04-07T13:00:00Z", isLowStock: true, isExpiringSoon: false, totalValue: 0,
+  },
+  {
+    id: 16, productId: 16, productName: "Mì Tôm Omachi", skuCode: "SP016",
+    locationId: 4, warehouseCode: "WH01", shelfCode: "D4",
+    batchNumber: "B2026016", expiryDate: "2026-05-01",
+    quantity: 450, minQuantity: 100, unitName: "Gói", costPrice: 6500,
+    updatedAt: "2026-04-06T10:00:00Z", isLowStock: false, isExpiringSoon: true, totalValue: 2925000,
+  },
+  {
+    id: 17, productId: 17, productName: "Dầu Gội Clear", skuCode: "SP017",
+    locationId: 5, warehouseCode: "WH01", shelfCode: "E4",
+    quantity: 85, minQuantity: 30, unitName: "Chai", costPrice: 68000,
+    updatedAt: "2026-04-12T10:30:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 5780000,
+  },
+  {
+    id: 18, productId: 18, productName: "Sữa Chua Vinamilk", skuCode: "SP018",
+    locationId: 1, warehouseCode: "WH01", shelfCode: "A4",
+    batchNumber: "B2026018", expiryDate: "2026-04-18",
+    quantity: 120, minQuantity: 50, unitName: "Lốc", costPrice: 24000,
+    updatedAt: "2026-04-10T14:20:00Z", isLowStock: false, isExpiringSoon: true, totalValue: 2880000,
+  },
+  {
+    id: 19, productId: 19, productName: "Bánh Chocopie", skuCode: "SP019",
+    locationId: 3, warehouseCode: "WH01", shelfCode: "C2",
+    quantity: 210, minQuantity: 60, unitName: "Hộp", costPrice: 48000,
+    updatedAt: "2026-04-11T09:15:00Z", isLowStock: false, isExpiringSoon: false, totalValue: 10080000,
+  },
+  {
+    id: 20, productId: 20, productName: "Xúc Xích Vissan", skuCode: "SP020",
+    locationId: 1, warehouseCode: "WH01", shelfCode: "A5",
+    quantity: 25, minQuantity: 50, unitName: "Gói", costPrice: 38000,
+    updatedAt: "2026-04-09T16:45:00Z", isLowStock: true, isExpiringSoon: false, totalValue: 950000,
+  },
 ];
 
 export const mockInventoryKPIs = {
