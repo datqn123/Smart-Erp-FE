@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react"
 import { usePageTitle } from "@/context/PageTitleContext"
 import { Package, AlertTriangle, CalendarClock, TrendingUp } from "lucide-react"
 import { formatCurrency } from "../utils"
-import { mockInventory, mockInventoryKPIs } from "../mockData"
+import { mockInventory } from "../mockData"
 import type { InventoryItem, InventoryFilters } from "../types"
 import { toast } from "sonner"
+import { applyBulkApprove, applyBulkDelete, recalculateKPIs } from "../inventoryLogic"
 
 import { StockToolbar } from "../components/StockToolbar"
 import { StockTable } from "../components/StockTable"
@@ -27,6 +28,8 @@ function KPICard({ title, value, icon, color }: {
 export function StockPage() {
   const { setTitle } = usePageTitle()
   const [filters, setFilters] = useState<InventoryFilters>({ search: "", status: "all" })
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(mockInventory)
+  const kpis = useMemo(() => recalculateKPIs(inventoryItems), [inventoryItems])
   
   // Custom states for selection and dialog tracking
   const [selectedIds, setSelectedIds] = useState<number[]>([])
@@ -37,7 +40,7 @@ export function StockPage() {
 
   // Derived state: filter items based on search + status
   const filteredItems = useMemo(() => {
-    let items = [...mockInventory]
+    let items = [...inventoryItems]
     if (filters.search) {
       const search = filters.search.toLowerCase()
       items = items.filter(i =>
@@ -71,10 +74,12 @@ export function StockPage() {
   const handleToolbarAction = (action: string) => {
     switch (action) {
       case "approve":
+        setInventoryItems(prev => applyBulkApprove(prev, selectedIds));
         toast.success(`Đã duyệt ${selectedIds.length} mặt hàng`);
         setSelectedIds([]);
         break;
       case "delete":
+        setInventoryItems(prev => applyBulkDelete(prev, selectedIds));
         toast.success(`Đã xoá ${selectedIds.length} mặt hàng khỏi dữ liệu nháp (Draft)`);
         setSelectedIds([]);
         break;
@@ -104,25 +109,25 @@ export function StockPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 shrink-0">
         <KPICard
           title="Tổng mặt hàng"
-          value={String(mockInventoryKPIs.totalSKUs)}
+          value={String(kpis.totalSKUs)}
           icon={<Package className="h-5 w-5 text-slate-700" />}
           color="bg-slate-100"
         />
         <KPICard
           title="Tổng giá trị kho"
-          value={formatCurrency(mockInventoryKPIs.totalValue)}
+          value={formatCurrency(kpis.totalValue)}
           icon={<TrendingUp className="h-5 w-5 text-green-700" />}
           color="bg-green-50"
         />
         <KPICard
           title="Sắp hết hàng"
-          value={String(mockInventoryKPIs.lowStockCount)}
+          value={String(kpis.lowStockCount)}
           icon={<AlertTriangle className="h-5 w-5 text-red-700" />}
           color="bg-red-50"
         />
         <KPICard
           title="Cận hạn sử dụng"
-          value={String(mockInventoryKPIs.expiringSoonCount)}
+          value={String(kpis.expiringSoonCount)}
           icon={<CalendarClock className="h-5 w-5 text-amber-700" />}
           color="bg-amber-50"
         />

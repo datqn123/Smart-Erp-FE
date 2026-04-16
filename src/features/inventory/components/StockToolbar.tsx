@@ -36,14 +36,14 @@ export function StockToolbar({ searchStr, onSearch, status, onStatusChange, sele
             />
           </div>
           <Select value={status} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-full sm:w-[200px] min-h-[44px] bg-white">
+            <SelectTrigger className="w-full sm:w-[200px] min-h-[44px] bg-white text-slate-900 border-slate-200 focus:ring-2 focus:ring-slate-100 focus:border-slate-400 data-[state=open]:border-slate-400 transition-colors">
               <SelectValue placeholder="Trạng thái" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả trạng thái</SelectItem>
-              <SelectItem value="in-stock">Còn hàng</SelectItem>
-              <SelectItem value="low-stock">Sắp hết</SelectItem>
-              <SelectItem value="out-of-stock">Hết hàng</SelectItem>
+            <SelectContent position="popper" sideOffset={4} className="bg-white border-slate-200 text-slate-900 shadow-lg min-w-[200px]">
+              <SelectItem value="all" className="focus:bg-slate-100 focus:text-slate-900 cursor-pointer py-3 px-3">Tất cả trạng thái</SelectItem>
+              <SelectItem value="in-stock" className="focus:bg-slate-100 focus:text-slate-900 cursor-pointer py-3 px-3">Còn hàng</SelectItem>
+              <SelectItem value="low-stock" className="focus:bg-slate-100 focus:text-slate-900 cursor-pointer py-3 px-3">Sắp hết</SelectItem>
+              <SelectItem value="out-of-stock" className="focus:bg-slate-100 focus:text-slate-900 cursor-pointer py-3 px-3">Hết hàng</SelectItem>
             </SelectContent>
           </Select>
         </div>

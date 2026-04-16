@@ -23,6 +23,7 @@ export interface InventoryItem {
   isLowStock: boolean;
   isExpiringSoon: boolean;
   totalValue: number; // quantity * costPrice
+  status?: 'Draft' | 'Active';
 }
 
 export interface InventoryFilters {

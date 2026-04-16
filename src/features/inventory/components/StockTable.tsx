@@ -18,10 +18,11 @@ export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDet
   const someSelected = selectedIds.length > 0 && selectedIds.length < data.length;
 
   const getStatusInfo = (item: InventoryItem) => {
+    if (item.status === 'Draft') return { label: "Nháp", bg: "bg-slate-100 text-slate-700" };
     if (item.quantity === 0) return { label: "Hết hàng", bg: "bg-red-100 text-red-800" }
     if (item.isLowStock) return { label: "Sắp hết", bg: "bg-red-50 text-red-700 hover:bg-red-100" }
     if (item.isExpiringSoon) return { label: "Cận date", bg: "bg-amber-50 text-amber-700 hover:bg-amber-100" }
-    return { label: "Còn hàng", bg: "bg-green-50 text-green-700 hover:bg-green-100" }
+    return { label: "Chính thức", bg: "bg-green-50 text-green-700 hover:bg-green-100" }
   };
 
   return (
