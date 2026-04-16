@@ -9,66 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 
-// Picking List Component
-function PickingList({ items }: { items: StockDispatch['items'] }) {
-  if (items.length === 0) return null
-  return (
-    <div className="space-y-3">
-      <h3 className="font-medium text-sm flex items-center gap-2">
-        <MapPin className="h-4 w-4 text-slate-600" /> Danh sách lấy hàng (Picking List)
-      </h3>
-      {items.map((item) => (
-        <div key={item.id} className="bg-green-50 border-l-4 border-green-500 p-3">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <p className="font-medium text-sm">{item.productName}</p>
-              <p className="text-xs text-slate-500">{item.skuCode}</p>
-            </div>
-            <Badge className="bg-green-100 text-green-800 text-xs">
-              {item.isFullyDispatched ? "✓ Đủ" : "● Một phần"}
-            </Badge>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-            <div><p className="text-slate-500">Vị trí</p><p className="font-semibold text-base">{item.warehouseLocation}-{item.shelfCode}</p></div>
-            <div><p className="text-slate-500">Cần xuất</p><p className="font-semibold text-base text-green-700">{item.remainingQty} {item.unitName}</p></div>
-            <div><p className="text-slate-500">Tồn khả dụng</p><p className="font-medium">{item.availableStock} {item.unitName}</p></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
+import { DispatchTable, DispatchTableHeader } from "../components/DispatchTable"
+import { DispatchDetailPanel } from "../components/DispatchDetailPanel"
 
-// Dispatch Detail (inline expandable)
-function DispatchDetail({ dispatch }: { dispatch: StockDispatch }) {
-  const [expanded, setExpanded] = useState(false)
-  return (
-    <div className="bg-white border border-slate-200">
-      <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between p-4 hover:bg-slate-50/50">
-        <div className="flex items-center gap-3">
-          <Eye className={`h-4 w-4 text-slate-600 transition-transform ${expanded ? "rotate-90" : ""}`} />
-          <div className="text-left">
-            <p className="font-mono text-sm font-medium">{dispatch.dispatchCode}</p>
-            <p className="text-xs text-slate-500">{dispatch.orderCode} • {dispatch.customerName}</p>
-          </div>
-        </div>
-        <StatusBadge status={dispatch.status} type="dispatch" />
-      </button>
-      {expanded && (
-        <div className="px-4 pb-4 space-y-4 border-t border-slate-100 pt-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><p className="text-xs text-slate-500">Đơn hàng</p><p className="font-medium">{dispatch.orderCode}</p></div>
-            <div><p className="text-xs text-slate-500">Khách hàng</p><p className="font-medium">{dispatch.customerName}</p></div>
-            <div><p className="text-xs text-slate-500">Ngày xuất</p><p className="font-medium">{formatDate(dispatch.dispatchDate)}</p></div>
-            <div><p className="text-xs text-slate-500">Người xuất</p><p className="font-medium">{dispatch.userName}</p></div>
-          </div>
-          {dispatch.notes && <div><p className="text-xs text-slate-500">Ghi chú</p><p className="mt-1 text-sm">{dispatch.notes}</p></div>}
-          <PickingList items={dispatch.items} />
-        </div>
-      )}
-    </div>
-  )
-}
+const PAGE_SIZE = 20
 
 const statusOptions = [
   { value: "all", label: "Tất cả trạng thái" },
@@ -81,13 +25,53 @@ const statusOptions = [
 export function DispatchPage() {
   const { setTitle } = usePageTitle()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  // State
   const [dispatches] = useState(mockStockDispatchs)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [dateFrom, setDateFrom] = useState("")
   const [dateTo, setDateTo] = useState("")
+  
+  // UI State
+  const [selectedDispatch, setSelectedDispatch] = useState<StockDispatch | null>(null)
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setTitle("Xuất kho & Điều phối") }, [setTitle])
+
+  // Logic: Filter and Sort
+  const filtered = dispatches.filter(d => {
+    const matchesSearch = 
+      d.dispatchCode.toLowerCase().includes(search.toLowerCase()) ||
+      d.orderCode.toLowerCase().includes(search.toLowerCase()) ||
+      d.customerName.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || d.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  // Infinite Scroll Handler
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+        setIsLoadingMore(true);
+        setTimeout(() => {
+          setVisibleCount(prev => prev + PAGE_SIZE);
+          setIsLoadingMore(false);
+        }, 600);
+      }
+    }, { threshold: 0.1 });
+
+    if (sentinelRef.current) observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingMore]);
 
   const handleExportExcel = () => { alert("Chức năng Export Excel sẽ được triển khai khi có API") }
   const handleImportExcel = () => { fileInputRef.current?.click() }
@@ -98,8 +82,8 @@ export function DispatchPage() {
   const handleCreateDispatch = () => { alert("Form tạo phiếu xuất kho sẽ được triển khai") }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6">
-      {/* Header */}
+    <div className="h-full flex flex-col p-4 md:p-6 lg:p-8 gap-4 md:gap-5 overflow-hidden">
+      {/* ── Header Area (Thanh tiêu đề và các nút chức năng) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-medium text-slate-900" style={{ letterSpacing: "-0.02em" }}>
@@ -121,49 +105,107 @@ export function DispatchPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-4 space-y-3">
+      {/* ── Filter Bar (Bộ lọc và tìm kiếm) ── */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input placeholder="Tìm theo mã phiếu, đơn hàng, khách hàng..." value={search}
-              onChange={(e) => setSearch(e.target.value)} className="pl-9 h-11" />
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setVisibleCount(PAGE_SIZE);
+              }} className="pl-9 h-11 bg-slate-50/50 border-slate-200 focus:bg-white transition-all" />
           </div>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 px-3 border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 w-full sm:w-[180px]">
+          <select value={statusFilter} onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setVisibleCount(PAGE_SIZE);
+          }}
+            className="h-11 px-3 border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 w-full sm:w-[180px] rounded-md transition-all">
             {statusOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-slate-400" />
-            <span className="text-xs text-slate-500">Từ ngày:</span>
-            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
-              className="h-9 px-2 border border-slate-200 text-sm" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <span className="text-xs text-slate-500">Từ ngày:</span>
+              <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
+                className="h-9 px-2 border border-slate-200 text-sm rounded bg-slate-50/50" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">Đến ngày:</span>
+              <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
+                className="h-9 px-2 border border-slate-200 text-sm rounded bg-slate-50/50" />
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">Đến ngày:</span>
-            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
-              className="h-9 px-2 border border-slate-200 text-sm" />
-          </div>
+          <p className="text-xs font-medium text-slate-500 flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+            Hiển thị {visible.length} / {filtered.length} phiếu
+          </p>
         </div>
-        <p className="text-xs text-slate-500">{dispatches.length} phiếu xuất kho</p>
       </div>
 
-      {/* Dispatch List */}
-      <div className="space-y-3">
-        {dispatches.map(d => <DispatchDetail key={d.id} dispatch={d} />)}
+      {/* ── Table Section (Header + Bound Body) ── */}
+      <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+        {/* Fixed Header */}
+        {filtered.length > 0 && (
+          <div className="bg-slate-50 border-b border-slate-200 pr-[10px]"> 
+            <DispatchTableHeader />
+          </div>
+        )}
+
+        {/* Scrollable Body */}
+        <div
+          data-testid="dispatch-list-container"
+          className="flex-1 overflow-y-auto relative scroll-smooth"
+        >
+          {filtered.length === 0 ? (
+            <div className="text-center py-20 bg-white">
+              <Truck className="h-16 w-16 text-slate-200 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-slate-900">Không tìm thấy phiếu nào</h3>
+              <p className="text-slate-500 text-sm max-w-xs mx-auto">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm để xem kết quả</p>
+              <Button onClick={() => {setSearch(""); setStatusFilter("all");}} variant="link" className="mt-2 text-slate-900">
+                Xóa tất cả bộ lọc
+              </Button>
+            </div>
+          ) : (
+            <>
+              <DispatchTable 
+                dispatches={visible} 
+                onAction={(d) => {
+                  setSelectedDispatch(d);
+                  setIsPanelOpen(true);
+                }} 
+              />
+
+              {/* Skeleton loading more */}
+              {isLoadingMore && (
+                <div className="flex justify-center p-6 bg-slate-50/30">
+                  <div className="animate-spin h-6 w-6 border-2 border-slate-300 border-t-slate-900 rounded-full" />
+                </div>
+              )}
+
+              {/* Sentinel */}
+              {hasMore && !isLoadingMore && (
+                <div ref={sentinelRef} className="h-10" />
+              )}
+
+              {!hasMore && filtered.length > 0 && (
+                <p className="text-center text-[11px] font-bold text-slate-400 py-8 uppercase tracking-widest bg-slate-50/10">
+                  — Đã tải hết {filtered.length} phiếu xuất kho —
+                </p>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
-      {dispatches.length === 0 && (
-        <div className="text-center py-12 bg-white border border-slate-200">
-          <Truck className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-          <p className="text-slate-500 text-sm mb-4">Chưa có phiếu xuất kho</p>
-          <Button onClick={handleCreateDispatch} className="h-11 bg-slate-900 hover:bg-slate-800 text-white">
-            <Truck className="h-4 w-4 mr-2" /> Tạo phiếu xuất
-          </Button>
-        </div>
-      )}
+      <DispatchDetailPanel 
+        dispatch={selectedDispatch}
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        canApprove={true}
+      />
     </div>
   )
 }
