@@ -42,7 +42,7 @@ export function DispatchTable({ dispatches, onAction }: DispatchTableProps) {
             <TableCell className="w-[140px] font-mono text-xs font-semibold text-slate-900">
               {dispatch.dispatchCode}
             </TableCell>
-            <TableCell className="w-[140px] text-sm text-slate-700">
+            <TableCell className="w-[140px] font-mono text-xs text-slate-600">
               {dispatch.orderCode}
             </TableCell>
             <TableCell className="min-w-[160px] text-sm font-medium">

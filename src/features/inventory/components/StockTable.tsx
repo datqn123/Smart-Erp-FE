@@ -2,21 +2,51 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Eye } from "lucide-react"
+import { Eye, Package } from "lucide-react"
 import type { InventoryItem } from "../types"
 
 interface StockTableProps {
   data: InventoryItem[]
   selectedIds: number[]
   onSelect: (id: number) => void
-  onSelectAll: (checked: boolean) => void
   onViewDetails: (item: InventoryItem) => void
 }
 
-export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDetails }: StockTableProps) {
-  const allSelected = data.length > 0 && selectedIds.length === data.length;
-  const someSelected = selectedIds.length > 0 && selectedIds.length < data.length;
+export function StockTableHeader({ 
+  allSelected, 
+  someSelected, 
+  onSelectAll 
+}: { 
+  allSelected: boolean, 
+  someSelected: boolean, 
+  onSelectAll: (checked: boolean) => void 
+}) {
+  return (
+    <Table className="w-full table-fixed bg-slate-50 border-none border-separate border-spacing-0">
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead className="w-[48px] px-4 text-center">
+            <Checkbox 
+              checked={allSelected ? true : someSelected ? "indeterminate" : false} 
+              onCheckedChange={(checked) => onSelectAll(checked as boolean)}
+              aria-label="Select all"
+              className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
+            />
+          </TableHead>
+          <TableHead className="w-[110px] text-sm font-semibold text-slate-900 px-4">Mã SP</TableHead>
+          <TableHead className="min-w-[200px] text-sm font-semibold text-slate-900 px-4">Tên sản phẩm</TableHead>
+          <TableHead className="w-[120px] text-sm font-semibold text-slate-900 px-4">Vị trí</TableHead>
+          <TableHead className="w-[110px] text-right text-sm font-semibold text-slate-900 px-4">Tồn kho</TableHead>
+          <TableHead className="w-[140px] text-sm font-semibold text-slate-900 px-4">Hạn SD</TableHead>
+          <TableHead className="w-[130px] text-sm font-semibold text-slate-900 px-4">Trạng thái</TableHead>
+          <TableHead className="w-[80px] text-right text-sm font-semibold text-slate-900 px-4 sticky right-0 bg-slate-50">NV</TableHead>
+        </TableRow>
+      </TableHeader>
+    </Table>
+  );
+}
 
+export function StockTable({ data, selectedIds, onSelect, onViewDetails }: StockTableProps) {
   const getStatusInfo = (item: InventoryItem) => {
     if (item.status === 'Draft') return { label: "Nháp", bg: "bg-slate-100 text-slate-700" };
     if (item.quantity === 0) return { label: "Hết hàng", bg: "bg-red-100 text-red-800" }
@@ -26,10 +56,10 @@ export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDet
   };
 
   return (
-    <div className="bg-white border-x border-b md:border border-slate-200 md:rounded-b-md shadow-sm h-full flex flex-col relative min-h-0 overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
       
       {/* Mobile Card Layout (hidden on md and up) */}
-      <div className="md:hidden flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="md:hidden flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/30">
         {data.length === 0 ? (
            <div className="text-center py-12 text-slate-500 text-sm">Không tìm thấy sản phẩm nào</div>
         ) : (
@@ -37,13 +67,13 @@ export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDet
             const status = getStatusInfo(item);
             const isSelected = selectedIds.includes(item.id);
             return (
-              <div key={item.id} className={`p-4 border rounded-lg ${isSelected ? 'border-slate-800 bg-slate-50' : 'border-slate-200 bg-white'}`}>
+              <div key={item.id} className={`p-4 border rounded-lg shadow-sm ${isSelected ? 'border-slate-800 bg-slate-50' : 'border-slate-200 bg-white'}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <Checkbox id={`mob-cb-${item.id}`} checked={isSelected} onCheckedChange={() => onSelect(item.id)} className="h-5 w-5 rounded-sm border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600" />
                     <div className="flex-1 min-w-0">
                       <p className="text-base font-medium text-slate-900 truncate">{item.productName}</p>
-                      <p className="text-sm text-slate-500">{item.skuCode}</p>
+                      <p className="text-sm font-mono text-slate-500">{item.skuCode}</p>
                     </div>
                   </div>
                   <Badge variant="outline" className={`${status.bg} text-xs ml-2 whitespace-nowrap`}>{status.label}</Badge>
@@ -70,28 +100,9 @@ export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDet
       </div>
 
       {/* Desktop Table Layout */}
-      <div className="hidden md:block flex-1 min-h-0 overflow-auto">
-        <Table className="w-full min-w-[1000px] border-collapse relative">
-          <TableHeader className="sticky top-0 z-30 bg-slate-50 shadow-sm border-b">
-            <TableRow className="hover:bg-slate-50">
-              <TableHead className="w-[48px] px-4 text-center">
-                <Checkbox 
-                  checked={allSelected ? true : someSelected ? "indeterminate" : false} 
-                  onCheckedChange={(checked) => onSelectAll(checked as boolean)}
-                  aria-label="Select all"
-                  className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
-                />
-              </TableHead>
-              <TableHead className="w-[110px] text-sm font-semibold text-slate-900 px-4">Mã SP</TableHead>
-              <TableHead className="w-[280px] text-sm font-semibold text-slate-900 px-4">Tên sản phẩm</TableHead>
-              <TableHead className="w-[120px] text-sm font-semibold text-slate-900 px-4">Vị trí</TableHead>
-              <TableHead className="w-[110px] text-right text-sm font-semibold text-slate-900 px-4">Tồn kho</TableHead>
-              <TableHead className="w-[140px] text-sm font-semibold text-slate-900 px-4">Hạn SD</TableHead>
-              <TableHead className="w-[130px] text-sm font-semibold text-slate-900 px-4">Trạng thái</TableHead>
-              <TableHead className="w-[80px] text-right text-sm font-semibold text-slate-900 px-4">Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="divide-y divide-slate-100">
+      <div className="hidden md:block flex-1 min-h-0">
+        <Table data-testid="stock-table" className="w-full table-fixed border-none border-separate border-spacing-0">
+          <TableBody className="divide-y divide-slate-100 bg-white">
             {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24 text-center text-slate-500 text-sm">
@@ -103,8 +114,8 @@ export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDet
                 const status = getStatusInfo(item);
                 const isSelected = selectedIds.includes(item.id);
                 return (
-                  <TableRow key={item.id} className={`${isSelected ? "bg-slate-50" : "hover:bg-slate-50/50"} h-14`}>
-                    <TableCell className="px-4 text-center">
+                  <TableRow key={item.id} className={`group ${isSelected ? "bg-slate-50" : "hover:bg-slate-50/50"} h-14 cursor-pointer`} onClick={() => onSelect(item.id)}>
+                    <TableCell className="w-[48px] px-4 text-center" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={isSelected}
                         onCheckedChange={() => onSelect(item.id)}
@@ -112,22 +123,25 @@ export function StockTable({ data, selectedIds, onSelect, onSelectAll, onViewDet
                         className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
                       />
                     </TableCell>
-                    <TableCell className="text-sm font-mono text-slate-600 px-4">{item.skuCode}</TableCell>
-                    <TableCell className="text-sm font-medium text-slate-900 px-4 truncate max-w-[280px]">{item.productName}</TableCell>
-                    <TableCell className="text-sm text-slate-600 px-4">
+                    <TableCell className="w-[110px] text-xs font-mono font-semibold text-slate-900 px-4">{item.skuCode}</TableCell>
+                    <TableCell className="min-w-[200px] text-sm font-medium text-slate-900 px-4 truncate">{item.productName}</TableCell>
+                    <TableCell className="w-[120px] text-sm text-slate-600 px-4">
                       <Badge variant="outline" className="text-xs font-normal border-slate-200 h-6">{item.warehouseCode}-{item.shelfCode}</Badge>
                     </TableCell>
-                    <TableCell className="text-sm font-semibold text-right text-slate-900 px-4">
-                      {item.quantity} <span className="text-xs font-normal text-slate-500">{item.unitName}</span>
+                    <TableCell className="w-[110px] text-sm font-semibold text-right text-slate-900 px-4">
+                      <div className="flex items-center justify-end gap-1">
+                        <Package className="h-3 w-3 text-slate-400" />
+                        {item.quantity} <span className="text-xs font-normal text-slate-500">{item.unitName}</span>
+                      </div>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-600 px-4">
+                    <TableCell className="w-[140px] text-sm text-slate-600 px-4">
                       {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString('vi-VN') : '-'}
                     </TableCell>
-                    <TableCell className="px-4">
+                    <TableCell className="w-[130px] px-4">
                       <Badge variant="secondary" className={`${status.bg} text-xs font-normal border-none`}>{status.label}</Badge>
                     </TableCell>
-                    <TableCell className="text-right px-4">
-                      <Button variant="ghost" size="icon" onClick={() => onViewDetails(item)} title="Xem chi tiết" className="h-9 w-9 text-slate-500 hover:text-slate-900">
+                    <TableCell className="w-[80px] text-right px-4 sticky right-0 bg-white group-hover:bg-slate-50/50">
+                      <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onViewDetails(item); }} title="Xem chi tiết" className="h-9 w-9 text-slate-400 hover:text-slate-900">
                         <Eye className="h-5 w-5" />
                       </Button>
                     </TableCell>
