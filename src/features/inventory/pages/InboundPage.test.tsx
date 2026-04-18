@@ -3,20 +3,15 @@ import { InboundPage } from "./InboundPage"
 import { describe, it, expect, vi } from "vitest"
 import { PageTitleProvider } from "@/context/PageTitleContext"
 
-// Mock lucide-react to avoid icon rendering issues in tests
-vi.mock("lucide-react", () => ({
-  Plus: () => <div data-testid="plus-icon" />,
-  Search: () => <div data-testid="search-icon" />,
-  Calendar: () => <div data-testid="calendar-icon" />,
-  Upload: () => <div data-testid="upload-icon" />,
-  Download: () => <div data-testid="download-icon" />,
-  Camera: () => <div data-testid="camera-icon" />,
-}))
+// Giữ toàn bộ icon thật (form/panel dùng nhiều icon); tránh mock từng export.
+vi.mock("lucide-react", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("lucide-react")>()
+  return { ...mod }
+})
 
 // Mock components used in InboundPage
 vi.mock("../components/ReceiptTable", () => ({
   ReceiptTable: () => <div data-testid="receipt-table" />,
-  ReceiptTableHeader: () => <div data-testid="receipt-table-header" />,
 }))
 
 vi.mock("../components/ReceiptDetailPanel", () => ({

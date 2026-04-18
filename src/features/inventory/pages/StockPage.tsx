@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { applyBulkApprove, applyBulkDelete, recalculateKPIs } from "../inventoryLogic"
 
 import { StockToolbar } from "../components/StockToolbar"
-import { StockTable, StockTableHeader } from "../components/StockTable"
+import { StockTable } from "../components/StockTable"
 import { StockBatchDetailsDialog } from "../components/StockBatchDetailsDialog"
 
 function KPICard({ title, value, icon, color }: {
@@ -99,7 +99,7 @@ export function StockPage() {
   }
 
   return (
-    <div className="h-full flex flex-col p-4 md:p-6 lg:p-8 gap-4 md:gap-5">
+    <div className="h-full flex flex-col min-h-0 overflow-hidden p-4 md:p-6 lg:p-8 gap-4 md:gap-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shrink-0">
         <div>
@@ -150,24 +150,17 @@ export function StockPage() {
         />
       </div>
       
-      {/* Main Table Content Area (Standardized) */}
+      {/* Một bảng thead+tbody trong cùng vùng cuộn — chuẩn data-table-layout */}
       <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
-        {/* Fixed Header */}
-        <div className="hidden md:block bg-slate-50 border-b border-slate-200 pr-[10px]">
-          <StockTableHeader 
-            allSelected={allSelected}
-            someSelected={someSelected}
-            onSelectAll={handleSelectAll}
-          />
-        </div>
-
-        {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto relative scroll-smooth">
-          <StockTable 
+        <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
+          <StockTable
             data={filteredItems}
             selectedIds={selectedIds}
             onSelect={handleSelect}
             onViewDetails={handleViewDetails}
+            allSelected={allSelected}
+            someSelected={someSelected}
+            onSelectAll={handleSelectAll}
           />
         </div>
       </div>

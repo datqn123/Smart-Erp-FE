@@ -1,21 +1,25 @@
 import { useEffect, useState, useRef } from "react"
 import { usePageTitle } from "@/context/PageTitleContext"
-import { Package } from "lucide-react"
 import { mockProducts } from "../mockData"
 import type { Product } from "../types"
 import { ProductToolbar } from "../components/ProductToolbar"
 import { ProductTable } from "../components/ProductTable"
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
 export function ProductsPage() {
   const { setTitle } = usePageTitle()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  const [products] = useState(mockProducts)
+  const [products, setProducts] = useState(mockProducts)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+
+  // State cho xóa
+  const [deleteTarget, setDeleteTarget] = useState<Product | null>(null)
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false)
 
   useEffect(() => { setTitle("Quản lý sản phẩm") }, [setTitle])
 
@@ -43,8 +47,7 @@ export function ProductsPage() {
         toast.info(`Chỉnh sửa ${selectedIds.length} sản phẩm`)
         break;
       case "delete":
-        toast.success(`Đã xoá ${selectedIds.length} sản phẩm`)
-        setSelectedIds([])
+        setIsDeletingBulk(true)
         break;
       case "create":
         toast.info("Mở form tạo sản phẩm")
@@ -69,6 +72,25 @@ export function ProductsPage() {
 
   const handleEdit = (item: Product) => {
     toast.info(`Chỉnh sửa sản phẩm: ${item.name}`)
+  }
+
+  const handleDelete = (item: Product) => {
+    setDeleteTarget(item)
+  }
+
+  const confirmDelete = () => {
+    if (deleteTarget) {
+      setProducts(prev => prev.filter(p => p.id !== deleteTarget.id))
+      toast.success(`Đã xóa sản phẩm: ${deleteTarget.name}`)
+      setDeleteTarget(null)
+    }
+  }
+
+  const confirmBulkDelete = () => {
+    setProducts(prev => prev.filter(p => !selectedIds.includes(p.id)))
+    toast.success(`Đã xóa ${selectedIds.length} sản phẩm`)
+    setSelectedIds([])
+    setIsDeletingBulk(false)
   }
 
   return (
@@ -104,8 +126,26 @@ export function ProductsPage() {
           onSelectAll={handleSelectAll}
           onView={handleView}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
+
+      {/* Confirm Deletion */}
+      <ConfirmDialog 
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Xác nhận xóa"
+        description={`Bạn có chắc chắn muốn xóa sản phẩm "${deleteTarget?.name}"? Hành động này không thể hoàn tác.`}
+      />
+
+      <ConfirmDialog 
+        open={isDeletingBulk}
+        onOpenChange={setIsDeletingBulk}
+        onConfirm={confirmBulkDelete}
+        title="Xác nhận xóa nhiều"
+        description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} sản phẩm đã chọn?`}
+      />
     </div>
   )
 }

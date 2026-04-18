@@ -32,6 +32,8 @@ import { TopProductsPage } from "./features/analytics/pages/TopProductsPage"
 // Settings
 import { StoreInfoPage } from "./features/settings/pages/StoreInfoPage"
 import { EmployeesPage } from "./features/settings/pages/EmployeesPage"
+import { LogsPage } from "./features/settings/pages/LogsPage"
+import { WarehouseLocationsPage } from "./features/inventory/pages/WarehouseLocationsPage"
 
 import { PageTitleProvider } from "./context/PageTitleContext"
 
@@ -59,6 +61,7 @@ function App() {
 
           {/* Inventory Routes */}
           <Route path="/inventory/stock" element={<StockPage />} />
+          <Route path="/inventory/locations" element={<WarehouseLocationsPage />} />
           <Route path="/inventory/inbound" element={<InboundPage />} />
           <Route path="/inventory/dispatch" element={<DispatchPage />} />
           <Route path="/inventory/audit" element={<AuditPage />} />
@@ -97,7 +100,7 @@ function App() {
           <Route path="/settings/store-info" element={<StoreInfoPage />} />
           <Route path="/settings/employees" element={<EmployeesPage />} />
           <Route path="/settings/alerts" element={<PlaceholderPage title="Cấu hình cảnh báo" />} />
-          <Route path="/settings/system-logs" element={<PlaceholderPage title="Nhật ký hệ thống" />} />
+          <Route path="/settings/system-logs" element={<LogsPage />} />
         </Route>
 
         {/* Default and 404 Routes */}

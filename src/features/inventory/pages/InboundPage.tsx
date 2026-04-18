@@ -8,8 +8,10 @@ import type { StockReceipt } from "../types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { filterReceipts, paginateReceipts, sortByDate } from "../inboundLogic"
-import { ReceiptTable, ReceiptTableHeader } from "../components/ReceiptTable"
+import { ReceiptTable } from "../components/ReceiptTable"
 import { ReceiptDetailPanel } from "../components/ReceiptDetailPanel"
+import { ReceiptForm } from "../components/ReceiptForm"
+import { createReceipt, updateReceipt, deleteReceipt } from "../inventoryCrudLogic"
 
 const PAGE_SIZE = 20 // Tăng size cho table layout
 
@@ -39,6 +41,10 @@ export function InboundPage() {
   // Selection state for Detail Panel
   const [selectedReceipt, setSelectedReceipt] = useState<StockReceipt | null>(null)
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  
+  // Form state
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingReceipt, setEditingReceipt] = useState<StockReceipt | undefined>()
 
 
   useEffect(() => { setTitle("Phiếu nhập kho") }, [setTitle])
@@ -76,7 +82,77 @@ export function InboundPage() {
     return () => observer.disconnect()
   }, [loadMore])
 
-  const handleCreateReceipt = () => alert("Form tạo phiếu nhập kho sẽ được triển khai")
+  const handleCreateReceipt = () => {
+    setEditingReceipt(undefined)
+    setIsFormOpen(true)
+  }
+  
+  const handleEditReceipt = (receipt: StockReceipt) => {
+    setEditingReceipt(receipt)
+    setIsFormOpen(true)
+  }
+  
+  const handleDeleteReceipt = (id: number) => {
+    if (confirm("Bạn có chắc chắn muốn xóa phiếu nhập này?")) {
+      deleteReceipt(id)
+      alert("Xóa phiếu nhập thành công!")
+      window.location.reload()
+    }
+  }
+  
+  const handleFormSubmit = async (data: any) => {
+    const supplierMap: Record<number, string> = {
+      1: "Công ty TNHH Vinamilk",
+      2: "Nhà phân phối PepsiCo",
+      3: "Công ty Hàng Tiêu Dùng",
+      4: "Công ty Masan",
+      5: "Đại lý Unilever",
+    }
+    
+    if (editingReceipt) {
+      updateReceipt(editingReceipt.id, {
+        supplierId: data.supplierId,
+        supplierName: supplierMap[data.supplierId] || "",
+        receiptDate: data.receiptDate,
+        invoiceNumber: data.invoiceNumber,
+        notes: data.notes,
+        details: data.details.map((d: any) => ({
+          productId: d.productId,
+          productName: "",
+          skuCode: "",
+          unitId: 1,
+          unitName: "",
+          quantity: d.quantity,
+          costPrice: d.costPrice,
+          batchNumber: d.batchNumber,
+          expiryDate: d.expiryDate,
+        }))
+      })
+      alert("Cập nhật phiếu nhập thành công!")
+      window.location.reload()
+    } else {
+      createReceipt({
+        supplierId: data.supplierId,
+        supplierName: supplierMap[data.supplierId] || "",
+        receiptDate: data.receiptDate,
+        invoiceNumber: data.invoiceNumber,
+        notes: data.notes,
+        details: data.details.map((d: any) => ({
+          productId: d.productId,
+          productName: "",
+          skuCode: "",
+          unitId: 1,
+          unitName: "",
+          quantity: d.quantity,
+          costPrice: d.costPrice,
+          batchNumber: d.batchNumber,
+          expiryDate: d.expiryDate,
+        }))
+      })
+      alert("Tạo phiếu nhập mới thành công!")
+      window.location.reload()
+    }
+  }
   const handleScanOCR = () => alert("Chức năng Quét hóa đơn (OCR) sẽ được triển khai khi có API Backend")
   const handleExportExcel = () => alert("Chức năng Export Excel sẽ được triển khai khi có API")
   const handleImportExcel = () => fileInputRef.current?.click()
@@ -143,19 +219,11 @@ export function InboundPage() {
         </p>
       </div>
 
-      {/* ── Table Section (Header + Bound Body) ── */}
+      {/* ── Table (một bảng thead+tbody trong cùng vùng cuộn — tránh lệch cột) ── */}
       <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
-        {/* Fixed Header */}
-        {filtered.length > 0 && (
-          <div className="bg-slate-50 border-b border-slate-200 pr-[10px]"> 
-            <ReceiptTableHeader />
-          </div>
-        )}
-
-        {/* Scrollable Body */}
         <div
           data-testid="receipt-list-container"
-          className="flex-1 overflow-y-auto relative scroll-smooth"
+          className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0"
         >
           {filtered.length === 0 ? (
             <div className="text-center py-16 bg-white">
@@ -171,6 +239,8 @@ export function InboundPage() {
                   setSelectedReceipt(r);
                   setIsPanelOpen(true);
                 }} 
+                onEdit={handleEditReceipt}
+                onDelete={handleDeleteReceipt}
               />
 
             {/* Skeleton khi đang tải thêm (Spinner hoặc Shimmer cho hàng mới) */}
@@ -193,15 +263,22 @@ export function InboundPage() {
             )}
           </>
         )}
+        </div>
 
         <ReceiptDetailPanel 
           receipt={selectedReceipt} 
           isOpen={isPanelOpen} 
           onClose={() => setIsPanelOpen(false)}
-          canApprove={true} // Giả định là Owner cho demo Task026
+          canApprove={true}
+        />
+        
+        <ReceiptForm 
+          open={isFormOpen}
+          onOpenChange={setIsFormOpen}
+          receipt={editingReceipt}
+          onSubmit={handleFormSubmit}
         />
       </div>
     </div>
-  </div>
   )
 }

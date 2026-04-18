@@ -2,8 +2,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Eye, Edit2 } from "lucide-react"
+import { Eye, Edit2, Trash2 } from "lucide-react"
 import { formatCurrency } from "@/features/inventory/utils"
+import { 
+  DATA_TABLE_ROOT_CLASS, 
+  DATA_TABLE_ACTION_HEAD_CLASS, 
+  DATA_TABLE_ACTION_CELL_CLASS,
+  ORDER_TABLE_COL 
+} from "@/lib/data-table-layout"
+import { cn } from "@/lib/utils"
 import type { Order } from "../types"
 
 interface OrderTableProps {
@@ -13,6 +20,7 @@ interface OrderTableProps {
   onSelectAll: (checked: boolean) => void
   onView: (item: Order) => void
   onEdit: (item: Order) => void
+  onDelete: (item: Order) => void
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -22,114 +30,83 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function TypeBadge({ type }: { type: string }) {
-  if (type === 'Wholesale') return <Badge className="bg-blue-50 text-blue-700 text-xs font-normal">Bán buôn</Badge>;
-  if (type === 'Retail') return <Badge className="bg-purple-50 text-purple-700 text-xs font-normal">Bán lẻ</Badge>;
-  return <Badge className="bg-slate-100 text-slate-700 text-xs font-normal">Trả hàng</Badge>;
+  if (type === 'Wholesale') return <Badge className="bg-blue-50 text-blue-700 text-xs font-normal border-blue-200">Bán buôn</Badge>;
+  if (type === 'Retail') return <Badge className="bg-purple-50 text-purple-700 text-xs font-normal border-purple-200">Bán lẻ</Badge>;
+  return <Badge className="bg-slate-100 text-slate-700 text-xs font-normal border-slate-200">Trả hàng</Badge>;
 }
 
-export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, onEdit }: OrderTableProps) {
+export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, onEdit, onDelete }: OrderTableProps) {
   const allSelected = data.length > 0 && selectedIds.length === data.length;
   const someSelected = selectedIds.length > 0 && selectedIds.length < data.length;
 
   return (
-    <div className="bg-white border-x border-b md:border border-slate-200 md:rounded-b-md shadow-sm h-full flex flex-col relative min-h-0 overflow-hidden flex-1">
-      
-      {/* Mobile Card Layout */}
-      <div className="md:hidden flex-1 overflow-y-auto p-4 space-y-4">
-        {data.length === 0 ? (
-           <div className="text-center py-12 text-slate-500 text-sm">Không tìm thấy đơn hàng nào</div>
-        ) : (
-          data.map(item => {
-            const isSelected = selectedIds.includes(item.id);
-            return (
-              <div key={item.id} className={`p-4 border rounded-lg ${isSelected ? 'border-slate-800 bg-slate-50' : 'border-slate-200 bg-white'}`}>
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Checkbox 
-                      id={`mob-cb-${item.id}`} 
-                      checked={isSelected} 
-                      onCheckedChange={() => onSelect(item.id)} 
-                      className="h-5 w-5 rounded-sm border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600" 
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-base font-medium text-slate-900 truncate">{item.orderCode}</p>
-                      <p className="text-sm text-slate-500 truncate">{item.customerName}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mb-4 text-sm ml-8">
-                  <div><p className="text-slate-500 text-xs uppercase tracking-wider">Tổng tiền</p><p className="text-base font-semibold text-slate-900">{formatCurrency(item.totalAmount)}</p></div>
-                  <div><p className="text-slate-500 text-xs uppercase tracking-wider">Trạng thái</p><div className="mt-1"><StatusBadge status={item.status} /></div></div>
-                  <div><p className="text-slate-500 text-xs uppercase tracking-wider">Phân loại</p><div className="mt-1"><TypeBadge type={item.type} /></div></div>
-                  <div><p className="text-slate-500 text-xs uppercase tracking-wider">Ngày tạo</p><p className="text-sm font-medium text-slate-900">{new Date(item.date).toLocaleDateString('vi-VN')}</p></div>
-                </div>
-                <div className="flex gap-2 ml-8">
-                  <Button variant="outline" size="sm" className="h-11 flex-1" onClick={() => onView(item)}><Eye className="h-4 w-4 mr-1.5" /> Xem</Button>
-                  <Button variant="outline" size="sm" className="h-11 flex-1" onClick={() => onEdit(item)}><Edit2 className="h-4 w-4 mr-1.5" /> Sửa</Button>
-                </div>
-              </div>
-            )
-          })
-        )}
-      </div>
-
-      {/* Desktop Table Layout */}
-      <div className="hidden md:block flex-1 min-h-0 overflow-auto">
-        <Table className="w-full min-w-[800px] border-collapse relative">
-          <TableHeader className="sticky top-0 z-30 bg-slate-50 shadow-sm border-b">
-            <TableRow className="hover:bg-slate-50">
-              <TableHead className="w-[48px] px-4 text-center">
+    <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+      <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
+        <Table className={DATA_TABLE_ROOT_CLASS}>
+          <TableHeader className="sticky top-0 z-30 bg-slate-50 border-b">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className={cn(ORDER_TABLE_COL.select, "px-4 text-center")}>
                 <Checkbox 
                   checked={allSelected ? true : someSelected ? "indeterminate" : false} 
                   onCheckedChange={(checked) => onSelectAll(checked as boolean)}
-                  aria-label="Select all"
                   className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
                 />
               </TableHead>
-              <TableHead className="w-[120px] text-sm font-semibold text-slate-900 px-4">Mã đơn</TableHead>
-              <TableHead className="w-[200px] text-sm font-semibold text-slate-900 px-4">Tên khách hàng</TableHead>
-              <TableHead className="w-[120px] text-sm font-semibold text-slate-900 px-4">Loại đơn</TableHead>
-              <TableHead className="w-[160px] text-right text-sm font-semibold text-slate-900 px-4">Tổng tiền</TableHead>
-              <TableHead className="w-[140px] text-sm font-semibold text-slate-900 px-4">Ngày tạo</TableHead>
-              <TableHead className="w-[140px] text-sm font-semibold text-slate-900 px-4">Trạng thái</TableHead>
-              <TableHead className="w-[80px] text-center text-sm font-semibold text-slate-900 px-4">Thao tác</TableHead>
+              <TableHead className={cn(ORDER_TABLE_COL.code, "text-sm font-semibold text-slate-900 px-4")}>Mã đơn</TableHead>
+              <TableHead className={cn(ORDER_TABLE_COL.customer, "text-sm font-semibold text-slate-900 px-4")}>Khách hàng</TableHead>
+              <TableHead className={cn(ORDER_TABLE_COL.date, "text-sm font-semibold text-slate-900 px-4")}>Ngày tạo</TableHead>
+              <TableHead className={cn(ORDER_TABLE_COL.total, "text-right text-sm font-semibold text-slate-900 px-4")}>Tổng tiền</TableHead>
+              <TableHead className={cn(ORDER_TABLE_COL.status, "text-center text-sm font-semibold text-slate-900 px-4")}>Trạng thái</TableHead>
+              <TableHead className={DATA_TABLE_ACTION_HEAD_CLASS}>Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-slate-100">
             {data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center text-slate-500 text-sm">
-                  Không tìm thấy đơn hàng nào.
+                <TableCell colSpan={7} className="h-64 text-center">
+                   <div className="flex flex-col items-center justify-center text-slate-400 gap-2">
+                      <p className="text-sm">Không tìm thấy đơn hàng nào</p>
+                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               data.map((item) => {
                 const isSelected = selectedIds.includes(item.id);
                 return (
-                  <TableRow key={item.id} className={`${isSelected ? "bg-slate-50" : "hover:bg-slate-50/50"} h-14`}>
+                  <TableRow key={item.id} className={`${isSelected ? "bg-slate-50" : "hover:bg-slate-50/50"} h-16 group`}>
                     <TableCell className="px-4 text-center">
                       <Checkbox 
                         checked={isSelected}
                         onCheckedChange={() => onSelect(item.id)}
-                        aria-label={`Select ${item.orderCode}`}
                         className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
                       />
                     </TableCell>
-                    <TableCell className="text-sm font-mono text-slate-600 px-4">{item.orderCode}</TableCell>
-                    <TableCell className="text-sm font-medium text-slate-900 px-4 truncate max-w-[200px]">{item.customerName}</TableCell>
-                    <TableCell className="px-4"><TypeBadge type={item.type} /></TableCell>
-                    <TableCell className="text-sm font-semibold text-right text-slate-900 px-4">
+                    <TableCell className="text-sm font-mono font-semibold text-slate-700 px-4">{item.orderCode}</TableCell>
+                    <TableCell className="px-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-900 truncate max-w-[200px]">{item.customerName}</span>
+                        <TypeBadge type={item.type} />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-600 px-4">
+                      {new Date(item.date).toLocaleDateString('vi-VN')}
+                    </TableCell>
+                    <TableCell className="text-sm font-bold text-right text-slate-900 px-4">
                       {formatCurrency(item.totalAmount)}
                     </TableCell>
-                    <TableCell className="text-sm text-slate-600 px-4">{new Date(item.date).toLocaleDateString('vi-VN')}</TableCell>
-                    <TableCell className="px-4"><StatusBadge status={item.status} /></TableCell>
-                    <TableCell className="text-center px-4">
+                    <TableCell className="px-4 text-center">
+                      <StatusBadge status={item.status} />
+                    </TableCell>
+                    <TableCell className={DATA_TABLE_ACTION_CELL_CLASS}>
                       <div className="flex items-center justify-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => onView(item)} title="Xem chi tiết" className="h-8 w-8 text-slate-500 hover:text-slate-900">
+                        <Button variant="ghost" size="icon" onClick={() => onView(item)} title="Xem chi tiết" className="h-8 w-8 text-slate-500 hover:text-slate-900 transition-colors">
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => onEdit(item)} title="Chỉnh sửa" className="h-8 w-8 text-slate-500 hover:text-slate-900">
+                        <Button variant="ghost" size="icon" onClick={() => onEdit(item)} title="Chỉnh sửa" className="h-8 w-8 text-slate-500 hover:text-slate-900 transition-colors">
                           <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => onDelete(item)} title="Xóa đơn hàng" className="h-8 w-8 text-slate-500 hover:text-red-600 transition-colors">
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

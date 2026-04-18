@@ -57,6 +57,10 @@ export function WholesalePage() {
     toast.info(`Chỉnh sửa đơn hàng: ${item.orderCode}`)
   }
 
+  const handleDelete = (item: Order) => {
+    toast.error(`Yêu cầu xóa đơn hàng: ${item.orderCode}`)
+  }
+
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
       {/* Header */}
@@ -85,6 +89,7 @@ export function WholesalePage() {
           onSelectAll={handleSelectAll}
           onView={handleView}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
     </div>

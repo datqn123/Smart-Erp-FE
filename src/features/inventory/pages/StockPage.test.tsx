@@ -41,25 +41,24 @@ vi.mock("../components/StockBatchDetailsDialog", () => ({
 }))
 
 describe("StockPage Layout Test", () => {
-  it("should have a standalone header with flex-col layout", () => {
+  it("should render one scrollable stock table (thead + tbody aligned)", () => {
     const { container } = render(
       <PageTitleProvider>
         <StockPage />
       </PageTitleProvider>
     )
-    
-    // Kiểm tra cấu trúc phân tách (Header, Filter, Table Wrapper)
-    const mainContainer = container.firstChild as HTMLElement;
-    expect(mainContainer.className).toContain("h-full");
-    expect(mainContainer.className).toContain("flex-col");
-    
-    // Tìm Table Wrapper có shadow-md
-    const tableWrapper = container.querySelector(".shadow-md.rounded-xl");
-    expect(tableWrapper).toBeTruthy();
-    
-    // Tìm Standalone Header bên trong Wrapper
-    const headerContainer = tableWrapper?.querySelector(".bg-slate-50.border-b");
-    expect(headerContainer).toBeTruthy();
+
+    const mainContainer = container.firstChild as HTMLElement
+    expect(mainContainer.className).toContain("h-full")
+    expect(mainContainer.className).toContain("flex-col")
+
+    const tableWrapper = container.querySelector(".shadow-md.rounded-xl")
+    expect(tableWrapper).toBeTruthy()
+
+    const scroll = tableWrapper?.querySelector(".overflow-y-auto")
+    expect(scroll).toBeTruthy()
+    expect(scroll?.querySelector("thead")).toBeTruthy()
+    expect(scroll?.querySelector('[data-testid="stock-table"]')).toBeTruthy()
   })
 
   // AC3: Filter bar should NOT have shadow-sm

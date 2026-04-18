@@ -59,6 +59,10 @@ export function TransactionsPage() {
     toast.info(`Chỉnh sửa giao dịch: ${item.transactionCode}`)
   }
 
+  const handleDelete = (item: Transaction) => {
+    toast.error(`Yêu cầu xóa giao dịch: ${item.transactionCode}`)
+  }
+
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
       {/* Header */}
@@ -89,6 +93,7 @@ export function TransactionsPage() {
           onSelectAll={handleSelectAll}
           onView={handleView}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
     </div>

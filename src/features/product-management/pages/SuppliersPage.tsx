@@ -4,16 +4,21 @@ import { mockSuppliers } from "../mockData"
 import type { Supplier } from "../types"
 import { SupplierToolbar } from "../components/SupplierToolbar"
 import { SupplierTable } from "../components/SupplierTable"
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
 export function SuppliersPage() {
   const { setTitle } = usePageTitle()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  const [suppliers] = useState(mockSuppliers)
+  const [suppliers, setSuppliers] = useState(mockSuppliers)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+
+  // State cho xóa
+  const [deleteTarget, setDeleteTarget] = useState<Supplier | null>(null)
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false)
 
   useEffect(() => { setTitle("Nhà cung cấp") }, [setTitle])
 
@@ -38,8 +43,7 @@ export function SuppliersPage() {
         toast.info(`Chỉnh sửa ${selectedIds.length} nhà cung cấp`)
         break;
       case "delete":
-        toast.success(`Đã xoá ${selectedIds.length} nhà cung cấp`)
-        setSelectedIds([])
+        setIsDeletingBulk(true)
         break;
       case "create":
         toast.info("Mở form tạo nhà cung cấp")
@@ -64,6 +68,25 @@ export function SuppliersPage() {
 
   const handleEdit = (item: Supplier) => {
     toast.info(`Chỉnh sửa NCC: ${item.name}`)
+  }
+
+  const handleDelete = (item: Supplier) => {
+    setDeleteTarget(item)
+  }
+
+  const confirmDelete = () => {
+    if (deleteTarget) {
+      setSuppliers(prev => prev.filter(s => s.id !== deleteTarget.id))
+      toast.success(`Đã xóa nhà cung cấp: ${deleteTarget.name}`)
+      setDeleteTarget(null)
+    }
+  }
+
+  const confirmBulkDelete = () => {
+    setSuppliers(prev => prev.filter(s => !selectedIds.includes(s.id)))
+    toast.success(`Đã xóa ${selectedIds.length} nhà cung cấp`)
+    setSelectedIds([])
+    setIsDeletingBulk(false)
   }
 
   return (
@@ -96,8 +119,26 @@ export function SuppliersPage() {
           onSelectAll={handleSelectAll}
           onView={handleView}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
+
+      {/* Confirm Deletion */}
+      <ConfirmDialog 
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Xác nhận xóa"
+        description={`Bạn có chắc chắn muốn xóa nhà cung cấp "${deleteTarget?.name}"? Hành động này không thể hoàn tác.`}
+      />
+
+      <ConfirmDialog 
+        open={isDeletingBulk}
+        onOpenChange={setIsDeletingBulk}
+        onConfirm={confirmBulkDelete}
+        title="Xác nhận xóa nhiều"
+        description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} nhà cung cấp đã chọn?`}
+      />
     </div>
   )
 }

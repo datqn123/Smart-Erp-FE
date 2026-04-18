@@ -4,16 +4,21 @@ import { mockCustomers } from "../mockData"
 import type { Customer } from "../types"
 import { CustomerToolbar } from "../components/CustomerToolbar"
 import { CustomerTable } from "../components/CustomerTable"
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
 export function CustomersPage() {
   const { setTitle } = usePageTitle()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  const [customers] = useState(mockCustomers)
+  const [customers, setCustomers] = useState(mockCustomers)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+
+  // State cho xóa
+  const [deleteTarget, setDeleteTarget] = useState<Customer | null>(null)
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false)
 
   useEffect(() => { setTitle("Khách hàng") }, [setTitle])
 
@@ -38,8 +43,7 @@ export function CustomersPage() {
         toast.info(`Chỉnh sửa ${selectedIds.length} khách hàng`)
         break;
       case "delete":
-        toast.success(`Đã xoá ${selectedIds.length} khách hàng`)
-        setSelectedIds([])
+        setIsDeletingBulk(true)
         break;
       case "create":
         toast.info("Mở form tạo khách hàng")
@@ -64,6 +68,25 @@ export function CustomersPage() {
 
   const handleEdit = (item: Customer) => {
     toast.info(`Chỉnh sửa KH: ${item.name}`)
+  }
+
+  const handleDelete = (item: Customer) => {
+    setDeleteTarget(item)
+  }
+
+  const confirmDelete = () => {
+    if (deleteTarget) {
+      setCustomers(prev => prev.filter(c => c.id !== deleteTarget.id))
+      toast.success(`Đã xóa khách hàng: ${deleteTarget.name}`)
+      setDeleteTarget(null)
+    }
+  }
+
+  const confirmBulkDelete = () => {
+    setCustomers(prev => prev.filter(c => !selectedIds.includes(c.id)))
+    toast.success(`Đã xóa ${selectedIds.length} khách hàng`)
+    setSelectedIds([])
+    setIsDeletingBulk(false)
   }
 
   return (
@@ -96,8 +119,26 @@ export function CustomersPage() {
           onSelectAll={handleSelectAll}
           onView={handleView}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
+
+      {/* Confirm Deletion */}
+      <ConfirmDialog 
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Xác nhận xóa"
+        description={`Bạn có chắc chắn muốn xóa khách hàng "${deleteTarget?.name}"? Hành động này không thể hoàn tác.`}
+      />
+
+      <ConfirmDialog 
+        open={isDeletingBulk}
+        onOpenChange={setIsDeletingBulk}
+        onConfirm={confirmBulkDelete}
+        title="Xác nhận xóa nhiều"
+        description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} khách hàng đã chọn?`}
+      />
     </div>
   )
 }

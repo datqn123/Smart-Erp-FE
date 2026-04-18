@@ -4,6 +4,7 @@ import { mockCategories } from "../mockData"
 import type { Category } from "../types"
 import { CategoryToolbar } from "../components/CategoryToolbar"
 import { CategoryTable } from "../components/CategoryTable"
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
 // Helper to flatten categories for select all
@@ -21,15 +22,18 @@ function flattenCategories(categories: Category[]): Category[] {
 export function CategoriesPage() {
   const { setTitle } = usePageTitle()
   
-  const [categories] = useState(mockCategories)
+  const [categories, setCategories] = useState(mockCategories)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
 
+  // State cho xóa
+  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false)
+
   useEffect(() => { setTitle("Danh mục sản phẩm") }, [setTitle])
 
   // Filter both parent and children simply here for demonstration
-  // Real implementation might need to keep parent structure if children match
   const filtered = categories.filter(c => {
     if (statusFilter !== "all" && c.status !== statusFilter) return false
     if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.categoryCode.toLowerCase().includes(search.toLowerCase())) return false
@@ -52,8 +56,7 @@ export function CategoriesPage() {
         toast.info(`Chỉnh sửa ${selectedIds.length} danh mục`)
         break;
       case "delete":
-        toast.success(`Đã xoá ${selectedIds.length} danh mục`)
-        setSelectedIds([])
+        setIsDeletingBulk(true)
         break;
       case "create":
         toast.info("Mở form tạo danh mục")
@@ -67,6 +70,26 @@ export function CategoriesPage() {
 
   const handleEdit = (item: Category) => {
     toast.info(`Chỉnh sửa danh mục: ${item.name}`)
+  }
+
+  const handleDelete = (item: Category) => {
+    setDeleteTarget(item)
+  }
+
+  const confirmDelete = () => {
+    if (deleteTarget) {
+      // Recursive delete helper if needed, but here we just filter top level
+      setCategories(prev => prev.filter(c => c.id !== deleteTarget.id))
+      toast.success(`Đã xóa danh mục: ${deleteTarget.name}`)
+      setDeleteTarget(null)
+    }
+  }
+
+  const confirmBulkDelete = () => {
+    setCategories(prev => prev.filter(c => !selectedIds.includes(c.id)))
+    toast.success(`Đã xóa ${selectedIds.length} danh mục`)
+    setSelectedIds([])
+    setIsDeletingBulk(false)
   }
 
   return (
@@ -97,8 +120,26 @@ export function CategoriesPage() {
           onSelectAll={handleSelectAll}
           onView={handleView}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
+
+      {/* Confirm Deletion */}
+      <ConfirmDialog 
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Xác nhận xóa"
+        description={`Bạn có chắc chắn muốn xóa danh mục "${deleteTarget?.name}"? Hành động này không thể hoàn tác.`}
+      />
+
+      <ConfirmDialog 
+        open={isDeletingBulk}
+        onOpenChange={setIsDeletingBulk}
+        onConfirm={confirmBulkDelete}
+        title="Xác nhận xóa nhiều"
+        description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} danh mục đã chọn?`}
+      />
     </div>
   )
 }
