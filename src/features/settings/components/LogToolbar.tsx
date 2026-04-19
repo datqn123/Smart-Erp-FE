@@ -40,7 +40,7 @@ export function LogToolbar({
             <Filter className="h-4 w-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Module" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper" className="bg-white">
             <SelectItem value="all">Tất cả Module</SelectItem>
             <SelectItem value="Products">Sản phẩm</SelectItem>
             <SelectItem value="Orders">Đơn hàng</SelectItem>

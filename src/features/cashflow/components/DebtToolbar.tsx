@@ -1,9 +1,9 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Plus, Filter, Download, Trash2, Edit2 } from "lucide-react"
+import { Search, Plus, Filter, Download, Trash2, CreditCard } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-interface TransactionToolbarProps {
+interface DebtToolbarProps {
   searchStr: string
   onSearch: (val: string) => void
   statusFilter: string
@@ -14,9 +14,9 @@ interface TransactionToolbarProps {
   onAction: (action: string) => void
 }
 
-export function TransactionToolbar({ 
+export function DebtToolbar({ 
   searchStr, onSearch, statusFilter, onStatusChange, typeFilter, onTypeChange, selectedIds, onAction 
-}: TransactionToolbarProps) {
+}: DebtToolbarProps) {
   const hasSelection = selectedIds.length > 0
 
   return (
@@ -24,7 +24,7 @@ export function TransactionToolbar({
       <div className="relative flex-1 w-full max-w-md group">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
         <Input 
-          placeholder="Tìm theo mã giao dịch, nội dung..." 
+          placeholder="Tìm theo mã nợ, tên đối tác..." 
           className="pl-10 h-10 bg-white border-slate-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition-all rounded-lg"
           value={searchStr}
           onChange={(e) => onSearch(e.target.value)}
@@ -39,20 +39,19 @@ export function TransactionToolbar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tất cả trạng thái</SelectItem>
-            <SelectItem value="Completed">Hoàn thành</SelectItem>
-            <SelectItem value="Pending">Chờ xử lý</SelectItem>
-            <SelectItem value="Cancelled">Đã hủy</SelectItem>
+            <SelectItem value="InDebt">Còn nợ</SelectItem>
+            <SelectItem value="Cleared">Đã tất toán</SelectItem>
           </SelectContent>
         </Select>
 
         <Select value={typeFilter} onValueChange={onTypeChange}>
-          <SelectTrigger className="w-[140px] h-10 bg-white border-slate-200 rounded-lg">
-            <SelectValue placeholder="Loại giao dịch" />
+          <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200 rounded-lg">
+            <SelectValue placeholder="Loại đối tác" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tất cả loại hình</SelectItem>
-            <SelectItem value="Income">Thu tiền</SelectItem>
-            <SelectItem value="Expense">Chi tiền</SelectItem>
+            <SelectItem value="all">Tất cả đối tác</SelectItem>
+            <SelectItem value="Customer">Khách hàng</SelectItem>
+            <SelectItem value="Supplier">Nhà cung cấp</SelectItem>
           </SelectContent>
         </Select>
 
@@ -64,10 +63,10 @@ export function TransactionToolbar({
               variant="outline" 
               size="sm" 
               className="h-10 px-4 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-lg"
-              onClick={() => onAction("edit")}
+              onClick={() => onAction("repay")}
             >
-              <Edit2 className="h-4 w-4 mr-2" />
-              Sửa ({selectedIds.length})
+              <CreditCard className="h-4 w-4 mr-2" />
+              Thanh toán ({selectedIds.length})
             </Button>
             <Button 
               variant="outline" 
@@ -95,7 +94,7 @@ export function TransactionToolbar({
               onClick={() => onAction("create")}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Tạo phiếu
+              Tạo khoản nợ
             </Button>
           </>
         )}

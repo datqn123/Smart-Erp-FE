@@ -4,6 +4,7 @@ import { mockOrders } from "../mockData"
 import type { Order } from "../types"
 import { OrderToolbar } from "../components/OrderToolbar"
 import { OrderTable } from "../components/OrderTable"
+import { OrderDetailPanel } from "../components/OrderDetailPanel"
 import { toast } from "sonner"
 
 export function WholesalePage() {
@@ -13,6 +14,8 @@ export function WholesalePage() {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   useEffect(() => { setTitle("Bán buôn (B2B)") }, [setTitle])
 
@@ -50,7 +53,8 @@ export function WholesalePage() {
   }
 
   const handleView = (item: Order) => {
-    toast.info(`Xem chi tiết đơn hàng: ${item.orderCode}`)
+    setSelectedOrder(item)
+    setIsDetailOpen(true)
   }
 
   const handleEdit = (item: Order) => {
@@ -92,6 +96,12 @@ export function WholesalePage() {
           onDelete={handleDelete}
         />
       </div>
+
+      <OrderDetailPanel 
+        order={selectedOrder}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
     </div>
   )
 }

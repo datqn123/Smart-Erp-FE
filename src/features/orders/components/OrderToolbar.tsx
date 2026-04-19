@@ -9,11 +9,12 @@ interface OrderToolbarProps {
   onStatusChange: (val: string) => void
   selectedIds: number[]
   onAction: (action: string) => void
+  showCreate?: boolean
 }
 
 export function OrderToolbar({
   searchStr, onSearch, statusFilter, onStatusChange,
-  selectedIds, onAction
+  selectedIds, onAction, showCreate = true
 }: OrderToolbarProps) {
   const hasSelection = selectedIds.length > 0;
 
@@ -69,9 +70,11 @@ export function OrderToolbar({
           
           <div className="w-px h-6 bg-slate-200 hidden sm:block mx-1"></div>
           
-          <Button onClick={() => onAction("create")} className="h-11 sm:h-9 bg-slate-900 hover:bg-slate-800 text-white ml-auto sm:ml-0">
-            <Plus className="h-4 w-4 mr-2" /> Tạo đơn hàng
-          </Button>
+          {showCreate && (
+            <Button onClick={() => onAction("create")} className="h-11 sm:h-9 bg-slate-900 hover:bg-slate-800 text-white ml-auto sm:ml-0">
+              <Plus className="h-4 w-4 mr-2" /> Tạo đơn hàng
+            </Button>
+          )}
           <Button onClick={() => onAction("export")} variant="outline" className="h-11 sm:h-9 hidden sm:flex">
             <Download className="h-4 w-4 mr-2" /> Export
           </Button>

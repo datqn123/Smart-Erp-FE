@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useMemo } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { 
   LayoutDashboard,
@@ -13,6 +13,7 @@ import {
   ChevronDown
 } from "lucide-react"
 import { useSidebarStore, type NavItemKey } from "@/store/sidebarStore"
+import { useAuthStore } from "@/features/auth/store/useAuthStore"
 import { useUIStore } from "@/store/useUIStore"
 import { Button } from "@/components/ui/button"
 import {
@@ -100,7 +101,6 @@ const navItems: NavItem[] = [
     subItems: [
       { label: "Doanh thu & Lợi nhuận", path: "/analytics/revenue" },
       { label: "Sản phẩm bán chạy", path: "/analytics/top-products" },
-      { label: "Báo cáo tồn kho", path: "/analytics/inventory-report" },
     ],
   },
   {
@@ -108,9 +108,7 @@ const navItems: NavItem[] = [
     label: "AI & Trợ lý",
     icon: <Brain className="h-[18px] w-[18px]" />,
     subItems: [
-      { label: "AI Chat Bot", path: "/ai/chat" },
-      { label: "Quét hóa đơn (OCR)", path: "/ai/ocr-scanner" },
-      { label: "Nhập liệu bằng giọng nói", path: "/ai/voice-input" },
+      { label: "Trợ lý ảo AI", path: "/ai/chat" },
     ],
   },
   {
@@ -132,6 +130,16 @@ export function Sidebar({ isMobile = false }: SidebarProps) {
   const { expandedItems, toggleItem, expandItem } = useSidebarStore()
   const { setSidebarOpen, sidebarWidth, setSidebarWidth } = useUIStore()
   const isResizing = useRef(false)
+  const user = useAuthStore(state => state.user)
+
+  // Use useMemo to prevent infinite re-renders since .filter() creates a new array reference
+  const filteredNavItems = useMemo(() => {
+    return navItems.filter(item => {
+      if (item.id === 'approvals' && user?.role !== 'Owner') return false
+      if (item.id === 'cashflow' && user?.role === 'Staff') return false
+      return true
+    })
+  }, [user?.role])
 
   const isActiveRoute = (path: string) => location.pathname === path
   
@@ -141,13 +149,13 @@ export function Sidebar({ isMobile = false }: SidebarProps) {
 
   useEffect(() => {
     // Find parent of current route and expand it automatically
-    const activeParent = navItems.find(item => 
+    const activeParent = filteredNavItems.find(item => 
       item.subItems?.some(sub => sub.path === location.pathname)
     )
     if (activeParent) {
       expandItem(activeParent.id)
     }
-  }, [location.pathname, expandItem])
+  }, [location.pathname, expandItem, filteredNavItems])
 
   const handleNavigation = (path: string) => {
     navigate(path)
@@ -214,7 +222,7 @@ export function Sidebar({ isMobile = false }: SidebarProps) {
 
       {/* Navigation Items - Scrollable */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
-        {navItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <div key={item.id} className="space-y-2">
             <Collapsible
               open={expandedItems.has(item.id)}

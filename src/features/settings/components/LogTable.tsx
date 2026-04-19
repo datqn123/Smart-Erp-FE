@@ -31,7 +31,7 @@ export function LogTable({
   const someSelected = selectedIds.length > 0 && selectedIds.length < data.length;
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+    <div className="flex-1 flex flex-col min-h-0 bg-white border-x border-b border-slate-200/60 rounded-b-xl overflow-hidden shadow-md">
       <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
         <Table className={DATA_TABLE_ROOT_CLASS}>
           <TableHeader className="sticky top-0 z-30 bg-slate-50 border-b">

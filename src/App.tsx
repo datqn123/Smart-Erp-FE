@@ -20,10 +20,13 @@ import { CustomersPage } from "./features/product-management/pages/CustomersPage
 import { RetailPage } from "./features/orders/pages/RetailPage"
 import { WholesalePage } from "./features/orders/pages/WholesalePage"
 import { ReturnsPage } from "./features/orders/pages/ReturnsPage"
+import PendingApprovalsPage from "./features/approvals/pages/PendingApprovalsPage"
+import ApprovalHistoryPage from "./features/approvals/pages/ApprovalHistoryPage"
 
 // Cashflow
 import { TransactionsPage } from "./features/cashflow/pages/TransactionsPage"
 import { DebtPage } from "./features/cashflow/pages/DebtPage"
+import { LedgerPage } from "./features/cashflow/pages/LedgerPage"
 
 // Analytics
 import { RevenuePage } from "./features/analytics/pages/RevenuePage"
@@ -32,8 +35,10 @@ import { TopProductsPage } from "./features/analytics/pages/TopProductsPage"
 // Settings
 import { StoreInfoPage } from "./features/settings/pages/StoreInfoPage"
 import { EmployeesPage } from "./features/settings/pages/EmployeesPage"
+import { AlertSettingsPage } from "./features/settings/pages/AlertSettingsPage"
 import { LogsPage } from "./features/settings/pages/LogsPage"
 import { WarehouseLocationsPage } from "./features/inventory/pages/WarehouseLocationsPage"
+import { ChatBotPage } from "./features/ai/pages/ChatBotPage"
 
 import { PageTitleProvider } from "./context/PageTitleContext"
 
@@ -78,28 +83,25 @@ function App() {
           <Route path="/orders/returns" element={<ReturnsPage />} />
 
           {/* Approvals Routes */}
-          <Route path="/approvals/pending" element={<PlaceholderPage title="Chờ phê duyệt" />} />
-          <Route path="/approvals/history" element={<PlaceholderPage title="Lịch sử phê duyệt" />} />
+          <Route path="/approvals/pending" element={<PendingApprovalsPage />} />
+          <Route path="/approvals/history" element={<ApprovalHistoryPage />} />
 
           {/* Cashflow Routes */}
           <Route path="/cashflow/transactions" element={<TransactionsPage />} />
           <Route path="/cashflow/debt" element={<DebtPage />} />
-          <Route path="/cashflow/ledger" element={<PlaceholderPage title="Sổ cái tài chính" />} />
+          <Route path="/cashflow/ledger" element={<LedgerPage />} />
 
           {/* Analytics Routes */}
           <Route path="/analytics/revenue" element={<RevenuePage />} />
           <Route path="/analytics/top-products" element={<TopProductsPage />} />
-          <Route path="/analytics/inventory-report" element={<PlaceholderPage title="Báo cáo tồn kho" />} />
 
           {/* AI Tools Routes */}
-          <Route path="/ai/chat" element={<PlaceholderPage title="AI Chat Bot" />} />
-          <Route path="/ai/ocr-scanner" element={<PlaceholderPage title="Quét hóa đơn (OCR)" />} />
-          <Route path="/ai/voice-input" element={<PlaceholderPage title="Nhập liệu bằng giọng nói" />} />
+          <Route path="/ai/chat" element={<ChatBotPage />} />
 
           {/* Settings Routes */}
           <Route path="/settings/store-info" element={<StoreInfoPage />} />
           <Route path="/settings/employees" element={<EmployeesPage />} />
-          <Route path="/settings/alerts" element={<PlaceholderPage title="Cấu hình cảnh báo" />} />
+          <Route path="/settings/alerts" element={<AlertSettingsPage />} />
           <Route path="/settings/system-logs" element={<LogsPage />} />
         </Route>
 

@@ -4,6 +4,7 @@ import { mockTransactions } from "../mockData"
 import type { Transaction } from "../types"
 import { TransactionToolbar } from "../components/TransactionToolbar"
 import { TransactionTable } from "../components/TransactionTable"
+import { TransactionDetailModal } from "../components/TransactionDetailModal"
 import { toast } from "sonner"
 
 export function TransactionsPage() {
@@ -14,8 +15,12 @@ export function TransactionsPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  
+  // Detail modal state
+  const [selectedItem, setSelectedItem] = useState<Transaction | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  useEffect(() => { setTitle("Sổ quỹ") }, [setTitle])
+  useEffect(() => { setTitle("Giao dịch thu chi") }, [setTitle])
 
   const filtered = transactions.filter(t => {
     if (statusFilter !== "all" && t.status !== statusFilter) return false
@@ -52,7 +57,8 @@ export function TransactionsPage() {
   }
 
   const handleView = (item: Transaction) => {
-    toast.info(`Xem chi tiết giao dịch: ${item.transactionCode}`)
+    setSelectedItem(item)
+    setIsDetailOpen(true)
   }
 
   const handleEdit = (item: Transaction) => {
@@ -67,7 +73,7 @@ export function TransactionsPage() {
     <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
       {/* Header */}
       <div className="shrink-0">
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Sổ quỹ</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Giao dịch thu chi</h1>
         <p className="text-sm text-slate-500 mt-1">Quản lý thu chi và luân chuyển tiền mặt</p>
       </div>
 
@@ -94,6 +100,13 @@ export function TransactionsPage() {
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
+        />
+
+        {/* Detail Modal */}
+        <TransactionDetailModal 
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          transaction={selectedItem}
         />
       </div>
     </div>

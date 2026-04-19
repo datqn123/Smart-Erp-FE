@@ -24,15 +24,29 @@ interface OrderTableProps {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  if (status === 'Completed') return <Badge className="bg-green-50 text-green-700 text-xs border-none font-normal">Hoàn thành</Badge>;
-  if (status === 'Pending') return <Badge className="bg-amber-50 text-amber-700 text-xs border-none font-normal">Chờ duyệt</Badge>;
-  return <Badge className="bg-red-50 text-red-700 text-xs border-none font-normal">Đã huỷ</Badge>;
+  switch (status) {
+    case 'Completed':
+    case 'Delivered':
+      return <Badge className="bg-green-50 text-green-700 text-xs border-none font-normal">Hoàn thành</Badge>;
+    case 'Shipped':
+      return <Badge className="bg-blue-50 text-blue-700 text-xs border-none font-normal">Đang giao</Badge>;
+    case 'Processing':
+      return <Badge className="bg-indigo-50 text-indigo-700 text-xs border-none font-normal">Đang xử lý</Badge>;
+    case 'Partial':
+      return <Badge className="bg-amber-50 text-amber-700 text-xs border-none font-normal">Giao một phần</Badge>;
+    case 'Pending':
+      return <Badge className="bg-amber-100 text-amber-900 icon-xs border-none font-normal">Chờ duyệt</Badge>;
+    case 'Cancelled':
+      return <Badge className="bg-red-50 text-red-700 text-xs border-none font-normal">Đã huỷ</Badge>;
+    default:
+      return <Badge className="bg-slate-50 text-slate-700 text-xs border-none font-normal">{status}</Badge>;
+  }
 }
 
 function TypeBadge({ type }: { type: string }) {
-  if (type === 'Wholesale') return <Badge className="bg-blue-50 text-blue-700 text-xs font-normal border-blue-200">Bán buôn</Badge>;
-  if (type === 'Retail') return <Badge className="bg-purple-50 text-purple-700 text-xs font-normal border-purple-200">Bán lẻ</Badge>;
-  return <Badge className="bg-slate-100 text-slate-700 text-xs font-normal border-slate-200">Trả hàng</Badge>;
+  if (type === 'Wholesale') return <Badge className="bg-blue-50 text-blue-700 text-[10px] font-normal border-blue-200 h-5 px-1.5">Bán buôn</Badge>;
+  if (type === 'Retail') return <Badge className="bg-purple-50 text-purple-700 text-[10px] font-normal border-purple-200 h-5 px-1.5">Bán lẻ</Badge>;
+  return <Badge className="bg-slate-100 text-slate-700 text-[10px] font-normal border-slate-200 h-5 px-1.5">Trả hàng</Badge>;
 }
 
 export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, onEdit, onDelete }: OrderTableProps) {
@@ -83,16 +97,19 @@ export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, o
                     </TableCell>
                     <TableCell className="text-sm font-mono font-semibold text-slate-700 px-4">{item.orderCode}</TableCell>
                     <TableCell className="px-4">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col gap-1">
                         <span className="text-sm font-medium text-slate-900 truncate max-w-[200px]">{item.customerName}</span>
-                        <TypeBadge type={item.type} />
+                        <div className="flex gap-1 items-center">
+                          <TypeBadge type={item.type} />
+                          <span className="text-[10px] text-slate-400">• {item.itemsCount} mặt hàng</span>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell className="text-sm text-slate-600 px-4">
                       {new Date(item.date).toLocaleDateString('vi-VN')}
                     </TableCell>
                     <TableCell className="text-sm font-bold text-right text-slate-900 px-4">
-                      {formatCurrency(item.totalAmount)}
+                      {formatCurrency(item.finalAmount)}
                     </TableCell>
                     <TableCell className="px-4 text-center">
                       <StatusBadge status={item.status} />

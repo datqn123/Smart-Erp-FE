@@ -156,3 +156,26 @@ export const TRANSACTION_TABLE_COL = {
   status: "w-[112px]",
   description: "min-w-[200px]",
 } as const
+
+/** Sổ nợ */
+export const DEBT_TABLE_COL = {
+  select: "w-[48px]",
+  code: "w-[116px]",
+  partner: "min-w-[180px]",
+  type: "w-[100px]",
+  total: "w-[124px]",
+  paid: "w-[124px]",
+  remaining: "w-[124px]",
+  lastUpdate: "w-[120px]",
+  status: "w-[112px]",
+} as const
+
+/** Sổ cái */
+export const LEDGER_TABLE_COL = {
+  date: "w-[112px]",
+  code: "w-[116px]",
+  description: "min-w-[200px]",
+  debit: "w-[124px]",
+  credit: "w-[124px]",
+  balance: "w-[140px]",
+} as const

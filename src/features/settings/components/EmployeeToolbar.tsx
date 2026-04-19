@@ -35,12 +35,12 @@ export function EmployeeToolbar({
           />
         </div>
         
-        <Select value={roleFilter} onValueChange={onRoleChange}>
-          <SelectTrigger className="w-[140px] h-10 border-slate-200">
-            <SlidersHorizontal className="h-4 w-4 mr-2 text-slate-400" />
-            <SelectValue placeholder="Vai trò" />
-          </SelectTrigger>
-          <SelectContent>
+          <Select value={roleFilter} onValueChange={onRoleChange}>
+            <SelectTrigger className="w-[140px] h-10 border-slate-200">
+              <SlidersHorizontal className="h-4 w-4 mr-2 text-slate-400" />
+              <SelectValue placeholder="Vai trò" />
+            </SelectTrigger>
+            <SelectContent position="popper" className="bg-white">
             <SelectItem value="all">Tất cả vai trò</SelectItem>
             <SelectItem value="Admin">Admin</SelectItem>
             <SelectItem value="Manager">Manager</SelectItem>
