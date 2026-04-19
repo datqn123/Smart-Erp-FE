@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Save, X, FolderTree, Tag, Hash, CheckCircle2, ListTree, Info, ArrowRight, CornerDownRight, BarChart3 } from "lucide-react"
+import { Save, FolderTree, Tag, Hash, CheckCircle2, ListTree, Info, ArrowRight, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -67,7 +67,7 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
         form.reset({
           name: category.id ? category.name : "",
           categoryCode: category.categoryCode || `CAT${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
-          parentId: category.parentId || 0,
+          parentId: category.parentId ?? 0,
           description: category.description || "",
           sortOrder: category.sortOrder || 0,
           status: category.status || "Active",
@@ -102,7 +102,7 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
   
   // Helper to render hierarchical categories in select
   const renderCategoryOptions = () => {
-    const options: JSX.Element[] = [<SelectItem key="0" value="0">Gốc (Root)</SelectItem>];
+    const options: any[] = [<SelectItem key="0" value="0">Gốc (Root)</SelectItem>];
     
     const addOptions = (cats: Category[], level: number) => {
       cats.forEach(c => {
@@ -150,7 +150,7 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(handleLocalSubmit)} className="p-0 bg-white">
+        <form onSubmit={form.handleSubmit(handleLocalSubmit as any)} className="p-0 bg-white">
           {/* Status Indicator Bar for Sub-category */}
           {isAddingSub && (
             <div className="px-8 py-3 bg-blue-50/50 border-b border-blue-100 flex items-center gap-3">
@@ -272,7 +272,7 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
           <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} className="h-12 px-6 font-bold text-slate-400 hover:text-slate-900">
             Hủy thao tác
           </Button>
-          <Button type="submit" disabled={isSubmitting} onClick={form.handleSubmit(handleLocalSubmit)} className="h-12 px-10 bg-slate-900 hover:bg-slate-800 text-white shadow-2xl shadow-slate-300 rounded-2xl font-bold flex items-center gap-2">
+          <Button type="submit" disabled={isSubmitting} onClick={form.handleSubmit(handleLocalSubmit as any)} className="h-12 px-10 bg-slate-900 hover:bg-slate-800 text-white shadow-2xl shadow-slate-300 rounded-2xl font-bold flex items-center gap-2">
             <Save size={18} />
             Xác nhận Lưu
           </Button>

@@ -7,7 +7,7 @@ import {
   DialogDescription 
 } from "@/components/ui/dialog"
 import type { Employee } from "../types"
-import { User, Shield, Key, Mail, Phone, Calendar, Activity, BadgeCheck, Lock } from "lucide-react"
+import { User, Shield, Mail, Phone, Calendar, Activity, BadgeCheck, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

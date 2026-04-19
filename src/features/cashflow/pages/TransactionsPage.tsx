@@ -7,7 +7,7 @@ import { TransactionTable } from "../components/TransactionTable"
 import { TransactionDetailDialog } from "../components/TransactionDetailDialog"
 import { TransactionFormDialog } from "../components/TransactionFormDialog"
 import { toast } from "sonner"
-import { Banknote, TrendingUp, TrendingDown, DollarSign } from "lucide-react"
+import { Banknote, TrendingUp, TrendingDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function TransactionsPage() {
