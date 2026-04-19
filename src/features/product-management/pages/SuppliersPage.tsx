@@ -4,6 +4,8 @@ import { mockSuppliers } from "../mockData"
 import type { Supplier } from "../types"
 import { SupplierToolbar } from "../components/SupplierToolbar"
 import { SupplierTable } from "../components/SupplierTable"
+import { SupplierDetailDialog } from "../components/SupplierDetailDialog"
+import { SupplierForm } from "../components/SupplierForm"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
@@ -19,6 +21,12 @@ export function SuppliersPage() {
   // State cho xóa
   const [deleteTarget, setDeleteTarget] = useState<Supplier | null>(null)
   const [isDeletingBulk, setIsDeletingBulk] = useState(false)
+
+  // State cho Detail & Form
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | undefined>()
 
   useEffect(() => { setTitle("Nhà cung cấp") }, [setTitle])
 
@@ -46,7 +54,8 @@ export function SuppliersPage() {
         setIsDeletingBulk(true)
         break;
       case "create":
-        toast.info("Mở form tạo nhà cung cấp")
+        setEditingSupplier(undefined)
+        setIsFormOpen(true)
         break;
       case "export":
         toast.info("Đang xuất dữ liệu Excel...")
@@ -63,11 +72,13 @@ export function SuppliersPage() {
   }
 
   const handleView = (item: Supplier) => {
-    toast.info(`Xem chi tiết NCC: ${item.name}`)
+    setSelectedSupplier(item)
+    setIsDetailOpen(true)
   }
 
   const handleEdit = (item: Supplier) => {
-    toast.info(`Chỉnh sửa NCC: ${item.name}`)
+    setEditingSupplier(item)
+    setIsFormOpen(true)
   }
 
   const handleDelete = (item: Supplier) => {
@@ -138,6 +149,40 @@ export function SuppliersPage() {
         onConfirm={confirmBulkDelete}
         title="Xác nhận xóa nhiều"
         description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} nhà cung cấp đã chọn?`}
+      />
+
+      <SupplierDetailDialog 
+        supplier={selectedSupplier}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
+
+      <SupplierForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        supplier={editingSupplier}
+        onSubmit={(data) => {
+            if (editingSupplier) {
+                setSuppliers(prev => prev.map(s => s.id === editingSupplier.id ? { ...s, ...data } : s))
+                toast.success("Cập nhật nhà cung cấp thành công")
+            } else {
+                const newSupplier: Supplier = {
+                    id: Math.max(...suppliers.map(s => s.id)) + 1,
+                    supplierCode: data.supplierCode,
+                    name: data.name,
+                    contactPerson: data.contactPerson,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                    taxCode: data.taxCode,
+                    status: data.status,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+                setSuppliers(prev => [newSupplier, ...prev])
+                toast.success("Thêm nhà cung cấp thành công")
+            }
+        }}
       />
     </div>
   )

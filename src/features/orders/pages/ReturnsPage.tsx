@@ -4,7 +4,7 @@ import { mockOrders } from "../mockData"
 import type { Order } from "../types"
 import { OrderToolbar } from "../components/OrderToolbar"
 import { OrderTable } from "../components/OrderTable"
-import { OrderDetailPanel } from "../components/OrderDetailPanel"
+import { OrderDetailDialog } from "../components/OrderDetailDialog"
 import { toast } from "sonner"
 
 export function ReturnsPage() {
@@ -97,7 +97,7 @@ export function ReturnsPage() {
         />
       </div>
 
-      <OrderDetailPanel 
+      <OrderDetailDialog 
         order={selectedOrder}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}

@@ -4,7 +4,10 @@ import { mockProducts } from "../mockData"
 import type { Product } from "../types"
 import { ProductToolbar } from "../components/ProductToolbar"
 import { ProductTable } from "../components/ProductTable"
+import { ProductDetailDialog } from "../components/ProductDetailDialog"
+import { ProductForm } from "../components/ProductForm"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
+import { mockCategories } from "../mockData"
 import { toast } from "sonner"
 
 export function ProductsPage() {
@@ -20,6 +23,12 @@ export function ProductsPage() {
   // State cho xóa
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null)
   const [isDeletingBulk, setIsDeletingBulk] = useState(false)
+
+  // State cho Detail & Form
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<Product | undefined>()
 
   useEffect(() => { setTitle("Quản lý sản phẩm") }, [setTitle])
 
@@ -50,7 +59,8 @@ export function ProductsPage() {
         setIsDeletingBulk(true)
         break;
       case "create":
-        toast.info("Mở form tạo sản phẩm")
+        setEditingProduct(undefined)
+        setIsFormOpen(true)
         break;
       case "export":
         toast.info("Đang xuất dữ liệu Excel...")
@@ -67,11 +77,13 @@ export function ProductsPage() {
   }
 
   const handleView = (item: Product) => {
-    toast.info(`Xem chi tiết sản phẩm: ${item.name}`)
+    setSelectedProduct(item)
+    setIsDetailOpen(true)
   }
 
   const handleEdit = (item: Product) => {
-    toast.info(`Chỉnh sửa sản phẩm: ${item.name}`)
+    setEditingProduct(item)
+    setIsFormOpen(true)
   }
 
   const handleDelete = (item: Product) => {
@@ -145,6 +157,42 @@ export function ProductsPage() {
         onConfirm={confirmBulkDelete}
         title="Xác nhận xóa nhiều"
         description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} sản phẩm đã chọn?`}
+      />
+
+      <ProductDetailDialog 
+        product={selectedProduct}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
+
+      <ProductForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        product={editingProduct}
+        categories={mockCategories}
+        onSubmit={(data) => {
+            const categoryName = mockCategories.find(c => c.id === data.categoryId)?.name
+            if (editingProduct) {
+                setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...data, categoryName } : p))
+                toast.success("Cập nhật sản phẩm thành công")
+            } else {
+                const newProduct: Product = {
+                    id: Math.max(...products.map(p => p.id)) + 1,
+                    skuCode: data.skuCode,
+                    name: data.name,
+                    categoryId: data.categoryId,
+                    categoryName,
+                    barcode: data.barcode,
+                    currentPrice: data.currentPrice,
+                    weight: data.weight,
+                    status: data.status,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+                setProducts(prev => [newProduct, ...prev])
+                toast.success("Thêm sản phẩm thành công")
+            }
+        }}
       />
     </div>
   )

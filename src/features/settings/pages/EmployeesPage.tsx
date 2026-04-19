@@ -3,6 +3,8 @@ import { usePageTitle } from "@/context/PageTitleContext"
 import type { Employee } from "../types"
 import { EmployeeTable } from "../components/EmployeeTable"
 import { EmployeeToolbar } from "../components/EmployeeToolbar"
+import { EmployeeDetailDialog } from "../components/EmployeeDetailDialog"
+import { EmployeeForm } from "../components/EmployeeForm"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
@@ -24,6 +26,12 @@ export function EmployeesPage() {
   // Selection/Confirm states
   const [deleteTarget, setDeleteTarget] = useState<Employee | null>(null)
   const [isDeletingBulk, setIsDeletingBulk] = useState(false)
+
+  // Detail & Form states
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingEmployee, setEditingEmployee] = useState<Employee | undefined>()
 
   useEffect(() => {
     setTitle("Quản Lý Nhân Viên")
@@ -48,12 +56,19 @@ export function EmployeesPage() {
     if (action === "delete") {
       setIsDeletingBulk(true)
     } else if (action === "create") {
-      toast.info("Mở form thêm nhân viên mới")
+      setEditingEmployee(undefined)
+      setIsFormOpen(true)
     }
   }
 
-  const handleView = (item: Employee) => toast.info(`Xem nhân viên: ${item.fullName}`)
-  const handleEdit = (item: Employee) => toast.info(`Chỉnh sửa nhân viên: ${item.fullName}`)
+  const handleView = (item: Employee) => {
+    setSelectedEmployee(item)
+    setIsDetailOpen(true)
+  }
+  const handleEdit = (item: Employee) => {
+    setEditingEmployee(item)
+    setIsFormOpen(true)
+  }
   const handleDelete = (item: Employee) => setDeleteTarget(item)
 
   const confirmDelete = () => {
@@ -118,6 +133,32 @@ export function EmployeesPage() {
         onConfirm={confirmBulkDelete}
         title="Xác nhận xóa nhiều"
         description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} nhân viên đã chọn?`}
+      />
+
+      <EmployeeDetailDialog 
+        employee={selectedEmployee}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
+
+      <EmployeeForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        employee={editingEmployee}
+        onSubmit={(data) => {
+            if (editingEmployee) {
+                setEmployees(prev => prev.map(e => e.id === editingEmployee.id ? { ...e, ...data } : e))
+                toast.success("Cập nhật nhân viên thành công")
+            } else {
+                const newEmployee: Employee = {
+                    id: Math.max(...employees.map(e => e.id)) + 1,
+                    ...data,
+                    joinedDate: new Date().toISOString().split('T')[0]
+                }
+                setEmployees(prev => [newEmployee, ...prev])
+                toast.success("Thêm nhân viên thành công")
+            }
+        }}
       />
     </div>
   )

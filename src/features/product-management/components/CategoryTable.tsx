@@ -3,7 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Eye, Edit2, Trash2, ChevronDown, ChevronRight } from "lucide-react"
+import { Eye, Edit2, Trash2, ChevronDown, ChevronRight, PlusCircle } from "lucide-react"
 import type { Category } from "../types"
 import { cn } from "@/lib/utils"
 import {
@@ -21,6 +21,7 @@ interface CategoryRowProps {
   onView: (item: Category) => void
   onEdit: (item: Category) => void
   onDelete: (item: Category) => void
+  onAddSub: (parent: Category) => void
 }
 
 function CategoryRow({ 
@@ -30,7 +31,8 @@ function CategoryRow({
   onSelect, 
   onView, 
   onEdit,
-  onDelete
+  onDelete,
+  onAddSub
 }: CategoryRowProps) {
   const [expanded, setExpanded] = useState(false)
   const hasChildren = category.children && category.children.length > 0
@@ -55,32 +57,35 @@ function CategoryRow({
         <TableCell className="px-4">
           <div className="flex items-center gap-2" style={{ paddingLeft: `${level * 24}px` }}>
             {hasChildren ? (
-              <button onClick={handleToggle} className="p-1 hover:bg-slate-200 rounded">
+              <button onClick={handleToggle} className="p-1 hover:bg-slate-200 rounded shrink-0">
                 {expanded ? <ChevronDown className="h-4 w-4 text-slate-500" /> : <ChevronRight className="h-4 w-4 text-slate-500" />}
               </button>
             ) : (
-              <span className="w-6" />
+              <span className="w-6 shrink-0" />
             )}
             <span className="text-sm font-mono text-slate-600">{category.categoryCode}</span>
           </div>
         </TableCell>
-        <TableCell className="text-sm font-medium text-slate-900 px-4 truncate">{category.name}</TableCell>
+        <TableCell className="text-sm font-bold text-slate-900 px-4 truncate">{category.name}</TableCell>
         <TableCell className="text-sm text-slate-600 px-4 text-center tabular-nums">{category.productCount ?? 0}</TableCell>
-        <TableCell className="text-sm text-slate-600 px-4 truncate">{category.description || '-'}</TableCell>
+        <TableCell className="text-sm text-slate-500 px-4 max-w-[200px] truncate">{category.description || '-'}</TableCell>
         <TableCell className="px-4">
-          <Badge className={`${category.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'} text-xs font-normal border-none`}>
-            {category.status === 'Active' ? 'Hoạt động' : 'Ngừng'}
+          <Badge className={`${category.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'} text-[10px] font-bold uppercase border-none`}>
+            {category.status === 'Active' ? 'Hoạt động' : 'Ngưng'}
           </Badge>
         </TableCell>
         <TableCell className={DATA_TABLE_ACTION_CELL_CLASS}>
           <div className="flex items-center justify-center gap-1">
-            <Button variant="ghost" size="icon" onClick={() => onView(category)} title="Xem chi tiết" className="h-8 w-8 text-slate-500 hover:text-slate-900">
+            <Button variant="ghost" size="icon" onClick={() => onView(category)} title="Xem chi tiết" className="h-8 w-8 text-slate-400 hover:text-slate-900 hover:bg-slate-100">
               <Eye className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onEdit(category)} title="Chỉnh sửa" className="h-8 w-8 text-slate-500 hover:text-slate-900">
+            <Button variant="ghost" size="icon" onClick={() => onAddSub(category)} title="Thêm danh mục con" className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+              <PlusCircle className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => onEdit(category)} title="Chỉnh sửa" className="h-8 w-8 text-slate-400 hover:text-slate-900 hover:bg-slate-100">
               <Edit2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onDelete(category)} title="Xóa" className="h-8 w-8 text-slate-500 hover:text-red-600">
+            <Button variant="ghost" size="icon" onClick={() => onDelete(category)} title="Xóa" className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -96,6 +101,7 @@ function CategoryRow({
           onView={onView} 
           onEdit={onEdit} 
           onDelete={onDelete}
+          onAddSub={onAddSub}
         />
       ))}
     </>
@@ -122,6 +128,7 @@ interface CategoryTableProps {
   onView: (item: Category) => void
   onEdit: (item: Category) => void
   onDelete: (item: Category) => void
+  onAddSub: (parent: Category) => void
 }
 
 export function CategoryTable({ 
@@ -131,8 +138,10 @@ export function CategoryTable({
   onSelectAll, 
   onView, 
   onEdit,
-  onDelete
+  onDelete,
+  onAddSub
 }: CategoryTableProps) {
+
   const flatData = flattenCategories(data);
   const allSelected = flatData.length > 0 && selectedIds.length === flatData.length;
   const someSelected = selectedIds.length > 0 && selectedIds.length < flatData.length;

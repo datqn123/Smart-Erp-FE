@@ -49,14 +49,6 @@ export function CategoryToolbar({
               Đã chọn: {selectedIds.length}
             </span>
             <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => hasSelection ? onAction("edit") : undefined}
-              className="min-h-[44px] sm:min-h-[36px]"
-            >
-              <Edit2 className="mr-1.5 h-4 w-4" />Sửa
-            </Button>
-            <Button 
               variant="destructive" 
               size="sm" 
               onClick={() => hasSelection ? onAction("delete") : undefined}

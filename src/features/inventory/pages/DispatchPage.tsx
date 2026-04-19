@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 
 import { DispatchTable } from "../components/DispatchTable"
-import { DispatchDetailPanel } from "../components/DispatchDetailPanel"
+import { DispatchDetailDialog } from "../components/DispatchDetailDialog"
 import { DispatchForm } from "../components/DispatchForm"
 import { createDispatch, confirmDispatch, cancelDispatch } from "../inventoryCrudLogic"
 
@@ -253,7 +253,7 @@ export function DispatchPage() {
         </div>
       </div>
 
-      <DispatchDetailPanel 
+      <DispatchDetailDialog 
         dispatch={selectedDispatch}
         isOpen={isPanelOpen}
         onClose={() => setIsPanelOpen(false)}

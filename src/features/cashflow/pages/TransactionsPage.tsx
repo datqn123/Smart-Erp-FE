@@ -4,7 +4,7 @@ import { mockTransactions } from "../mockData"
 import type { Transaction } from "../types"
 import { TransactionToolbar } from "../components/TransactionToolbar"
 import { TransactionTable } from "../components/TransactionTable"
-import { TransactionDetailModal } from "../components/TransactionDetailModal"
+import { TransactionDetailDialog } from "../components/TransactionDetailDialog"
 import { toast } from "sonner"
 
 export function TransactionsPage() {
@@ -103,10 +103,10 @@ export function TransactionsPage() {
         />
 
         {/* Detail Modal */}
-        <TransactionDetailModal 
+        <TransactionDetailDialog 
+          transaction={selectedItem}
           isOpen={isDetailOpen}
           onClose={() => setIsDetailOpen(false)}
-          transaction={selectedItem}
         />
       </div>
     </div>

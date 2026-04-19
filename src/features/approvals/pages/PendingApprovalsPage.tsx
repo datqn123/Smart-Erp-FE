@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { usePageTitle } from "@/context/PageTitleContext"
 import { useApprovalStore } from "../store/useApprovalStore"
 import { OrderTable } from "@/features/orders/components/OrderTable"
-import { OrderDetailPanel } from "@/features/orders/components/OrderDetailPanel"
+import { OrderDetailDialog } from "@/features/orders/components/OrderDetailDialog"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
@@ -107,32 +107,35 @@ export default function PendingApprovalsPage() {
 
       {/* Reject Reason Dialog */}
       <Dialog open={rejectId !== null} onOpenChange={() => setRejectId(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Từ chối giao dịch</DialogTitle>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-slate-200 shadow-2xl rounded-2xl">
+          <DialogHeader className="p-6 pb-4 bg-slate-50/50 border-b border-slate-100">
+            <DialogTitle className="text-xl font-black text-slate-900 flex items-center gap-2">
+               <XCircle className="text-red-500" size={20} /> Từ chối giao dịch
+            </DialogTitle>
           </DialogHeader>
-          <div className="py-4 space-y-4">
+          <div className="p-8 space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Lý do từ chối (Bắt buộc)</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lý do từ chối (Bắt buộc)</label>
               <Input 
                 placeholder="VD: Sai thông tin hóa đơn, sai số lượng..." 
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
+                className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
                 autoFocus
               />
             </div>
-            <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100 italic">
-              * Lưu ý: Lý do này sẽ được gửi thông báo trực tiếp đến nhân viên tạo đơn.
+            <p className="text-xs text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-100 italic">
+               Lý do này sẽ được đính kèm trong thông báo phản hồi gửi đến nhân viên khởi tạo giao dịch.
             </p>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setRejectId(null)}>Hủy</Button>
-            <Button variant="destructive" onClick={confirmReject}>Xác nhận từ chối</Button>
+          <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100">
+            <Button variant="outline" onClick={() => setRejectId(null)} className="h-10 border-slate-300">Hủy</Button>
+            <Button variant="destructive" onClick={confirmReject} className="h-10 bg-red-600 hover:bg-red-700 shadow-lg shadow-red-100">Xác nhận từ chối</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <OrderDetailPanel 
+      <OrderDetailDialog 
         order={selectedOrder}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}

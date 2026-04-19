@@ -1,27 +1,61 @@
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Plus, X, Save, CheckCircle } from "lucide-react"
+import { 
+  Plus, 
+  Trash2, 
+  Save, 
+  X, 
+  Package, 
+  Info, 
+  MapPin, 
+  Truck, 
+  Hash, 
+  ArrowRightCircle, 
+  History,
+  CheckCircle2
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from "@/components/ui/dialog"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import type { StockDispatch } from "../types"
+import { cn } from "@/lib/utils"
 
 const dispatchSchema = z.object({
-  orderCode: z.string().min(1, "Vui lòng nhập mã đơn hàng"),
+  orderCode: z.string().min(1, "Vui lòng nhập mã đơn đặt hàng"),
   customerName: z.string().min(1, "Vui lòng nhập tên khách hàng"),
-  dispatchDate: z.string().min(1, "Vui lòng chọn ngày"),
+  dispatchDate: z.string().min(1, "Vui lòng chọn ngày xuất hàng"),
   notes: z.string().optional(),
   items: z.array(z.object({
-    productId: z.number().min(1, "Vui lòng chọn sản phẩm"),
-    dispatchQty: z.number().min(1, "Số lượng phải > 0"),
+    productId: z.number().min(1, "Chọn sản phẩm"),
+    dispatchQty: z.number().min(1, "SL > 0"),
     batchNumber: z.string().optional(),
-    warehouseLocation: z.string().min(1, "Vui lòng chọn kho"),
-    shelfCode: z.string().min(1, "Vui lòng chọn vị trí"),
-  })).min(1, "Phải có ít nhất 1 sản phẩm")
+    warehouseLocation: z.string().min(1, "Chọn kho"),
+    shelfCode: z.string().min(1, "Kệ"),
+  })).min(1, "Phải có ít nhất 1 dòng hàng")
 })
 
 type DispatchFormData = z.infer<typeof dispatchSchema>
@@ -69,7 +103,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
       customerName: "",
       dispatchDate: new Date().toISOString().split("T")[0],
       notes: "",
-      items: [{ productId: 0 as unknown as number, dispatchQty: 1, batchNumber: "", warehouseLocation: "WH01", shelfCode: "A1" }]
+      items: [{ productId: 0 as any, dispatchQty: 1, batchNumber: "", warehouseLocation: "WH01", shelfCode: "A1" }]
     }
   })
 
@@ -78,7 +112,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
     name: "items"
   })
 
-  const handleSubmit = async (data: DispatchFormData) => {
+  const handleLocalSubmit = async (data: DispatchFormData) => {
     setIsSubmitting(true)
     try {
       await onSubmit(data)
@@ -88,191 +122,228 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
     }
   }
 
-  const isEditable = !dispatch || (dispatch.status !== "Cancelled" && dispatch.status !== "Full")
+  const isEditable = !dispatch || (dispatch.status === "Pending" || dispatch.status === "Partial")
+
+  const totalSKUs = fields.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {dispatch ? (isEditable ? "Sửa phiếu xuất" : "Chi tiết phiếu xuất") : "Tạo phiếu xuất mới"}
-          </DialogTitle>
+      <DialogContent className="max-w-[95vw] sm:max-w-7xl max-h-[92vh] flex flex-col p-0 gap-0 border-slate-200 shadow-2xl overflow-hidden rounded-2xl">
+        <DialogHeader className="p-8 pb-6 bg-slate-50/50 border-b border-slate-100 shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-slate-400 mb-1">
+                <Truck size={16} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Quy trình điều phối</span>
+              </div>
+              <DialogTitle className="text-2xl font-black text-slate-900 leading-none">
+                {dispatch ? (isEditable ? "Sửa phiếu điều phối" : "Chi tiết điều phối") : "Tạo phiếu điều phối xuất kho"}
+              </DialogTitle>
+            </div>
+            <div className="text-right">
+                <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Mặt hàng đang chọn</p>
+                <p className="text-2xl font-black text-slate-900">{totalSKUs} <span className="text-sm font-normal text-slate-400">SKU</span></p>
+            </div>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Mã đơn hàng *</label>
-              <Input 
-                placeholder="VD: ORD-2026-0001"
-                {...form.register("orderCode")}
-                disabled={!isEditable}
-              />
-              {form.formState.errors.orderCode && (
-                <p className="text-sm text-red-500">{form.formState.errors.orderCode.message}</p>
-              )}
+        <form onSubmit={form.handleSubmit(handleLocalSubmit)} className="flex-1 overflow-y-auto flex flex-col gap-0 min-h-0 bg-white">
+          <div className="p-8 space-y-8">
+            {/* Header Info Section */}
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                    <Info size={16} className="text-slate-400" />
+                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-700">Thông tin đơn hàng & khách hàng</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="space-y-2">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mã đơn hàng *</label>
+                        <Input 
+                            placeholder="ORD-..."
+                            {...form.register("orderCode")}
+                            disabled={!isEditable}
+                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Khách hàng *</label>
+                        <Input 
+                            placeholder="Tên khách hàng..."
+                            {...form.register("customerName")}
+                            disabled={!isEditable}
+                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ngày xuất hàng *</label>
+                        <Input 
+                            type="date" 
+                            {...form.register("dispatchDate")}
+                            disabled={!isEditable}
+                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ghi chú</label>
+                        <Input 
+                            placeholder="Nội dung/Yêu cầu..."
+                            {...form.register("notes")}
+                            disabled={!isEditable}
+                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                        />
+                    </div>
+                </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Tên khách hàng *</label>
-              <Input 
-                placeholder="Nhập tên khách hàng" 
-                {...form.register("customerName")}
-                disabled={!isEditable}
-              />
-              {form.formState.errors.customerName && (
-                <p className="text-sm text-red-500">{form.formState.errors.customerName.message}</p>
-              )}
-            </div>
+            {/* Picking Table Section */}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Package size={20} className="text-slate-900" />
+                        <h3 className="text-lg font-black text-slate-900">Danh sách xuất hàng (Picking List)</h3>
+                    </div>
+                    {isEditable && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 border-slate-200 hover:bg-slate-50 font-bold"
+                            onClick={() => append({ productId: 0 as any, dispatchQty: 1, batchNumber: "", warehouseLocation: "WH01", shelfCode: "A1" })}
+                        >
+                            <Plus className="h-4 w-4 mr-2" /> Thêm sản phẩm
+                        </Button>
+                    )}
+                </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Ngày xuất *</label>
-              <Input 
-                type="date" 
-                {...form.register("dispatchDate")}
-                disabled={!isEditable}
-              />
-              {form.formState.errors.dispatchDate && (
-                <p className="text-sm text-red-500">{form.formState.errors.dispatchDate.message}</p>
-              )}
+                <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                    <Table>
+                        <TableHeader className="bg-slate-50 h-12">
+                            <TableRow className="hover:bg-transparent border-b border-slate-200">
+                                <TableHead className="w-[50px] text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">STT</TableHead>
+                                <TableHead className="min-w-[300px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Sản phẩm xuất</TableHead>
+                                <TableHead className="w-[100px] text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">ĐVT</TableHead>
+                                <TableHead className="w-[120px] text-right font-bold text-slate-500 uppercase text-[10px] tracking-wider">Số lượng</TableHead>
+                                <TableHead className="w-[150px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Kho xuất</TableHead>
+                                <TableHead className="w-[100px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Vị trí (Kệ)</TableHead>
+                                <TableHead className="w-[150px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Số lô</TableHead>
+                                <TableHead className="w-[60px] text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Xóa</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {fields.map((field, index) => {
+                                const selectedProductId = form.watch(`items.${index}.productId`);
+                                const product = mockProducts.find(p => p.id === selectedProductId);
+
+                                return (
+                                    <TableRow key={field.id} className="hover:bg-slate-50/30 transition-colors group h-14 border-b border-slate-100 last:border-0 text-slate-900">
+                                        <TableCell className="text-center text-xs font-mono text-slate-400">{index + 1}</TableCell>
+                                        <TableCell className="px-1">
+                                            <Select
+                                              value={selectedProductId?.toString() || ""}
+                                              onValueChange={(val) => form.setValue(`items.${index}.productId`, parseInt(val))}
+                                              disabled={!isEditable}
+                                            >
+                                              <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                                                <SelectValue placeholder="Chọn sản phẩm xuất..." />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                {mockProducts.map(p => (
+                                                  <SelectItem key={p.id} value={p.id.toString()}>{p.name} ({p.sku})</SelectItem>
+                                                ))}
+                                              </SelectContent>
+                                            </Select>
+                                        </TableCell>
+                                        <TableCell className="text-center px-4">
+                                            <span className="text-xs font-medium text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
+                                              {product?.unit || "—"}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="px-1">
+                                            <Input
+                                              type="number"
+                                              {...form.register(`items.${index}.dispatchQty`, { valueAsNumber: true })}
+                                              disabled={!isEditable}
+                                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900 font-semibold"
+                                            />
+                                        </TableCell>
+                                        <TableCell className="px-1">
+                                          <Select
+                                            value={form.watch(`items.${index}.warehouseLocation`)}
+                                            onValueChange={(val) => form.setValue(`items.${index}.warehouseLocation`, val)}
+                                            disabled={!isEditable}
+                                          >
+                                            <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              {mockLocations.map(loc => (
+                                                <SelectItem key={loc.id} value={loc.id}>{loc.name}</SelectItem>
+                                              ))}
+                                            </SelectContent>
+                                          </Select>
+                                        </TableCell>
+                                        <TableCell className="px-1">
+                                          <Select
+                                            value={form.watch(`items.${index}.shelfCode`)}
+                                            onValueChange={(val) => form.setValue(`items.${index}.shelfCode`, val)}
+                                            disabled={!isEditable}
+                                          >
+                                            <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              {mockShelves.map(s => (
+                                                <SelectItem key={s} value={s}>{s}</SelectItem>
+                                              ))}
+                                            </SelectContent>
+                                          </Select>
+                                        </TableCell>
+                                        <TableCell className="px-1">
+                                            <Input
+                                              placeholder="BATCH..."
+                                              {...form.register(`items.${index}.batchNumber`)}
+                                              disabled={!isEditable}
+                                              className="h-10 font-mono text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900"
+                                            />
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            {isEditable && fields.length > 1 && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => remove(index)}
+                                                    className="h-8 w-8 text-slate-300 hover:text-red-600 hover:bg-red-50"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Ghi chú</label>
-            <Textarea 
-              placeholder="Nhập ghi chú xuất kho" 
-              {...form.register("notes")}
-              disabled={!isEditable}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Danh sách sản phẩm *</label>
+          <DialogFooter className="p-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2 text-slate-400">
+                <History size={16} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Lưu nháp tự động lúc 13:30</span>
+            </div>
+            <div className="flex gap-3">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-12 px-6 border-slate-200 hover:bg-white font-medium text-slate-600">
+                Hủy bỏ
+              </Button>
               {isEditable && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => append({ productId: 0 as unknown as number, dispatchQty: 1, batchNumber: "", warehouseLocation: "WH01", shelfCode: "A1" })}
-                >
-                  <Plus className="h-4 w-4 mr-1" /> Thêm sản phẩm
+                <Button type="submit" disabled={isSubmitting} className="h-12 px-8 bg-slate-900 hover:bg-slate-800 text-white border-none shadow-lg shadow-slate-200 group">
+                  <CheckCircle2 className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                  Xác nhận xuất kho & Hoàn tất
                 </Button>
               )}
             </div>
-
-            <div className="space-y-3">
-              {fields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-lg bg-slate-50 space-y-3 relative">
-                  {isEditable && fields.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => remove(index)}
-                      className="absolute top-2 right-2 text-red-500 hover:text-red-600"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Sản phẩm</label>
-                      <Select
-                        value={form.watch(`items.${index}.productId`)?.toString() || ""}
-                        onValueChange={(val) => form.setValue(`items.${index}.productId`, parseInt(val))}
-                        disabled={!isEditable}
-                      >
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="Chọn sản phẩm" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockProducts.map(p => (
-                            <SelectItem key={p.id} value={p.id.toString()}>{p.name} ({p.sku})</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Số lượng xuất</label>
-                      <Input
-                        type="number"
-                        placeholder="Số lượng"
-                        {...form.register(`items.${index}.dispatchQty`, { valueAsNumber: true })}
-                        className="bg-white"
-                        disabled={!isEditable}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Kho</label>
-                      <Select
-                        value={form.watch(`items.${index}.warehouseLocation`)}
-                        onValueChange={(val) => form.setValue(`items.${index}.warehouseLocation`, val)}
-                        disabled={!isEditable}
-                      >
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="Chọn kho" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockLocations.map(loc => (
-                            <SelectItem key={loc.id} value={loc.id}>{loc.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Vị trí (Kệ)</label>
-                      <Select
-                        value={form.watch(`items.${index}.shelfCode`)}
-                        onValueChange={(val) => form.setValue(`items.${index}.shelfCode`, val)}
-                        disabled={!isEditable}
-                      >
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="Vị trí" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockShelves.map(s => (
-                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Số lô (Tùy chọn)</label>
-                      <Input
-                        placeholder="Số lô"
-                        {...form.register(`items.${index}.batchNumber`)}
-                        className="bg-white"
-                        disabled={!isEditable}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {form.formState.errors.items && (
-              <p className="text-sm text-red-500">{form.formState.errors.items.message}</p>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Hủy
-            </Button>
-            {isEditable && (
-              <Button type="submit" disabled={isSubmitting}>
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Xác nhận xuất kho
-              </Button>
-            )}
           </DialogFooter>
         </form>
       </DialogContent>

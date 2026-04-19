@@ -4,6 +4,8 @@ import { mockCategories } from "../mockData"
 import type { Category } from "../types"
 import { CategoryToolbar } from "../components/CategoryToolbar"
 import { CategoryTable } from "../components/CategoryTable"
+import { CategoryForm } from "../components/CategoryForm"
+import { CategoryDetailDialog } from "../components/CategoryDetailDialog"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
@@ -31,6 +33,11 @@ export function CategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
   const [isDeletingBulk, setIsDeletingBulk] = useState(false)
 
+  // State cho Form
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<Category | undefined>()
+  const [viewingCategory, setViewingCategory] = useState<Category | null>(null)
+
   useEffect(() => { setTitle("Danh mục sản phẩm") }, [setTitle])
 
   // Filter both parent and children simply here for demonstration
@@ -52,24 +59,35 @@ export function CategoriesPage() {
 
   const handleToolbarAction = (action: string) => {
     switch (action) {
-      case "edit":
-        toast.info(`Chỉnh sửa ${selectedIds.length} danh mục`)
-        break;
       case "delete":
         setIsDeletingBulk(true)
         break;
       case "create":
-        toast.info("Mở form tạo danh mục")
+        setEditingCategory(undefined)
+        setIsFormOpen(true)
         break;
     }
   }
 
   const handleView = (item: Category) => {
-    toast.info(`Xem chi tiết danh mục: ${item.name}`)
+    setViewingCategory(item)
   }
 
   const handleEdit = (item: Category) => {
-    toast.info(`Chỉnh sửa danh mục: ${item.name}`)
+    setEditingCategory(item)
+    setIsFormOpen(true)
+  }
+
+  const handleAddSub = (parent: Category) => {
+    setEditingCategory({ 
+        parentId: parent.id,
+        parentName: parent.name,
+        categoryCode: `SUB-${parent.categoryCode}`,
+        status: "Active",
+        sortOrder: 0,
+        name: ""
+    } as any)
+    setIsFormOpen(true)
   }
 
   const handleDelete = (item: Category) => {
@@ -96,8 +114,8 @@ export function CategoriesPage() {
     <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
       {/* Header */}
       <div className="shrink-0">
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Danh mục sản phẩm</h1>
-        <p className="text-sm text-slate-500 mt-1">Phân loại sản phẩm theo cấu trúc cây phân cấp</p>
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Danh mục sản phẩm</h1>
+        <p className="text-sm text-slate-500 mt-1 font-medium">Phân loại sản phẩm theo cấu trúc cây phân cấp</p>
       </div>
 
       {/* Main Content Area */}
@@ -121,8 +139,16 @@ export function CategoriesPage() {
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onAddSub={handleAddSub}
         />
       </div>
+
+      {/* Detail Dialog */}
+      <CategoryDetailDialog 
+        category={viewingCategory}
+        isOpen={!!viewingCategory}
+        onClose={() => setViewingCategory(null)}
+      />
 
       {/* Confirm Deletion */}
       <ConfirmDialog 
@@ -139,6 +165,34 @@ export function CategoriesPage() {
         onConfirm={confirmBulkDelete}
         title="Xác nhận xóa nhiều"
         description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} danh mục đã chọn?`}
+      />
+
+      <CategoryForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        category={editingCategory}
+        allCategories={categories}
+        onSubmit={(data) => {
+            const parentName = data.parentId ? categories.find(c => c.id === data.parentId)?.name : undefined
+            if (editingCategory) {
+                setCategories(prev => prev.map(c => c.id === editingCategory.id ? { ...c, ...data, parentName } : c))
+                toast.success("Cập nhật danh mục thành công")
+            } else {
+                const newCategory: Category = {
+                    id: Math.max(...categories.map(c => c.id)) + 1,
+                    categoryCode: data.categoryCode,
+                    name: data.name,
+                    parentId: data.parentId || undefined,
+                    parentName,
+                    sortOrder: data.sortOrder,
+                    status: data.status,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+                setCategories(prev => [newCategory, ...prev])
+                toast.success("Thêm danh mục thành công")
+            }
+        }}
       />
     </div>
   )

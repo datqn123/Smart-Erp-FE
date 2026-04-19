@@ -119,7 +119,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
             </div>
             <div className="text-right">
                 <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Ước tính giá trị (VNĐ)</p>
-                <p className="text-2xl font-black text-blue-600">{formatCurrency(totalAmount)}</p>
+                <p className="text-2xl font-black text-slate-900">{formatCurrency(totalAmount)}</p>
             </div>
           </div>
         </DialogHeader>
@@ -129,7 +129,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
             {/* Header Info Section */}
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                    <Info size={16} className="text-blue-500" />
+                    <Info size={16} className="text-slate-400" />
                     <h3 className="text-sm font-black uppercase tracking-widest text-slate-700">Thông tin chung</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -140,7 +140,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                         onValueChange={(val) => form.setValue("supplierId", parseInt(val))}
                         disabled={!isEditable}
                     >
-                        <SelectTrigger className="h-11 border-slate-200 focus:ring-blue-100 focus:border-blue-400 font-medium">
+                        <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium">
                         <SelectValue placeholder="Chọn đối tác..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -160,7 +160,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                         type="date" 
                         {...form.register("receiptDate")}
                         disabled={!isEditable}
-                        className="h-11 border-slate-200 focus:ring-blue-100 focus:border-blue-400 font-medium"
+                        className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
                     />
                     {form.formState.errors.receiptDate && (
                         <p className="text-[10px] text-red-500 font-bold px-1">{form.formState.errors.receiptDate.message}</p>
@@ -241,7 +241,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               onValueChange={(val) => form.setValue(`details.${index}.productId`, parseInt(val))}
                               disabled={!isEditable}
                             >
-                              <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-blue-400 transition-all shadow-none">
+                              <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
                                 <SelectValue placeholder="Chọn sản phẩm..." />
                               </SelectTrigger>
                               <SelectContent>
@@ -266,7 +266,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               type="number"
                               {...form.register(`details.${index}.quantity`, { valueAsNumber: true })}
                               disabled={!isEditable}
-                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-blue-400 font-semibold"
+                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900 font-semibold"
                             />
                           </TableCell>
                           <TableCell className="px-1">
@@ -274,7 +274,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               type="number"
                               {...form.register(`details.${index}.costPrice`, { valueAsNumber: true })}
                               disabled={!isEditable}
-                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-blue-400"
+                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900"
                             />
                           </TableCell>
                           <TableCell className="px-1">
@@ -282,7 +282,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               placeholder="BATCH..."
                               {...form.register(`details.${index}.batchNumber`)}
                               disabled={!isEditable}
-                              className="h-10 font-mono text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-blue-400"
+                              className="h-10 font-mono text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900"
                             />
                           </TableCell>
                           <TableCell className="px-1">
@@ -290,7 +290,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               type="date"
                               {...form.register(`details.${index}.expiryDate`)}
                               disabled={!isEditable}
-                              className="h-10 text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-blue-400 px-2"
+                              className="h-10 text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900 px-2"
                             />
                           </TableCell>
                           <TableCell className="text-right pr-6">

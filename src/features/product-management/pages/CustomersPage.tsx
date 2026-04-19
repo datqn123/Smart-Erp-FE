@@ -4,6 +4,8 @@ import { mockCustomers } from "../mockData"
 import type { Customer } from "../types"
 import { CustomerToolbar } from "../components/CustomerToolbar"
 import { CustomerTable } from "../components/CustomerTable"
+import { CustomerDetailDialog } from "../components/CustomerDetailDialog"
+import { CustomerForm } from "../components/CustomerForm"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { toast } from "sonner"
 
@@ -19,6 +21,12 @@ export function CustomersPage() {
   // State cho xóa
   const [deleteTarget, setDeleteTarget] = useState<Customer | null>(null)
   const [isDeletingBulk, setIsDeletingBulk] = useState(false)
+
+  // State cho Detail & Form
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState<Customer | undefined>()
 
   useEffect(() => { setTitle("Khách hàng") }, [setTitle])
 
@@ -46,7 +54,8 @@ export function CustomersPage() {
         setIsDeletingBulk(true)
         break;
       case "create":
-        toast.info("Mở form tạo khách hàng")
+        setEditingCustomer(undefined)
+        setIsFormOpen(true)
         break;
       case "export":
         toast.info("Đang xuất dữ liệu Excel...")
@@ -63,11 +72,13 @@ export function CustomersPage() {
   }
 
   const handleView = (item: Customer) => {
-    toast.info(`Xem chi tiết KH: ${item.name}`)
+    setSelectedCustomer(item)
+    setIsDetailOpen(true)
   }
 
   const handleEdit = (item: Customer) => {
-    toast.info(`Chỉnh sửa KH: ${item.name}`)
+    setEditingCustomer(item)
+    setIsFormOpen(true)
   }
 
   const handleDelete = (item: Customer) => {
@@ -138,6 +149,39 @@ export function CustomersPage() {
         onConfirm={confirmBulkDelete}
         title="Xác nhận xóa nhiều"
         description={`Bạn có chắc chắn muốn xóa ${selectedIds.length} khách hàng đã chọn?`}
+      />
+
+      <CustomerDetailDialog 
+        customer={selectedCustomer}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
+
+      <CustomerForm 
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        customer={editingCustomer}
+        onSubmit={(data) => {
+            if (editingCustomer) {
+                setCustomers(prev => prev.map(c => c.id === editingCustomer.id ? { ...c, ...data } : c))
+                toast.success("Cập nhật khách hàng thành công")
+            } else {
+                const newCustomer: Customer = {
+                    id: Math.max(...customers.map(c => c.id)) + 1,
+                    customerCode: data.customerCode,
+                    name: data.name,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                    loyaltyPoints: 0,
+                    status: data.status,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+                setCustomers(prev => [newCustomer, ...prev])
+                toast.success("Thêm khách hàng thành công")
+            }
+        }}
       />
     </div>
   )

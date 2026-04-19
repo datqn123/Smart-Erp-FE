@@ -9,10 +9,11 @@ import {
 import { formatCurrency, formatDate } from "../utils"
 import type { StockReceipt } from "../types"
 import { StatusBadge } from "./StatusBadge"
-import { Package, Calendar, User, Building2, Hash, FileText, CheckCircle2, XCircle } from "lucide-react"
+import { Package, Calendar, User, Building2, Hash, FileText, CheckCircle2, XCircle, Timer, ClipboardCheck, Boxes, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 
 interface ReceiptDetailDialogProps {
   receipt: StockReceipt | null;
@@ -29,25 +30,29 @@ export function ReceiptDetailDialog({ receipt, isOpen, onClose, canApprove = fal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-full sm:max-w-5xl lg:max-w-5xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-slate-200 shadow-2xl">
+      <DialogContent className="max-w-full sm:max-w-5xl lg:max-w-5xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-slate-200 shadow-2xl rounded-2xl">
         <DialogHeader className="p-8 pb-4 bg-slate-50/50">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="text-left">
               <div className="flex items-center gap-3 mb-2">
                 <StatusBadge status={receipt.status} />
-                <span className="text-xs font-mono text-slate-400">ID: #{receipt.id}</span>
+                <span className="text-xs font-mono text-slate-400">Inventory ID: #{receipt.id}</span>
               </div>
-              <DialogTitle className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-                Phiếu nhập: <span className="font-mono text-blue-600">{receipt.receiptCode}</span>
+              <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+                Phiếu nhập hàng <span className="text-slate-400 font-medium">#{receipt.receiptCode}</span>
               </DialogTitle>
-              <DialogDescription className="text-slate-500 mt-1">
-                Tạo lúc {formatDate(receipt.createdAt)} bởi <span className="font-medium text-slate-700">{receipt.staffName}</span>
-              </DialogDescription>
+              <p className="text-sm text-slate-500 mt-1 flex items-center gap-2 font-medium">
+                <Building2 size={14} className="text-slate-300" /> Nhà cung cấp: <span className="font-bold text-slate-900">{receipt.supplierName}</span>
+              </p>
             </div>
             
-            <div className="flex items-center gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div className="text-right border-r pr-4 border-slate-100">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Số lượng</p>
+                    <p className="text-sm font-black text-slate-900">{receipt.details.length} <span className="text-[10px] text-slate-400">SKU</span></p>
+                </div>
                 <div className="text-right">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Tổng thanh toán</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Giá trị nhập</p>
                     <p className="text-2xl font-black text-slate-900">{formatCurrency(receipt.totalAmount)}</p>
                 </div>
             </div>
@@ -55,129 +60,120 @@ export function ReceiptDetailDialog({ receipt, isOpen, onClose, canApprove = fal
         </DialogHeader>
 
         <div className="p-8 pt-6">
-          {/* Quick Info Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <DetailGridItem icon={Building2} label="Nhà cung cấp" value={receipt.supplierName} />
-            <DetailGridItem icon={Calendar} label="Ngày nhập kho" value={formatDate(receipt.receiptDate)} />
-            <DetailGridItem icon={Hash} label="Số hóa đơn" value={receipt.invoiceNumber || "—"} />
-            <DetailGridItem icon={User} label="Người tạo" value={receipt.staffName} />
+          {/* Progress Tracker (Premium Feel) */}
+          <div className="mb-12 pt-4">
+              <div className="flex justify-between relative">
+                  <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -translate-y-1/2 z-0" />
+                  <div className={cn("absolute top-1/2 left-0 h-0.5 bg-slate-900 -translate-y-1/2 z-0 transition-all duration-700", 
+                    receipt.status === "Draft" ? "w-0" : 
+                    receipt.status === "Pending" ? "w-1/2" : "w-full"
+                  )} />
+                  <Step icon={Timer} label="Bản thảo" active />
+                  <Step icon={Activity} label="Chờ duyệt" active={["Pending", "Approved"].includes(receipt.status)} />
+                  <Step icon={CheckCircle2} label="Hoàn tất" active={ receipt.status === "Approved" } />
+              </div>
           </div>
 
-          {/* Workflow progress */}
-          <div className="mb-8 p-4 bg-white border border-slate-100 rounded-xl shadow-xs">
-             <div className="flex items-center justify-between px-2">
-                <WorkflowStep label="Nháp" status="completed" />
-                <div className="flex-1 h-px bg-slate-100 mx-4" />
-                <WorkflowStep label="Chờ duyệt" status={receipt.status === 'Draft' ? 'pending' : 'completed'} />
-                <div className="flex-1 h-px bg-slate-100 mx-4" />
-                <WorkflowStep label="Hoàn tất" status={receipt.status === 'Approved' ? 'completed' : 'pending'} />
-             </div>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8">
+            <div className="space-y-6">
+                <SectionHeader icon={ClipboardCheck} title="Thông tin nghiệp vụ" />
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Ngày lập phiếu</p>
+                        <p className="text-sm font-bold text-slate-900">{formatDate(receipt.createdAt)}</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Ngày nhập kho</p>
+                        <p className="text-sm font-bold text-slate-900">{formatDate(receipt.receiptDate)}</p>
+                    </div>
+                </div>
 
-          {/* Note section */}
-          {receipt.notes && (
-            <div className="mb-8 flex gap-3 p-4 bg-amber-50/50 border border-amber-100 rounded-xl">
-               <FileText className="text-amber-500 shrink-0" size={18} />
-               <div>
-                  <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">Ghi chú</p>
-                  <p className="text-sm text-slate-700">{receipt.notes}</p>
-               </div>
-            </div>
-          )}
+                <div className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm space-y-3">
+                    <InfoLine icon={Hash} label="Số hóa đơn" value={receipt.invoiceNumber || "—"} />
+                    <InfoLine icon={User} label="Nhân viên tạo" value={receipt.staffName} />
+                </div>
 
-          {/* Products Table */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Package className="h-5 w-5 text-slate-400" /> 
-                Danh sách hàng hóa nhập kho
-                <span className="ml-2 text-sm font-normal text-slate-400">({receipt.details.length} mặt hàng)</span>
-              </h3>
+                {receipt.notes && (
+                    <div className="p-4 bg-amber-50/50 border border-amber-100 rounded-xl">
+                        <p className="text-[10px] text-amber-600 font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                            <FileText size={12} /> Ghi chú nội bộ
+                        </p>
+                        <p className="text-sm text-amber-900 italic leading-relaxed">"{receipt.notes}"</p>
+                    </div>
+                )}
             </div>
-            
-            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white">
-              <Table>
-                <TableHeader className="bg-slate-50">
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="w-[60px] text-center">STT</TableHead>
-                    <TableHead>Thông tin sản phẩm</TableHead>
-                    <TableHead className="text-center">Số lô</TableHead>
-                    <TableHead className="text-center">Hạn sử dụng</TableHead>
-                    <TableHead className="text-right">Số lượng</TableHead>
-                    <TableHead className="text-right">Đơn giá</TableHead>
-                    <TableHead className="text-right font-bold w-[140px]">Thành tiền</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {receipt.details.map((detail, idx) => (
-                    <TableRow key={detail.id} className="hover:bg-slate-50/50 transition-colors">
-                      <TableCell className="text-center text-slate-400 font-mono text-xs">{idx + 1}</TableCell>
-                      <TableCell>
-                        <p className="font-bold text-slate-900">{detail.productName}</p>
-                        <p className="text-xs text-slate-500 font-mono">{detail.skuCode} · {detail.unitName}</p>
-                      </TableCell>
-                      <TableCell className="text-center font-mono text-xs text-slate-600">
-                        {detail.batchNumber || "—"}
-                      </TableCell>
-                      <TableCell className="text-center text-sm text-slate-600">
-                        {detail.expiryDate ? formatDate(detail.expiryDate) : "—"}
-                      </TableCell>
-                      <TableCell className="text-right font-semibold">
-                        {detail.quantity} <span className="text-[10px] font-normal text-slate-500">{detail.unitName}</span>
-                      </TableCell>
-                      <TableCell className="text-right text-slate-600">
-                        {formatCurrency(detail.costPrice)}
-                      </TableCell>
-                      <TableCell className="text-right font-bold text-slate-900">
-                        {formatCurrency(detail.lineTotal)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
 
-          {/* Totals Summary */}
-          <div className="mt-8 flex flex-col items-end gap-2 border-t border-slate-100 pt-6">
-             <div className="flex justify-between w-full max-w-[300px] text-sm text-slate-500">
-                <span>Tiền hàng (trước thuế):</span>
-                <span className="font-medium text-slate-900">{formatCurrency(receipt.totalAmount)}</span>
-             </div>
-             <div className="flex justify-between w-full max-w-[300px] text-sm text-slate-500">
-                <span>Thuế giá trị gia tăng (0%):</span>
-                <span className="font-medium text-slate-900">0 ₫</span>
-             </div>
-             <Separator className="w-full max-w-[300px] my-2" />
-             <div className="flex justify-between w-full max-w-[300px]">
-                <span className="font-bold text-slate-900">Tổng cộng thanh toán:</span>
-                <span className="text-xl font-black text-blue-600">{formatCurrency(receipt.totalAmount)}</span>
-             </div>
+            <div className="space-y-4">
+                <SectionHeader icon={Boxes} title="Danh sách hàng hóa" />
+                <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <Table>
+                        <TableHeader className="bg-slate-50/50">
+                            <TableRow className="hover:bg-transparent border-0">
+                                <TableHead className="font-bold text-slate-400 text-[10px] uppercase tracking-wider h-10">Sản phẩm</TableHead>
+                                <TableHead className="font-bold text-slate-400 text-[10px] uppercase tracking-wider h-10 text-right">SL</TableHead>
+                                <TableHead className="font-bold text-slate-400 text-[10px] uppercase tracking-wider h-10 text-right">Thành tiền</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {receipt.details.map((item) => (
+                                <TableRow key={item.id} className="hover:bg-slate-50/30 transition-colors border-slate-50">
+                                    <TableCell className="py-3">
+                                        <p className="font-bold text-slate-900">{item.productName}</p>
+                                        <p className="text-[10px] text-slate-400 font-mono italic">{item.skuCode}</p>
+                                    </TableCell>
+                                    <TableCell className="py-3 text-right">
+                                        <span className="font-bold text-slate-900">{item.quantity}</span>
+                                        <span className="text-[10px] text-slate-400 ml-1">{item.unitName}</span>
+                                    </TableCell>
+                                    <TableCell className="py-3 text-right font-black text-slate-900">
+                                        {item.lineTotal.toLocaleString()}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+
+                <div className="p-5 bg-slate-900 rounded-2xl text-white shadow-xl">
+                    <div className="flex justify-between items-center mb-1 opacity-60 text-[10px] uppercase tracking-widest font-bold">
+                        <span>Giá trị hàng hóa</span>
+                        <span>{formatCurrency(receipt.totalAmount)}</span>
+                    </div>
+                    <div className="flex justify-between items-center mb-4 text-[10px] uppercase tracking-widest font-bold opacity-60">
+                        <span>Thuế & Phí</span>
+                        <span>0 ₫</span>
+                    </div>
+                    <Separator className="bg-white/10 mb-4" />
+                    <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">Tổng thanh toán</span>
+                        <span className="text-2xl font-black">{formatCurrency(receipt.totalAmount)}</span>
+                    </div>
+                </div>
+            </div>
           </div>
         </div>
 
-        {/* Action Footer */}
         <div className="p-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
            {receipt.approvedByName && (
               <div className="flex items-center gap-3">
-                 <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                    <CheckCircle2 size={24} />
+                 <div className="h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-lg">
+                    <CheckCircle2 size={20} />
                  </div>
                  <div>
-                    <p className="text-xs text-green-800 font-bold uppercase tracking-tight">Đã phê duyệt bởi</p>
-                    <p className="text-sm font-semibold text-slate-900">{receipt.approvedByName} <span className="text-slate-400 font-normal">vào {formatDate(receipt.approvedAt!)}</span></p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1">Xác nhận nhập kho</p>
+                    <p className="text-sm font-bold text-slate-900 leading-none">{receipt.approvedByName} <span className="text-slate-400 font-normal ml-1">vào {formatDate(receipt.approvedAt!)}</span></p>
                  </div>
               </div>
            )}
            
            <div className="flex gap-3 ml-auto">
-              <Button variant="outline" onClick={onClose} className="border-slate-300">Đóng</Button>
+              <Button variant="outline" onClick={onClose} className="border-slate-300 h-10 px-6">Đóng</Button>
               {canApprove && receipt.status === "Pending" && (
                 <>
-                  <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700" onClick={handleReject}>
+                  <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 h-10" onClick={handleReject}>
                     <XCircle className="w-4 h-4 mr-2" /> Từ chối
                   </Button>
-                  <Button className="bg-slate-900 hover:bg-slate-800 text-white" onClick={handleApprove}>
+                  <Button className="bg-slate-900 hover:bg-slate-800 text-white h-10 shadow-lg" onClick={handleApprove}>
                     <CheckCircle2 className="w-4 h-4 mr-2" /> Duyệt phiếu
                   </Button>
                 </>
@@ -189,25 +185,41 @@ export function ReceiptDetailDialog({ receipt, isOpen, onClose, canApprove = fal
   );
 }
 
-function DetailGridItem({ icon: Icon, label, value }: { icon: any, label: string, value: string }) {
-  return (
-    <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-100 shadow-xs">
-      <div className="h-10 w-10 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-        <Icon size={20} />
-      </div>
-      <div>
-        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1.5">{label}</p>
-        <p className="text-sm font-semibold text-slate-900 leading-none">{value}</p>
-      </div>
-    </div>
-  )
+function SectionHeader({ icon: Icon, title }: { icon: any, title: string }) {
+    return (
+        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-900 flex items-center gap-2 mb-4">
+            <div className="p-1.5 bg-slate-100 rounded-lg"><Icon size={14} className="text-slate-900" /></div> {title}
+        </h3>
+    )
 }
 
-function WorkflowStep({ label, status }: { label: string, status: 'completed' | 'pending' }) {
+function InfoLine({ icon: Icon, label, value }: { icon: any, label: string, value: string }) {
     return (
-        <div className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${status === 'completed' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-slate-200'}`} />
-            <span className={`text-xs font-bold uppercase tracking-tighter ${status === 'completed' ? 'text-slate-900' : 'text-slate-400'}`}>{label}</span>
+        <div className="flex items-center justify-between border-b border-slate-50 pb-2 last:border-0 last:pb-0">
+            <div className="flex items-center gap-2 text-slate-400">
+                <Icon size={14} />
+                <span className="text-xs font-bold uppercase tracking-widest">{label}</span>
+            </div>
+            <span className="text-sm font-bold text-slate-900">{value}</span>
+        </div>
+    )
+}
+
+function Step({ icon: Icon, label, active }: { icon: any, label: string, active?: boolean }) {
+    return (
+        <div className="flex flex-col items-center gap-2 relative z-10 group">
+            <div className={cn(
+                "h-10 w-10 rounded-xl flex items-center justify-center border-2 transition-all duration-500",
+                active 
+                    ? "bg-slate-900 border-slate-900 text-white shadow-[0_10px_20px_rgba(15,23,42,0.2)] scale-110" 
+                    : "bg-white border-slate-100 text-slate-300"
+            )}>
+                <Icon size={18} />
+            </div>
+            <span className={cn(
+                "text-[10px] font-black uppercase tracking-widest",
+                active ? "text-slate-900" : "text-slate-300"
+            )}>{label}</span>
         </div>
     )
 }

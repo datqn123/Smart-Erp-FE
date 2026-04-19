@@ -60,7 +60,7 @@ export function DispatchTable({ dispatches, onAction, onEdit, onDelete }: Dispat
             </TableCell>
             <TableCell className={cn(DISPATCH_TABLE_COL.userName, "text-sm text-slate-600")}>
               <div className="flex items-center gap-2 min-w-0">
-                <div className="h-6 w-6 shrink-0 rounded-full bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-600 border border-indigo-100 uppercase">
+                <div className="h-6 w-6 shrink-0 rounded-full bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-600 border border-slate-100 uppercase">
                   {dispatch.userName.split(" ").map((n) => n[0]).join("")}
                 </div>
                 <span className="truncate">{dispatch.userName}</span>
