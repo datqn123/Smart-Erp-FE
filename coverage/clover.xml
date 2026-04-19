@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1776576001865" clover="3.2.0">
+  <project timestamp="1776576001865" name="All files">
+    <metrics statements="43" coveredstatements="38" conditionals="25" coveredconditionals="15" methods="37" coveredmethods="32" elements="105" coveredelements="85" complexity="0" loc="43" ncloc="43" packages="3" files="6" classes="6"/>
+    <package name="components.ui">
+      <metrics statements="24" coveredstatements="20" conditionals="11" coveredconditionals="9" methods="20" coveredmethods="16"/>
+      <file name="button.tsx" path="D:\do_an_tot_nghiep\frontend\mini-erp\src\components\ui\button.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="5" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="51" count="20" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="20" type="stmt"/>
+      </file>
+      <file name="dialog.tsx" path="D:\do_an_tot_nghiep\frontend\mini-erp\src\components\ui\dialog.tsx">
+        <metrics statements="11" coveredstatements="9" conditionals="6" coveredconditionals="5" methods="10" coveredmethods="8"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="13" count="13" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="25" count="13" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="38" count="13" type="stmt"/>
+        <line num="58" count="13" type="stmt"/>
+        <line num="85" count="10" type="stmt"/>
+        <line num="102" count="10" type="stmt"/>
+        <line num="125" count="10" type="stmt"/>
+        <line num="138" count="10" type="stmt"/>
+      </file>
+      <file name="input.tsx" path="D:\do_an_tot_nghiep\frontend\mini-erp\src\components\ui\input.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="70" type="stmt"/>
+      </file>
+      <file name="table.tsx" path="D:\do_an_tot_nghiep\frontend\mini-erp\src\components\ui\table.tsx">
+        <metrics statements="9" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="6"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="8" count="10" type="stmt"/>
+        <line num="23" count="10" type="stmt"/>
+        <line num="33" count="10" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="56" count="20" type="stmt"/>
+        <line num="69" count="80" type="stmt"/>
+        <line num="82" count="80" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="features.inventory.components">
+      <metrics statements="18" coveredstatements="17" conditionals="14" coveredconditionals="6" methods="16" coveredmethods="15"/>
+      <file name="StockEditDialog.tsx" path="D:\do_an_tot_nghiep\frontend\mini-erp\src\features\inventory\components\StockEditDialog.tsx">
+        <metrics statements="18" coveredstatements="17" conditionals="14" coveredconditionals="6" methods="16" coveredmethods="15"/>
+        <line num="24" count="13" type="stmt"/>
+        <line num="26" count="13" type="stmt"/>
+        <line num="27" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="33" count="13" type="stmt"/>
+        <line num="34" count="7" type="stmt"/>
+        <line num="35" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="39" count="13" type="stmt"/>
+        <line num="40" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="10" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="107" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="127" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="136" count="1" type="stmt"/>
+        <line num="147" count="1" type="stmt"/>
+        <line num="160" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="lib">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="utils.ts" path="D:\do_an_tot_nghiep\frontend\mini-erp\src\lib\utils.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="5" count="366" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

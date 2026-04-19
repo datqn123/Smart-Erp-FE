@@ -33,11 +33,11 @@ export function TransactionToolbar({
 
       <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
         <Select value={statusFilter} onValueChange={onStatusChange}>
-          <SelectTrigger className="w-[180px] h-10 bg-white border-slate-200 rounded-lg">
+          <SelectTrigger className="min-w-[180px] w-fit h-10 bg-white border-slate-200 rounded-lg px-4 text-slate-700">
             <Filter className="h-4 w-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Trạng thái" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper" className="bg-white">
             <SelectItem value="all">Tất cả trạng thái</SelectItem>
             <SelectItem value="Completed">Hoàn thành</SelectItem>
             <SelectItem value="Pending">Chờ xử lý</SelectItem>
@@ -46,10 +46,10 @@ export function TransactionToolbar({
         </Select>
 
         <Select value={typeFilter} onValueChange={onTypeChange}>
-          <SelectTrigger className="w-[140px] h-10 bg-white border-slate-200 rounded-lg">
+          <SelectTrigger className="min-w-[140px] w-fit h-10 bg-white border-slate-200 rounded-lg px-4 text-slate-700">
             <SelectValue placeholder="Loại giao dịch" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper" className="bg-white">
             <SelectItem value="all">Tất cả loại hình</SelectItem>
             <SelectItem value="Income">Thu tiền</SelectItem>
             <SelectItem value="Expense">Chi tiền</SelectItem>

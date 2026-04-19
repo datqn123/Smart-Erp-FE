@@ -40,7 +40,7 @@ export function ProductToolbar({
           <select 
             value={statusFilter} 
             onChange={(e) => onStatusChange(e.target.value)}
-            className="h-11 sm:h-9 px-3 border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 w-full sm:w-[160px] rounded-md"
+            className="h-11 sm:h-9 px-3 border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 w-full sm:min-w-[160px] sm:w-fit rounded-md"
           >
             <option value="all">Tất cả trạng thái</option>
             <option value="Active">Hoạt động</option>
@@ -49,7 +49,7 @@ export function ProductToolbar({
           <select 
             value={categoryFilter} 
             onChange={(e) => onCategoryChange(e.target.value)}
-            className="h-11 sm:h-9 px-3 border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 w-full sm:w-[180px] rounded-md"
+            className="h-11 sm:h-9 px-3 border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400 w-full sm:min-w-[180px] sm:w-fit rounded-md"
           >
             <option value="all">Tất cả danh mục</option>
             {categories.map(c => <option key={c} value={c}>{c}</option>)}

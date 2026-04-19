@@ -44,3 +44,12 @@ export function filterReceipts(receipts: StockReceipt[], filters: InboundFilters
 export function paginateReceipts(receipts: StockReceipt[], visibleCount: number): StockReceipt[] {
   return receipts.slice(0, visibleCount);
 }
+
+export function calculateReceiptTotal(details: Array<{ quantity: number, costPrice: number }>): number {
+  return details.reduce((sum, d) => sum + (d.quantity * d.costPrice), 0);
+}
+
+export function isExpiryValid(receiptDate: string, expiryDate: string | undefined): boolean {
+  if (!expiryDate) return true;
+  return new Date(expiryDate).getTime() >= new Date(receiptDate).getTime();
+}

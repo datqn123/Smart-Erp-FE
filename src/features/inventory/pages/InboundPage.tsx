@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { filterReceipts, paginateReceipts, sortByDate } from "../inboundLogic"
 import { ReceiptTable } from "../components/ReceiptTable"
-import { ReceiptDetailPanel } from "../components/ReceiptDetailPanel"
+import { ReceiptDetailDialog } from "../components/ReceiptDetailDialog"
 import { ReceiptForm } from "../components/ReceiptForm"
 import { createReceipt, updateReceipt, deleteReceipt } from "../inventoryCrudLogic"
 
@@ -265,7 +265,7 @@ export function InboundPage() {
         )}
         </div>
 
-        <ReceiptDetailPanel 
+        <ReceiptDetailDialog 
           receipt={selectedReceipt} 
           isOpen={isPanelOpen} 
           onClose={() => setIsPanelOpen(false)}

@@ -10,6 +10,8 @@ import { applyBulkApprove, applyBulkDelete, recalculateKPIs } from "../inventory
 import { StockToolbar } from "../components/StockToolbar"
 import { StockTable } from "../components/StockTable"
 import { StockBatchDetailsDialog } from "../components/StockBatchDetailsDialog"
+import { StockActionDialog } from "../components/StockActionDialog"
+import { StockEditDialog } from "../components/StockEditDialog"
 
 function KPICard({ title, value, icon, color }: {
   title: string; value: string; icon: React.ReactNode; color: string
@@ -35,6 +37,15 @@ export function StockPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [selectedBatchItem, setSelectedBatchItem] = useState<InventoryItem | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  
+  // States for Import/Export Action Dialog
+  const [isActionDialogOpen, setIsActionDialogOpen] = useState(false)
+  const [actionType, setActionType] = useState<'import' | 'export'>('import')
+  const [actionItems, setActionItems] = useState<InventoryItem[]>([])
+
+  // States for Edit Modal
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [itemsToEdit, setItemsToEdit] = useState<InventoryItem[]>([])
 
   useEffect(() => { setTitle("Tồn kho") }, [setTitle])
 
@@ -87,15 +98,67 @@ export function StockPage() {
         setSelectedIds([]);
         break;
       case "edit":
-        toast.info(`Mở giao diện sửa cho ${selectedIds.length} mặt hàng (Draft)`);
+        setItemsToEdit(inventoryItems.filter(i => selectedIds.includes(i.id)));
+        setIsEditDialogOpen(true);
         break;
       case "import":
-        toast.info(`Tạo phiếu nhập kho cho ${selectedIds.length} mặt hàng`);
+        setActionType('import');
+        setActionItems(inventoryItems.filter(i => selectedIds.includes(i.id)));
+        setIsActionDialogOpen(true);
         break;
       case "export":
-        toast.info(`Tạo phiếu xuất kho cho ${selectedIds.length} mặt hàng`);
+        setActionType('export');
+        setActionItems(inventoryItems.filter(i => selectedIds.includes(i.id)));
+        setIsActionDialogOpen(true);
         break;
     }
+  }
+
+  const handleActionConfirm = (adjustments: Record<number, number>) => {
+    setInventoryItems(prev => prev.map(item => {
+      if (adjustments[item.id]) {
+        const adj = adjustments[item.id]
+        const newQty = actionType === 'import' ? item.quantity + adj : item.quantity - adj
+        return {
+          ...item,
+          quantity: newQty,
+          totalValue: newQty * item.costPrice,
+          updatedAt: new Date().toISOString(),
+          isLowStock: newQty <= item.minQuantity
+        }
+      }
+      return item
+    }))
+    
+    toast.success(`Đã cập nhật ${Object.keys(adjustments).length} mặt hàng thành công`);
+    setIsActionDialogOpen(false);
+    setSelectedIds([]);
+  }
+
+  const handleEditConfirm = (updatedItems: InventoryItem[]) => {
+    setInventoryItems(prev => {
+      const newItems = [...prev];
+      updatedItems.forEach(updated => {
+        const index = newItems.findIndex(i => i.id === updated.id);
+        if (index !== -1) {
+          // Recalculate computed fields
+          const totalValue = updated.quantity * updated.costPrice;
+          const isLowStock = updated.quantity <= updated.minQuantity;
+          
+          newItems[index] = { 
+            ...updated, 
+            totalValue, 
+            isLowStock,
+            updatedAt: new Date().toISOString()
+          };
+        }
+      });
+      return newItems;
+    });
+
+    toast.success(`Đã cập nhật thông tin ${updatedItems.length} mặt hàng`);
+    setIsEditDialogOpen(false);
+    setSelectedIds([]);
   }
 
   return (
@@ -170,6 +233,23 @@ export function StockPage() {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         item={selectedBatchItem}
+      />
+
+      {/* Import/Export Action Modal */}
+      <StockActionDialog
+        isOpen={isActionDialogOpen}
+        onClose={() => setIsActionDialogOpen(false)}
+        onConfirm={handleActionConfirm}
+        items={actionItems}
+        type={actionType}
+      />
+
+      {/* Bulk Edit Modal */}
+      <StockEditDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        onConfirm={handleEditConfirm}
+        items={itemsToEdit}
       />
     </div>
   )

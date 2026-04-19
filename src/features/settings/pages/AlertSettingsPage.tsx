@@ -31,7 +31,7 @@ export function AlertSettingsPage() {
       <div className="flex justify-between items-center max-w-4xl mx-auto">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-             <Bell className="h-7 w-7 text-amber-500" />
+             <Bell className="h-7 w-7 text-slate-400" />
              Cấu hình cảnh báo
           </h1>
           <p className="text-sm text-slate-500 mt-1">Quản lý cách hệ thống thông báo các sự kiện quan trọng</p>
@@ -46,7 +46,7 @@ export function AlertSettingsPage() {
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                 <ShieldAlert className="h-4 w-4 text-rose-500" />
+                 <ShieldAlert className="h-4 w-4 text-slate-400" />
                  Cảnh báo kho hàng
               </h3>
            </div>
@@ -78,7 +78,7 @@ export function AlertSettingsPage() {
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                 <TrendingDown className="h-4 w-4 text-emerald-500" />
+                 <TrendingDown className="h-4 w-4 text-slate-400" />
                  Giao dịch & Doanh thu
               </h3>
            </div>
@@ -110,7 +110,7 @@ export function AlertSettingsPage() {
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                 <CreditCard className="h-4 w-4 text-blue-500" />
+                 <CreditCard className="h-4 w-4 text-slate-400" />
                  Tài chính & Hệ thống
               </h3>
            </div>

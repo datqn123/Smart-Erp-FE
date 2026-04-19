@@ -36,7 +36,7 @@ export function LogToolbar({
         </div>
         
         <Select value={moduleFilter} onValueChange={onModuleChange}>
-          <SelectTrigger className="w-[140px] h-10 border-slate-200">
+          <SelectTrigger className="min-w-[160px] w-fit h-10 border-slate-200">
             <Filter className="h-4 w-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Module" />
           </SelectTrigger>

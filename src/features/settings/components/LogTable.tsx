@@ -104,7 +104,7 @@ export function LogTable({
                         item.severity === 'Info' ? 'bg-blue-50 text-blue-700' : 
                         item.severity === 'Warning' ? 'bg-orange-50 text-orange-700' :
                         'bg-red-50 text-red-700'
-                      } text-[10px] font-normal border-none`}>
+                      } text-xs font-medium border-none shadow-none px-2.5 py-0.5`}>
                         {item.severity}
                       </Badge>
                     </TableCell>

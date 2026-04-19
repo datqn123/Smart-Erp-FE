@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useLocation, Link } from "react-router-dom"
-import { Bell, Home, Menu, X } from "lucide-react"
+import { Bell, Home, Menu, X, CheckCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -28,7 +28,22 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 export function Header() {
   const location = useLocation()
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const notificationRef = useRef<HTMLDivElement>(null)
   const { sidebarOpen, setSidebarOpen } = useUIStore()
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false)
+      }
+    }
+    if (isNotificationsOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isNotificationsOpen])
 
   // Simple breadcrumb logic based on path
   const pathSegments = location.pathname.split("/").filter(Boolean)
@@ -39,7 +54,7 @@ export function Header() {
   const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.read).length
 
   return (
-    <header className="h-14 bg-white border-b border-slate-200 flex items-center px-4 md:px-6 shadow-sm sticky top-0 z-20">
+    <header className="h-14 bg-white border-b border-slate-200 flex items-center px-4 md:px-6 shadow-sm sticky top-0 z-50">
       <div className="flex items-center justify-between w-full">
         
         {/* LEFT SIDE: Mobile Menu & Breadcrumb */}
@@ -68,7 +83,7 @@ export function Header() {
         <div className="flex items-center space-x-4">
           
           {/* Notifications */}
-          <div className="relative">
+          <div className="relative" ref={notificationRef}>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -83,32 +98,45 @@ export function Header() {
 
             {/* Simple Dropdown UI for Mock Data */}
             {isNotificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                <div className="p-3 border-b border-slate-100 flex justify-between items-center">
-                  <span className="font-semibold text-sm text-slate-900">Notifications</span>
-                  <span className="text-xs text-slate-500">{unreadCount} new</span>
+              <div className="absolute right-0 mt-2 w-[400px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-[100]">
+                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-sm text-slate-900">Thông báo</span>
+                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider">{unreadCount} mới</span>
+                  </div>
+                  <button className="text-[11px] font-bold text-slate-500 hover:text-blue-600 flex items-center gap-1 transition-colors">
+                    <CheckCheck className="h-3.5 w-3.5" />
+                    Đánh dấu đã đọc
+                  </button>
                 </div>
-                <div className="max-h-60 overflow-y-auto">
-                  {MOCK_NOTIFICATIONS.map((notification) => (
+                <div className="max-h-[400px] overflow-y-auto custom-scrollbar scroll-smooth">
+                  {[...MOCK_NOTIFICATIONS, 
+                    { id: "4", title: "Monthly report ready", time: "2 days ago", read: true },
+                    { id: "5", title: "New supplier approved", time: "3 days ago", read: true },
+                    { id: "6", title: "Inventory adjustment performed", time: "4 days ago", read: true },
+                    { id: "7", title: "Price update: Electronics", time: "5 days ago", read: true },
+                    { id: "8", title: "Customer feedback received", time: "1 week ago", read: true },
+                  ].map((notification) => (
                     <div 
                       key={notification.id}
                       className={cn(
-                        "p-3 border-b border-slate-50 last:border-0 hover:bg-slate-50 cursor-pointer transition-colors",
-                        !notification.read && "bg-blue-50/50"
+                        "p-4 border-b border-slate-50 last:border-0 hover:bg-slate-50 cursor-pointer transition-colors relative",
+                        !notification.read && "bg-blue-50/30"
                       )}
                     >
-                      <div className="flex justify-between items-start mb-1">
-                        <span className="font-medium text-sm text-slate-900">{notification.title}</span>
-                        <span className="text-xs text-slate-400 whitespace-nowrap">{notification.time}</span>
+                      {!notification.read && (
+                        <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-full" />
+                      )}
+                      <div className="flex justify-between items-start mb-1.5">
+                        <span className="font-bold text-sm text-slate-900 leading-snug">{notification.title}</span>
+                        <span className="text-xs text-slate-400 whitespace-nowrap ml-2">{notification.time}</span>
                       </div>
-                      <p className="text-xs text-slate-500">You have a new update regarding this item.</p>
+                      <p className="text-xs text-slate-500 leading-relaxed font-medium">Bạn có một cập nhật mới liên quan đến nội dung này trong hệ thống.</p>
                     </div>
                   ))}
-                </div>
-                <div className="p-2 border-t border-slate-100 bg-slate-50 text-center">
-                  <Link to="/notifications" className="text-xs font-medium text-blue-600 hover:text-blue-700">
-                    View all notifications
-                  </Link>
+                  <div className="p-4 text-center">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Đang tải thêm...</span>
+                  </div>
                 </div>
               </div>
             )}

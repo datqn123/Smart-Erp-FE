@@ -36,7 +36,7 @@ export function StockToolbar({ searchStr, onSearch, status, onStatusChange, sele
             />
           </div>
           <Select value={status} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-full sm:w-[200px] min-h-[44px] bg-white text-slate-900 border-slate-200 focus:ring-2 focus:ring-slate-100 focus:border-slate-400 data-[state=open]:border-slate-400 transition-colors">
+            <SelectTrigger className="w-full sm:min-w-[200px] sm:w-fit min-h-[44px] bg-white text-slate-900 border-slate-200 focus:ring-2 focus:ring-slate-100 focus:border-slate-400 data-[state=open]:border-slate-400 transition-colors px-4">
               <SelectValue placeholder="Trạng thái" />
             </SelectTrigger>
             <SelectContent position="popper" sideOffset={4} className="bg-white border-slate-200 text-slate-900 shadow-lg min-w-[200px]">

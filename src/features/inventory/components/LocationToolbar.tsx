@@ -36,11 +36,11 @@ export function LocationToolbar({
         </div>
         
         <Select value={statusFilter} onValueChange={onStatusChange}>
-          <SelectTrigger className="w-[140px] h-10 border-slate-200">
+          <SelectTrigger className="min-w-[160px] w-fit h-10 border-slate-200 text-slate-700">
             <Filter className="h-4 w-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Trạng thái" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper" className="bg-white">
             <SelectItem value="all">Tất cả</SelectItem>
             <SelectItem value="Active">Khả dụng</SelectItem>
             <SelectItem value="Full">Đã đầy</SelectItem>
