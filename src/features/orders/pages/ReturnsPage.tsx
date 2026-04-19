@@ -5,17 +5,19 @@ import type { Order } from "../types"
 import { OrderToolbar } from "../components/OrderToolbar"
 import { OrderTable } from "../components/OrderTable"
 import { OrderDetailDialog } from "../components/OrderDetailDialog"
+import { ReturnFormDialog } from "../components/ReturnFormDialog"
 import { toast } from "sonner"
 
 export function ReturnsPage() {
   const { setTitle } = usePageTitle()
   
-  const [orders] = useState<Order[]>(mockOrders.filter(o => o.type === "Return"))
+  const [orders, setOrders] = useState<Order[]>(mockOrders.filter(o => o.type === "Return"))
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   useEffect(() => { setTitle("Trả hàng") }, [setTitle])
 
@@ -37,14 +39,23 @@ export function ReturnsPage() {
   const handleToolbarAction = (action: string) => {
     switch (action) {
       case "edit":
-        toast.info(`Chỉnh sửa ${selectedIds.length} phiếu trả hàng`)
+        if (selectedIds.length === 1) {
+            const order = orders.find(o => o.id === selectedIds[0])
+            if (order) {
+                setSelectedOrder(order)
+                setIsFormOpen(true)
+            }
+        } else {
+            toast.info(`Vui lòng chọn duy nhất 1 phiếu trả hàng để chỉnh sửa`)
+        }
         break;
       case "delete":
         toast.success(`Đã xóa ${selectedIds.length} phiếu trả hàng`)
         setSelectedIds([])
         break;
       case "create":
-        toast.info("Mở form tạo phiếu trả hàng")
+        setSelectedOrder(null)
+        setIsFormOpen(true)
         break;
       case "export":
         toast.info("Đang xuất dữ liệu Excel...")
@@ -58,19 +69,28 @@ export function ReturnsPage() {
   }
 
   const handleEdit = (item: Order) => {
-    toast.info(`Chỉnh sửa phiếu trả: ${item.orderCode}`)
+    setSelectedOrder(item)
+    setIsFormOpen(true)
   }
 
   const handleDelete = (item: Order) => {
     toast.error(`Yêu cầu xóa phiếu trả: ${item.orderCode}`)
   }
 
+  const handleSave = (data: any) => {
+    if (selectedOrder) {
+        toast.success(`Đã cập nhật phiếu trả hàng ${data.orderCode}`)
+    } else {
+        toast.success(`Đã tạo mới phiếu trả hàng ${data.orderCode}`)
+    }
+  }
+
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
       {/* Header */}
-      <div className="shrink-0">
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Trả hàng</h1>
-        <p className="text-sm text-slate-500 mt-1">Quản lý và xử lý các yêu cầu trả hàng từ khách hàng</p>
+      <div className="shrink-0 text-left">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Trả hàng</h1>
+        <p className="text-sm text-slate-500 mt-1 font-medium">Quản lý và xử lý các yêu cầu trả hàng từ khách hàng</p>
       </div>
 
       {/* Main Content Area */}
@@ -101,6 +121,13 @@ export function ReturnsPage() {
         order={selectedOrder}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
+      />
+
+      <ReturnFormDialog 
+        order={selectedOrder}
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSave={handleSave}
       />
     </div>
   )

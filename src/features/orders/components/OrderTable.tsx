@@ -19,8 +19,10 @@ interface OrderTableProps {
   onSelect: (id: number) => void
   onSelectAll: (checked: boolean) => void
   onView: (item: Order) => void
-  onEdit: (item: Order) => void
-  onDelete: (item: Order) => void
+  onEdit?: (item: Order) => void
+  onDelete?: (item: Order) => void
+  renderCustomActions?: (item: Order) => React.ReactNode
+  showCheckbox?: boolean
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -49,7 +51,17 @@ function TypeBadge({ type }: { type: string }) {
   return <Badge className="bg-slate-100 text-slate-700 text-[10px] font-normal border-slate-200 h-5 px-1.5">Trả hàng</Badge>;
 }
 
-export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, onEdit, onDelete }: OrderTableProps) {
+export function OrderTable({ 
+  data, 
+  selectedIds, 
+  onSelect, 
+  onSelectAll, 
+  onView, 
+  onEdit, 
+  onDelete,
+  renderCustomActions,
+  showCheckbox = true
+}: OrderTableProps) {
   const allSelected = data.length > 0 && selectedIds.length === data.length;
   const someSelected = selectedIds.length > 0 && selectedIds.length < data.length;
 
@@ -59,13 +71,15 @@ export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, o
         <Table className={DATA_TABLE_ROOT_CLASS}>
           <TableHeader className="sticky top-0 z-30 bg-slate-50 border-b">
             <TableRow className="hover:bg-transparent">
-              <TableHead className={cn(ORDER_TABLE_COL.select, "px-4 text-center")}>
-                <Checkbox 
-                  checked={allSelected ? true : someSelected ? "indeterminate" : false} 
-                  onCheckedChange={(checked) => onSelectAll(checked as boolean)}
-                  className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
-                />
-              </TableHead>
+              {showCheckbox && (
+                <TableHead className={cn(ORDER_TABLE_COL.select, "px-4 text-center")}>
+                  <Checkbox 
+                    checked={allSelected ? true : someSelected ? "indeterminate" : false} 
+                    onCheckedChange={(checked) => onSelectAll(checked as boolean)}
+                    className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
+                  />
+                </TableHead>
+              )}
               <TableHead className={cn(ORDER_TABLE_COL.code, "text-sm font-semibold text-slate-900 px-4")}>Mã đơn</TableHead>
               <TableHead className={cn(ORDER_TABLE_COL.customer, "text-sm font-semibold text-slate-900 px-4")}>Khách hàng</TableHead>
               <TableHead className={cn(ORDER_TABLE_COL.date, "text-sm font-semibold text-slate-900 px-4")}>Ngày tạo</TableHead>
@@ -77,7 +91,7 @@ export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, o
           <TableBody className="divide-y divide-slate-100">
             {data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-64 text-center">
+                <TableCell colSpan={showCheckbox ? 7 : 6} className="h-64 text-center">
                    <div className="flex flex-col items-center justify-center text-slate-400 gap-2">
                       <p className="text-sm">Không tìm thấy đơn hàng nào</p>
                    </div>
@@ -88,13 +102,15 @@ export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, o
                 const isSelected = selectedIds.includes(item.id);
                 return (
                   <TableRow key={item.id} className={`${isSelected ? "bg-slate-50" : "hover:bg-slate-50/50"} h-16 group`}>
-                    <TableCell className="px-4 text-center">
-                      <Checkbox 
-                        checked={isSelected}
-                        onCheckedChange={() => onSelect(item.id)}
-                        className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
-                      />
-                    </TableCell>
+                    {showCheckbox && (
+                      <TableCell className="px-4 text-center">
+                        <Checkbox 
+                          checked={isSelected}
+                          onCheckedChange={() => onSelect(item.id)}
+                          className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
+                        />
+                      </TableCell>
+                    )}
                     <TableCell className="text-sm font-mono font-semibold text-slate-700 px-4">{item.orderCode}</TableCell>
                     <TableCell className="px-4">
                       <div className="flex flex-col gap-1">
@@ -116,15 +132,25 @@ export function OrderTable({ data, selectedIds, onSelect, onSelectAll, onView, o
                     </TableCell>
                     <TableCell className={DATA_TABLE_ACTION_CELL_CLASS}>
                       <div className="flex items-center justify-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => onView(item)} title="Xem chi tiết" className="h-8 w-8 text-slate-500 hover:text-slate-900 transition-colors">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => onEdit(item)} title="Chỉnh sửa" className="h-8 w-8 text-slate-500 hover:text-slate-900 transition-colors">
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => onDelete(item)} title="Xóa đơn hàng" className="h-8 w-8 text-slate-500 hover:text-red-600 transition-colors">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {renderCustomActions ? (
+                          renderCustomActions(item)
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="icon" onClick={() => onView(item)} title="Xem chi tiết" className="h-8 w-8 text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            {onEdit && (
+                              <Button variant="ghost" size="icon" onClick={() => onEdit(item)} title="Chỉnh sửa đơn" className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all">
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {onDelete && (
+                              <Button variant="ghost" size="icon" onClick={() => onDelete(item)} title="Hủy đơn hàng" className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

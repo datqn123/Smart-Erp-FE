@@ -5,7 +5,6 @@ import {
   Package, 
   ShoppingCart, 
   Banknote, 
-  BarChart3, 
   Settings, 
   LogOut,
   FileInput,
@@ -92,15 +91,6 @@ const navItems: NavItem[] = [
       { label: "Giao dịch thu chi", path: "/cashflow/transactions" },
       { label: "Sổ nợ", path: "/cashflow/debt" },
       { label: "Sổ cái tài chính", path: "/cashflow/ledger" },
-    ],
-  },
-  {
-    id: "analytics",
-    label: "Phân tích",
-    icon: <BarChart3 className="h-[18px] w-[18px]" />,
-    subItems: [
-      { label: "Doanh thu & Lợi nhuận", path: "/analytics/revenue" },
-      { label: "Sản phẩm bán chạy", path: "/analytics/top-products" },
     ],
   },
   {

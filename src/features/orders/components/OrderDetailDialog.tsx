@@ -8,9 +8,11 @@ import {
 } from "@/components/ui/dialog"
 import { formatDate } from "../../inventory/utils"
 import type { Order, OrderItem } from "../types"
-import { ShoppingBag, User, Calendar, Activity, CreditCard, Receipt, MapPin, Package, Trash2, Edit, CheckCircle2, Truck, Timer, XCircle } from "lucide-react"
+import { ShoppingBag, User, Calendar, Activity, CreditCard, Receipt, MapPin, Package, Trash2, Edit, CheckCircle2, Truck, Timer, XCircle, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "../../inventory/components/StatusBadge"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 interface OrderDetailDialogProps {
@@ -63,11 +65,11 @@ export function OrderDetailDialog({ order, isOpen, onClose }: OrderDetailDialogP
         </DialogHeader>
 
         <div className="p-8 pt-6">
-          {/* Progress Tracker (Premium Feel) */}
-          <div className="mb-10 pt-4">
-              <div className="flex justify-between relative">
-                  <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -translate-y-1/2 z-0" />
-                  <div className={cn("absolute top-1/2 left-0 h-0.5 bg-slate-900 -translate-y-1/2 z-0 transition-all duration-700", 
+          {/* Progress Tracker */}
+          <div className="mb-12 pt-4">
+              <div className="flex justify-between relative px-2">
+                  <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 z-0 rounded-full" />
+                  <div className={cn("absolute top-1/2 left-0 h-1 bg-slate-900 -translate-y-1/2 z-0 transition-all duration-1000 ease-in-out rounded-full", 
                     order.status === "Pending" ? "w-0" : 
                     order.status === "Processing" ? "w-1/3" : 
                     order.status === "Shipped" ? "w-2/3" : "w-full"
@@ -79,72 +81,106 @@ export function OrderDetailDialog({ order, isOpen, onClose }: OrderDetailDialogP
               </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="space-y-10">
+            {/* Row 1: Basic Info Grid */}
             <div className="space-y-6">
-                <SectionHeader icon={Receipt} title="Thông tin chung" />
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Ngày lập đơn</p>
-                        <p className="text-sm font-bold text-slate-900">{formatDate(order.date)}</p>
+                <SectionHeader icon={Receipt} title="Thông tin vận hành" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-7">
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
+                            <Calendar size={12} /> Ngày lập đơn
+                        </Label>
+                        <div className="h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
+                            {formatDate(order.date)}
+                        </div>
                     </div>
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Số lượng SKU</p>
-                        <p className="text-sm font-bold text-slate-900">{order.itemsCount} loại</p>
-                    </div>
-                </div>
 
-                <div className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <MapPin size={12} /> Địa chỉ giao hàng
-                    </p>
-                    <p className="text-sm text-slate-700 font-medium">123 Đường ABC, Quận X, TP. Hồ Chí Minh</p>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
+                            <Package size={12} /> Số lượng mặt hàng
+                        </Label>
+                        <div className="h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
+                            {order.itemsCount} loại sản phẩm trong đơn
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
+                            <MapPin size={12} /> Địa điểm giao hàng
+                        </Label>
+                        <div className="h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm truncate">
+                            123 Đường ABC, Quận X, TP. Hồ Chí Minh
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
+                            <CreditCard size={12} /> Phương thức thanh toán
+                        </Label>
+                        <div className="h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
+                            Chuyển khoản ngân hàng (Bank Transfer)
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="space-y-4">
-                <SectionHeader icon={Package} title="Danh sách sản phẩm" />
-                <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-                    <table className="w-full text-left text-sm">
-                        <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-100">
-                                <th className="p-3 font-bold text-slate-400 text-[10px] uppercase tracking-wider">Sản phẩm</th>
-                                <th className="p-3 font-bold text-slate-400 text-[10px] uppercase tracking-wider text-right">SL</th>
-                                <th className="p-3 font-bold text-slate-400 text-[10px] uppercase tracking-wider text-right">Tổng</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50">
-                            {mockOrderItems.map((item) => (
-                                <tr key={item.id} className="hover:bg-slate-50/30 transition-colors">
-                                    <td className="p-3">
-                                        <p className="font-bold text-slate-900">{item.productName}</p>
-                                        <p className="text-[10px] text-slate-400 font-mono italic">{item.skuCode}</p>
-                                    </td>
-                                    <td className="p-3 text-right">
-                                        <span className="font-bold text-slate-900">{item.quantity}</span>
-                                        <span className="text-xs text-slate-400 ml-1">{item.unitName}</span>
-                                    </td>
-                                    <td className="p-3 text-right font-black text-slate-900">
-                                        {item.lineTotal.toLocaleString()}
-                                    </td>
+            <Separator className="bg-slate-100" />
+
+            {/* Row 2: Product List & Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                <div className="space-y-4">
+                    <SectionHeader icon={ShoppingBag} title="Chi tiết sản phẩm" />
+                    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                        <table className="w-full text-left text-sm">
+                            <thead>
+                                <tr className="bg-slate-50/80 border-b border-slate-100">
+                                    <th className="p-4 font-black text-slate-500 text-[10px] uppercase tracking-wider">Mặt hàng</th>
+                                    <th className="p-4 font-black text-slate-500 text-[10px] uppercase tracking-wider text-right">S.Lượng</th>
+                                    <th className="p-4 font-black text-slate-500 text-[10px] uppercase tracking-wider text-right">Thành tiền</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {mockOrderItems.map((item) => (
+                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="p-4">
+                                            <p className="font-bold text-slate-900">{item.productName}</p>
+                                            <p className="text-[10px] text-slate-400 font-mono tracking-tighter uppercase">{item.skuCode}</p>
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <span className="font-bold text-slate-900">{item.quantity}</span>
+                                            <span className="text-[10px] text-slate-400 ml-1 font-bold uppercase">{item.unitName}</span>
+                                        </td>
+                                        <td className="p-4 text-right font-black text-slate-900">
+                                            {item.lineTotal.toLocaleString()}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div className="p-4 bg-slate-900 rounded-2xl text-white shadow-xl">
-                    <div className="flex justify-between items-center mb-1 opacity-60 text-[10px] uppercase tracking-widest font-bold">
-                        <span>Tạm tính</span>
-                        <span>{order.totalAmount.toLocaleString()} đ</span>
-                    </div>
-                    <div className="flex justify-between items-center mb-3 text-red-400 text-[10px] uppercase tracking-widest font-bold">
-                        <span>Giảm giá / Ưu đãi</span>
-                        <span>-{order.discountAmount?.toLocaleString() || 0} đ</span>
-                    </div>
-                    <Separator className="bg-white/10 mb-3" />
-                    <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold uppercase tracking-widest opacity-60">Tổng cộng</span>
-                        <span className="text-xl font-black">{order.finalAmount.toLocaleString()} đ</span>
+                <div className="space-y-4 flex flex-col justify-end">
+                    <SectionHeader icon={BarChart3} title="Tổng kết tài chính" />
+                    <div className="p-6 bg-slate-900 rounded-3xl text-white shadow-2xl relative overflow-hidden group">
+                        <Receipt className="absolute -right-4 -top-4 size-24 text-white/5 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
+                        <div className="space-y-4 relative z-10">
+                            <div className="flex justify-between items-center opacity-60 text-[10px] uppercase tracking-[0.2em] font-black">
+                                <span>Giá trị hàng hóa</span>
+                                <span>{order.totalAmount.toLocaleString()} đ</span>
+                            </div>
+                            <div className="flex justify-between items-center text-red-400 text-[10px] uppercase tracking-[0.2em] font-black">
+                                <span>Ưu đãi áp dụng</span>
+                                <span>-{order.discountAmount?.toLocaleString() || 0} đ</span>
+                            </div>
+                            <Separator className="bg-white/10" />
+                            <div className="pt-2">
+                                <p className="text-[10px] uppercase tracking-[0.2em] font-black opacity-40 mb-1 text-center">Tổng tiền thanh toán</p>
+                                <p className="text-4xl font-black text-center tracking-tighter tabular-nums">
+                                    {order.finalAmount.toLocaleString()} <span className="text-sm font-normal opacity-40 uppercase tracking-normal">vnd</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

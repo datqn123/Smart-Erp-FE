@@ -5,20 +5,25 @@ import type { Transaction } from "../types"
 import { TransactionToolbar } from "../components/TransactionToolbar"
 import { TransactionTable } from "../components/TransactionTable"
 import { TransactionDetailDialog } from "../components/TransactionDetailDialog"
+import { TransactionFormDialog } from "../components/TransactionFormDialog"
 import { toast } from "sonner"
+import { Banknote, TrendingUp, TrendingDown, DollarSign } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function TransactionsPage() {
   const { setTitle } = usePageTitle()
   
-  const [transactions] = useState<Transaction[]>(mockTransactions)
+  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   
-  // Detail modal state
+  // Modals state
   const [selectedItem, setSelectedItem] = useState<Transaction | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create')
 
   useEffect(() => { setTitle("Giao dịch thu chi") }, [setTitle])
 
@@ -28,6 +33,11 @@ export function TransactionsPage() {
     if (search && !t.transactionCode.toLowerCase().includes(search.toLowerCase()) && !t.description.toLowerCase().includes(search.toLowerCase())) return false
     return true
   })
+
+  // Summary stats
+  const totalIncome = transactions.filter(t => t.type === 'Income').reduce((sum, t) => sum + t.amount, 0)
+  const totalExpense = transactions.filter(t => t.type === 'Expense').reduce((sum, t) => sum + t.amount, 0)
+  const balance = totalIncome - totalExpense
 
   // Handlers
   const handleSelect = (id: number) => {
@@ -40,15 +50,26 @@ export function TransactionsPage() {
 
   const handleToolbarAction = (action: string) => {
     switch (action) {
+      case "create":
+        setSelectedItem(null)
+        setFormMode('create')
+        setIsFormOpen(true)
+        break;
       case "edit":
-        toast.info(`Chỉnh sửa ${selectedIds.length} giao dịch`)
+        if (selectedIds.length === 1) {
+          const item = transactions.find(t => t.id === selectedIds[0])
+          if (item) {
+            setSelectedItem(item)
+            setFormMode('edit')
+            setIsFormOpen(true)
+          }
+        } else {
+          toast.error("Vui lòng chọn duy nhất 1 giao dịch để chỉnh sửa")
+        }
         break;
       case "delete":
         toast.success(`Đã xoá ${selectedIds.length} giao dịch`)
         setSelectedIds([])
-        break;
-      case "create":
-        toast.info("Mở form tạo phiếu thu/chi")
         break;
       case "export":
         toast.info("Đang xuất dữ liệu Excel...")
@@ -62,24 +83,54 @@ export function TransactionsPage() {
   }
 
   const handleEdit = (item: Transaction) => {
-    toast.info(`Chỉnh sửa giao dịch: ${item.transactionCode}`)
+    setSelectedItem(item)
+    setFormMode('edit')
+    setIsFormOpen(true)
   }
 
-  const handleDelete = (item: Transaction) => {
-    toast.error(`Yêu cầu xóa giao dịch: ${item.transactionCode}`)
+  const handleFormSubmit = (data: any) => {
+    if (formMode === 'create') {
+      const newTransaction = { ...data, id: Date.now() }
+      setTransactions([newTransaction, ...transactions])
+    } else {
+      setTransactions(transactions.map(t => t.id === selectedItem?.id ? { ...t, ...data } : t))
+    }
+    setIsFormOpen(false)
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
-      {/* Header */}
-      <div className="shrink-0">
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Giao dịch thu chi</h1>
-        <p className="text-sm text-slate-500 mt-1">Quản lý thu chi và luân chuyển tiền mặt</p>
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 h-full flex flex-col bg-slate-50/30">
+      {/* Header & Stats Cards */}
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Giao dịch thu chi</h1>
+          <p className="text-sm text-slate-500 mt-1 font-medium">Quản lý thu chi và luân chuyển tiền mặt</p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4">
+            <StatCard 
+                label="Tổng thu" 
+                amount={totalIncome} 
+                icon={TrendingUp} 
+                color="emerald" 
+            />
+            <StatCard 
+                label="Tổng chi" 
+                amount={totalExpense} 
+                icon={TrendingDown} 
+                color="rose" 
+            />
+            <StatCard 
+                label="Số dư" 
+                amount={balance} 
+                icon={DollarSign} 
+                color="blue" 
+            />
+        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 bg-transparent rounded-lg">
-        {/* Toolbar */}
+      <div className="flex-1 flex flex-col min-h-0">
         <TransactionToolbar 
           searchStr={search}
           onSearch={setSearch}
@@ -91,24 +142,55 @@ export function TransactionsPage() {
           onAction={handleToolbarAction}
         />
         
-        {/* Data Table */}
-        <TransactionTable 
-          data={filtered}
-          selectedIds={selectedIds}
-          onSelect={handleSelect}
-          onSelectAll={handleSelectAll}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-
-        {/* Detail Modal */}
-        <TransactionDetailDialog 
-          transaction={selectedItem}
-          isOpen={isDetailOpen}
-          onClose={() => setIsDetailOpen(false)}
-        />
+        <div className="mt-4 flex-1 flex flex-col min-h-0 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+            <TransactionTable 
+            data={filtered}
+            selectedIds={selectedIds}
+            onSelect={handleSelect}
+            onSelectAll={handleSelectAll}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={(item) => toast.error(`Yêu cầu xóa: ${item.transactionCode}`)}
+            />
+        </div>
       </div>
+
+      {/* Modals */}
+      <TransactionDetailDialog 
+        transaction={selectedItem}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
+
+      <TransactionFormDialog 
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSubmit={handleFormSubmit}
+        initialData={selectedItem}
+        mode={formMode}
+      />
     </div>
   )
+}
+
+function StatCard({ label, amount, icon: Icon, color }: { label: string, amount: number, icon: any, color: 'emerald' | 'rose' | 'blue' }) {
+    const colorMap = {
+        emerald: "text-emerald-600 bg-slate-50 border-slate-100",
+        rose: "text-rose-600 bg-slate-50 border-slate-100",
+        blue: "text-blue-600 bg-slate-50 border-slate-100"
+    }
+    
+    return (
+        <div className="px-5 py-3 rounded-2xl border border-slate-200/60 flex items-center gap-4 bg-white shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] min-w-[200px]">
+            <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", colorMap[color].split(' ')[1])}>
+                <Icon size={18} className={colorMap[color].split(' ')[0]} />
+            </div>
+            <div>
+                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{label}</p>
+                <p className={cn("text-base font-black tracking-tight", colorMap[color].split(' ')[0])}>
+                    {amount.toLocaleString()} <span className="text-[10px] font-normal text-slate-400">đ</span>
+                </p>
+            </div>
+        </div>
+    )
 }

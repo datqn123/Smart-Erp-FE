@@ -188,6 +188,7 @@ export function CategoryTable({
                   onView={onView} 
                   onEdit={onEdit} 
                   onDelete={onDelete}
+                  onAddSub={onAddSub}
                 />
               ))
             )}

@@ -5,17 +5,19 @@ import type { Order } from "../types"
 import { OrderToolbar } from "../components/OrderToolbar"
 import { OrderTable } from "../components/OrderTable"
 import { OrderDetailDialog } from "../components/OrderDetailDialog"
+import { OrderFormDialog } from "../components/OrderFormDialog"
 import { toast } from "sonner"
 
 export function WholesalePage() {
   const { setTitle } = usePageTitle()
   
-  const [orders] = useState<Order[]>(mockOrders.filter(o => o.type === "Wholesale"))
+  const [orders, setOrders] = useState<Order[]>(mockOrders.filter(o => o.type === "Wholesale"))
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false)
 
   useEffect(() => { setTitle("Bán buôn (B2B)") }, [setTitle])
 
@@ -37,14 +39,23 @@ export function WholesalePage() {
   const handleToolbarAction = (action: string) => {
     switch (action) {
       case "edit":
-        toast.info(`Chỉnh sửa ${selectedIds.length} đơn hàng`)
+        if (selectedIds.length === 1) {
+            const order = orders.find(o => o.id === selectedIds[0]);
+            if (order) {
+                setSelectedOrder(order);
+                setIsEditFormOpen(true);
+            }
+        } else {
+            toast.info(`Vui lòng chọn duy nhất 1 đơn hàng để chỉnh sửa`)
+        }
         break;
       case "delete":
         toast.success(`Đã huỷ ${selectedIds.length} đơn hàng`)
         setSelectedIds([])
         break;
       case "create":
-        toast.info("Mở form tạo đơn hàng bán buôn")
+        setSelectedOrder(null)
+        setIsEditFormOpen(true)
         break;
       case "export":
         toast.info("Đang xuất dữ liệu Excel...")
@@ -58,19 +69,28 @@ export function WholesalePage() {
   }
 
   const handleEdit = (item: Order) => {
-    toast.info(`Chỉnh sửa đơn hàng: ${item.orderCode}`)
+    setSelectedOrder(item)
+    setIsEditFormOpen(true)
   }
 
   const handleDelete = (item: Order) => {
     toast.error(`Yêu cầu xóa đơn hàng: ${item.orderCode}`)
   }
 
+  const handleSave = (data: any) => {
+    if (selectedOrder) {
+        toast.success(`Đã cập nhật đơn hàng ${data.orderCode}`)
+    } else {
+        toast.success(`Đã tạo mới đơn hàng ${data.orderCode}`)
+    }
+  }
+
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
       {/* Header */}
-      <div className="shrink-0">
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Bán buôn (B2B)</h1>
-        <p className="text-sm text-slate-500 mt-1">Quản lý các đơn hàng bán buôn</p>
+      <div className="shrink-0 text-left">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Bán buôn (B2B)</h1>
+        <p className="text-sm text-slate-500 mt-1 font-medium">Quản lý và thực hiện các đơn hàng bán sỉ doanh nghiệp</p>
       </div>
 
       {/* Main Content Area */}
@@ -101,6 +121,13 @@ export function WholesalePage() {
         order={selectedOrder}
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
+      />
+
+      <OrderFormDialog
+        order={selectedOrder}
+        isOpen={isEditFormOpen}
+        onClose={() => setIsEditFormOpen(false)}
+        onSave={handleSave}
       />
     </div>
   )
