@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import type { Category } from "../types"
 import { cn } from "@/lib/utils"
+import { FORM_LABEL_CLASS, FORM_INPUT_CLASS, FORM_HELPER_CLASS } from "@/lib/data-table-layout"
+import type { Category } from "../types"
 
 const categorySchema = z.object({
   name: z.string().min(1, "Vui lòng nhập tên danh mục"),
@@ -136,9 +137,9 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
             <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100">
                 <FolderTree size={18} className="text-slate-900" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Phân loại hàng hóa</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Phân loại hàng hóa</span>
           </div>
-          <DialogTitle className="text-3xl font-black text-slate-900 tracking-tighter uppercase mb-1">
+          <DialogTitle className="text-2xl font-black text-slate-900 mb-1">
             {title}
           </DialogTitle>
           <DialogDescription className="text-slate-500 font-medium">
@@ -166,37 +167,35 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7">
                 {/* Row 1: Tên & Mã */}
                 <div className="space-y-2.5">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                        <Tag size={12} /> Tên danh mục <span className="text-red-500">*</span>
+                    <Label className={FORM_LABEL_CLASS}>
+                        Tên danh mục <span className="text-red-500">*</span>
                     </Label>
                     <Input 
                         {...form.register("name")} 
                         placeholder="Ví dụ: Đồ gia dụng, Điện tử..."
-                        className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 font-bold text-lg rounded-xl shadow-sm transition-all" 
+                        className={cn(FORM_INPUT_CLASS, "font-semibold")} 
                     />
                 </div>
 
                 <div className="space-y-2.5">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                        <Hash size={12} /> Mã danh mục <span className="text-red-500">*</span>
+                    <Label className={FORM_LABEL_CLASS}>
+                        Mã danh mục <span className="text-red-500">*</span>
                     </Label>
                     <Input 
                         {...form.register("categoryCode")} 
                         placeholder="Nhập mã hoặc random..."
-                        className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 font-mono rounded-xl shadow-xs"
+                        className={cn(FORM_INPUT_CLASS, "font-mono")}
                     />
                 </div>
 
                 {/* Row 2: Danh mục cha & Trạng thái */}
                 <div className="space-y-2.5">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap">
-                        <ListTree size={12} /> Thuộc nhóm (Danh mục cha)
-                    </Label>
+                    <Label className={FORM_LABEL_CLASS}>Thuộc nhóm (Danh mục cha)</Label>
                     <Select 
                         value={form.watch("parentId")?.toString()}
                         onValueChange={(val) => form.setValue("parentId", parseInt(val))}
                     >
-                        <SelectTrigger className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold text-slate-700">
+                        <SelectTrigger className={FORM_INPUT_CLASS}>
                             <SelectValue placeholder="Chọn danh mục cha" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
@@ -206,14 +205,12 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
                 </div>
 
                 <div className="space-y-2.5">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap">
-                        <CheckCircle2 size={12} /> Trạng thái hoạt động
-                    </Label>
+                    <Label className={FORM_LABEL_CLASS}>Trạng thái hoạt động</Label>
                     <Select 
                         defaultValue={form.getValues("status")}
                         onValueChange={(val) => form.setValue("status", val as any)}
                     >
-                        <SelectTrigger className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold">
+                        <SelectTrigger className={FORM_INPUT_CLASS}>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl border-slate-100 shadow-xl">
@@ -235,13 +232,11 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
 
                 {/* Row 3: Thứ tự & Info Box */}
                 <div className="space-y-2.5">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                        <BarChart3 size={12} /> Thứ tự sắp xếp
-                    </Label>
+                    <Label className={FORM_LABEL_CLASS}>Thứ tự sắp xếp</Label>
                     <Input 
                         type="number"
                         {...form.register("sortOrder", { valueAsNumber: true })} 
-                        className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl"
+                        className={FORM_INPUT_CLASS}
                     />
                 </div>
 
@@ -258,11 +253,11 @@ export function CategoryForm({ open, onOpenChange, category, allCategories = [],
             <Separator className="bg-slate-100" />
 
             <div className="space-y-2.5">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Mô tả chi tiết</Label>
+                <Label className={FORM_LABEL_CLASS}>Mô tả chi tiết</Label>
                 <Textarea 
                 {...form.register("description")} 
                 placeholder="Nhập ghi chú hoặc mô tả về danh mục này..."
-                className="min-h-[100px] border-slate-200 focus:ring-0 focus:border-slate-900 rounded-2xl p-4 bg-slate-50/20"
+                className={cn(FORM_INPUT_CLASS, "min-h-[100px] p-4")}
                 />
             </div>
           </div>

@@ -145,7 +145,8 @@ export default function ApprovalHistoryPage() {
       </div>
 
       {/* Table Section */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+        <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
           <OrderTable 
             data={displayData}
             selectedIds={[]}
@@ -157,6 +158,7 @@ export default function ApprovalHistoryPage() {
               setIsDetailOpen(true)
             }}
           />
+        </div>
       </div>
 
       <OrderDetailDialog 

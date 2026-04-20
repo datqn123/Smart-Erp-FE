@@ -87,7 +87,7 @@ export function EmployeesPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
+    <div className="p-4 md:p-6 lg:p-8 flex flex-col h-full min-h-0 gap-4 md:gap-5 overflow-hidden">
       {/* Header */}
       <div className="shrink-0">
         <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Quản lý nhân viên</h1>
@@ -95,8 +95,7 @@ export function EmployeesPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Toolbar */}
+      <div className="flex-1 flex flex-col min-h-0 gap-4 md:gap-5">
         <EmployeeToolbar 
           searchStr={search}
           onSearch={setSearch}
@@ -106,16 +105,17 @@ export function EmployeesPage() {
           onAction={handleToolbarAction}
         />
         
-        {/* Data Table */}
-        <EmployeeTable 
-          data={filtered}
-          selectedIds={selectedIds}
-          onSelect={handleSelect}
-          onSelectAll={handleSelectAll}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+          <EmployeeTable 
+            data={filtered}
+            selectedIds={selectedIds}
+            onSelect={handleSelect}
+            onSelectAll={handleSelectAll}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </div>
       </div>
 
       {/* Confirmations */}

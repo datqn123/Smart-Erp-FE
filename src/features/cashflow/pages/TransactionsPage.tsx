@@ -7,7 +7,7 @@ import { TransactionTable } from "../components/TransactionTable"
 import { TransactionDetailDialog } from "../components/TransactionDetailDialog"
 import { TransactionFormDialog } from "../components/TransactionFormDialog"
 import { toast } from "sonner"
-import { Banknote, TrendingUp, TrendingDown } from "lucide-react"
+import { Banknote, TrendingUp, TrendingDown, DollarSign } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function TransactionsPage() {
@@ -99,7 +99,7 @@ export function TransactionsPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-6 h-full flex flex-col bg-slate-50/30">
+    <div className="p-4 md:p-6 lg:p-8 flex flex-col h-full min-h-0 gap-4 md:gap-5 overflow-hidden">
       {/* Header & Stats Cards */}
       <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
         <div>
@@ -130,7 +130,7 @@ export function TransactionsPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 gap-4 md:gap-5">
         <TransactionToolbar 
           searchStr={search}
           onSearch={setSearch}
@@ -142,16 +142,18 @@ export function TransactionsPage() {
           onAction={handleToolbarAction}
         />
         
-        <div className="mt-4 flex-1 flex flex-col min-h-0 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+          <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
             <TransactionTable 
-            data={filtered}
-            selectedIds={selectedIds}
-            onSelect={handleSelect}
-            onSelectAll={handleSelectAll}
-            onView={handleView}
-            onEdit={handleEdit}
-            onDelete={(item) => toast.error(`Yêu cầu xóa: ${item.transactionCode}`)}
+              data={filtered}
+              selectedIds={selectedIds}
+              onSelect={handleSelect}
+              onSelectAll={handleSelectAll}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={(item) => toast.error(`Yêu cầu xóa: ${item.transactionCode}`)}
             />
+          </div>
         </div>
       </div>
 

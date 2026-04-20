@@ -97,11 +97,10 @@ export function DebtPage() {
     }
     setIsFormOpen(false)
   }
-
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-6 h-full flex flex-col bg-slate-50/30">
+    <div className="p-4 md:p-6 lg:p-8 flex flex-col h-full min-h-0 gap-4 md:gap-5 overflow-hidden">
       {/* Header & Stats Cards */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 shrink-0">
         <div>
           <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Sổ nợ đối tác</h1>
           <p className="text-sm text-slate-500 mt-1 font-medium">Theo dõi công nợ khách hàng và nhà cung cấp</p>
@@ -131,7 +130,7 @@ export function DebtPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 gap-4 md:gap-5">
         <DebtToolbar 
           searchStr={search}
           onSearch={setSearch}
@@ -143,7 +142,8 @@ export function DebtPage() {
           onAction={handleToolbarAction}
         />
         
-        <div className="mt-4 flex-1 flex flex-col min-h-0 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden text-slate-900">
+        <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+          <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
             <DebtTable 
               data={filtered}
               selectedIds={selectedIds}
@@ -153,6 +153,7 @@ export function DebtPage() {
               onEdit={handleEdit}
               onDelete={(item) => toast.error(`Yêu cầu xóa: ${item.debtCode}`)}
             />
+          </div>
         </div>
       </div>
 

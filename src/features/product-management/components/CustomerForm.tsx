@@ -21,6 +21,8 @@ import {
   SelectValue 
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import { FORM_LABEL_CLASS, FORM_INPUT_CLASS } from "@/lib/data-table-layout"
 import type { Customer } from "../types"
 
 const customerSchema = z.object({
@@ -92,22 +94,22 @@ export function CustomerForm({ open, onOpenChange, customer, onSubmit }: Custome
         <form onSubmit={form.handleSubmit(handleLocalSubmit)} className="p-8 space-y-6 bg-white">
           <div className="grid grid-cols-2 gap-x-6 gap-y-5">
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã khách hàng *</Label>
+                <Label className={FORM_LABEL_CLASS}>Mã khách hàng *</Label>
                 <Input 
                   {...form.register("customerCode")} 
-                  className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-mono"
+                  className={cn(FORM_INPUT_CLASS, "font-mono")}
                   placeholder="KH00001"
                 />
                 {form.formState.errors.customerCode && <p className="text-xs text-red-500">{form.formState.errors.customerCode.message}</p>}
              </div>
 
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái</Label>
+                <Label className={FORM_LABEL_CLASS}>Trạng thái</Label>
                 <Select 
                   defaultValue={form.getValues("status")}
                   onValueChange={(val) => form.setValue("status", val as any)}
                 >
-                  <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900">
+                  <SelectTrigger className={FORM_INPUT_CLASS}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -118,12 +120,12 @@ export function CustomerForm({ open, onOpenChange, customer, onSubmit }: Custome
              </div>
 
              <div className="space-y-2 col-span-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tên khách hàng *</Label>
+                <Label className={FORM_LABEL_CLASS}>Tên khách hàng *</Label>
                 <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("name")} 
-                        className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-semibold text-slate-900" 
+                        className={cn(FORM_INPUT_CLASS, "pl-10 font-semibold text-slate-900")} 
                         placeholder="Nguyễn Văn A"
                     />
                 </div>
@@ -131,12 +133,12 @@ export function CustomerForm({ open, onOpenChange, customer, onSubmit }: Custome
              </div>
 
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Số điện thoại *</Label>
+                <Label className={FORM_LABEL_CLASS}>Số điện thoại *</Label>
                 <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("phone")} 
-                        className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                        className={cn(FORM_INPUT_CLASS, "pl-10")}
                         placeholder="09xxx..."
                     />
                 </div>
@@ -144,12 +146,12 @@ export function CustomerForm({ open, onOpenChange, customer, onSubmit }: Custome
              </div>
 
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email</Label>
+                <Label className={FORM_LABEL_CLASS}>Email</Label>
                 <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("email")} 
-                        className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                        className={cn(FORM_INPUT_CLASS, "pl-10")}
                         placeholder="example@mail.com"
                     />
                 </div>
@@ -157,12 +159,12 @@ export function CustomerForm({ open, onOpenChange, customer, onSubmit }: Custome
              </div>
 
              <div className="space-y-2 col-span-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Địa chỉ</Label>
+                <Label className={FORM_LABEL_CLASS}>Địa chỉ</Label>
                 <div className="relative">
                     <MapPin className="absolute left-3 top-3 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("address")} 
-                        className="h-20 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900 flex items-start pt-2"
+                        className={cn(FORM_INPUT_CLASS, "h-20 pl-10 flex items-start pt-2")}
                         placeholder="Số nhà, đường, phường/xã..."
                     />
                 </div>

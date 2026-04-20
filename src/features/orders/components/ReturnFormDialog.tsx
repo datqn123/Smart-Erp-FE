@@ -40,6 +40,10 @@ import {
 } from "lucide-react"
 import type { Order } from "../types"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+} from "@/lib/data-table-layout"
 
 interface ReturnFormDialogProps {
   order: Order | null
@@ -118,39 +122,39 @@ export function ReturnFormDialog({ order, isOpen, onClose, onSave }: ReturnFormD
                 
                 {/* Row 1: Mã phiếu & Khách hàng */}
                 <div className="grid grid-cols-2 gap-x-10 gap-y-7">
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <Hash size={12} /> Mã phiếu trả *
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <Hash size={12} className="inline mr-1" /> Mã phiếu trả *
                         </Label>
                         <Input 
                             {...form.register("orderCode")}
                             disabled={isEdit}
                             placeholder="Nhập mã phiếu (Ví dụ: RET-001)"
-                            className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold"
+                            className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}
                         />
                     </div>
 
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <User size={12} /> Khách hàng hoàn trả *
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <User size={12} className="inline mr-1" /> Khách hàng hoàn trả *
                         </Label>
                         <Input 
                             {...form.register("customerName")}
                             placeholder="Tên khách hàng / Đại lý"
-                            className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold"
+                            className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}
                         />
                     </div>
 
                     {/* Row 2: Trạng thái & Hoàn tiền */}
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <Activity size={12} /> Trạng thái xử lý
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <Activity size={12} className="inline mr-1" /> Trạng thái xử lý
                         </Label>
                         <Select 
                             value={form.watch("status")}
                             onValueChange={(val) => form.setValue("status", val as any)}
                         >
-                            <SelectTrigger className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold">
+                            <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl border-slate-100 shadow-xl">
@@ -162,15 +166,15 @@ export function ReturnFormDialog({ order, isOpen, onClose, onSave }: ReturnFormD
                         </Select>
                     </div>
 
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <CreditCard size={12} /> Tình trạng hoàn tiền
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <CreditCard size={12} className="inline mr-1" /> Tình trạng hoàn tiền
                         </Label>
                         <Select 
                             value={form.watch("paymentStatus")}
                             onValueChange={(val) => form.setValue("paymentStatus", val as any)}
                         >
-                            <SelectTrigger className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold">
+                            <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl border-slate-100 shadow-xl">
@@ -182,14 +186,14 @@ export function ReturnFormDialog({ order, isOpen, onClose, onSave }: ReturnFormD
                     </div>
 
                     {/* Row 3: Lý do trả hàng (Full width symmetry) */}
-                    <div className="space-y-2.5 col-span-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <FileText size={12} /> Lý do hoàn trả & Ghi chú
+                    <div className="space-y-2 col-span-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <FileText size={12} className="inline mr-1" /> Lý do hoàn trả & Ghi chú
                         </Label>
                         <Input 
                             {...form.register("notes")}
                             placeholder="Ví dụ: Sản phẩm lỗi sản xuất, Giao sai chủng loại..."
-                            className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold"
+                            className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}
                         />
                     </div>
                 </div>

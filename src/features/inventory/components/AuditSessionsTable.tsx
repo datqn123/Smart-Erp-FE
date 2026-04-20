@@ -30,6 +30,11 @@ import {
   DATA_TABLE_ACTION_HEAD_CLASS,
   DATA_TABLE_ACTION_CELL_CLASS,
   AUDIT_SESSION_TABLE_COL,
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  TABLE_CELL_NUMBER_CLASS,
 } from "@/lib/data-table-layout"
 
 function VarianceBadge({ variance, variancePercent }: { variance: number; variancePercent: number }) {
@@ -101,8 +106,8 @@ function AuditSessionItemsPanel({ session }: { session: AuditSession }) {
             <div key={item.id} className="border border-slate-200 p-3 rounded-md bg-white">
               <div className="flex items-start justify-between mb-2 gap-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-900">{item.productName}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className={TABLE_CELL_PRIMARY_CLASS}>{item.productName}</p>
+                  <p className={cn(TABLE_CELL_MONO_CLASS, "text-[10px] text-slate-400")}>
                     {item.skuCode} • {item.warehouseCode}-{item.shelfCode}
                   </p>
                 </div>
@@ -205,16 +210,16 @@ export function AuditSessionsTable({ sessions, onView, onEdit, onDelete }: Audit
 
   return (
     <Table data-testid="audit-sessions-table" className={DATA_TABLE_ROOT_CLASS}>
-      <TableHeader className="sticky top-0 z-20 bg-slate-50 shadow-sm">
+      <TableHeader className="sticky top-0 z-30 bg-slate-50 shadow-sm">
         <TableRow className="hover:bg-transparent border-b border-slate-200">
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.auditCode, "bg-slate-50")}>Mã đợt</TableHead>
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.title, "bg-slate-50")}>Tên đợt kiểm kê</TableHead>
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.auditDate, "bg-slate-50")}>Ngày kiểm</TableHead>
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.createdByName, "bg-slate-50")}>Người tạo</TableHead>
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.progress, "text-center bg-slate-50")}>Tiến độ</TableHead>
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.varianceHint, "text-center bg-slate-50")}>Lệch dòng</TableHead>
-          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.status, "text-center bg-slate-50")}>Trạng thái</TableHead>
-          <TableHead className={DATA_TABLE_ACTION_HEAD_CLASS}>Thao tác</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.auditCode, TABLE_HEAD_CLASS)}>Mã đợt</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.title, TABLE_HEAD_CLASS)}>Tên đợt kiểm kê</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.auditDate, TABLE_HEAD_CLASS)}>Ngày kiểm</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.createdByName, TABLE_HEAD_CLASS)}>Người tạo</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.progress, "text-center", TABLE_HEAD_CLASS)}>Tiến độ</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.varianceHint, "text-center", TABLE_HEAD_CLASS)}>Lệch dòng</TableHead>
+          <TableHead className={cn(AUDIT_SESSION_TABLE_COL.status, "text-center", TABLE_HEAD_CLASS)}>Trạng thái</TableHead>
+          <TableHead className={cn(DATA_TABLE_ACTION_HEAD_CLASS, TABLE_HEAD_CLASS)}>Thao tác</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -225,28 +230,28 @@ export function AuditSessionsTable({ sessions, onView, onEdit, onDelete }: Audit
               onClick={() => toggle(session.id)}
             >
               <TableCell
-                className={cn(AUDIT_SESSION_TABLE_COL.auditCode, "font-mono text-xs font-semibold text-slate-900")}
+                className={cn(AUDIT_SESSION_TABLE_COL.auditCode, TABLE_CELL_MONO_CLASS)}
               >
                 <div className="flex items-center gap-2">
                   {isOpen ? <ChevronDown className="h-3.5 w-3.5 text-blue-600" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
                   {session.auditCode}
                 </div>
               </TableCell>
-              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.title, "text-sm font-medium text-slate-900 truncate")}>
+              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.title, TABLE_CELL_PRIMARY_CLASS, "truncate")}>
                 {session.title}
               </TableCell>
-              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.auditDate, "text-sm text-slate-600")}>
+              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.auditDate, TABLE_CELL_SECONDARY_CLASS)}>
                 {formatDate(session.auditDate)}
               </TableCell>
-              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.createdByName, "text-sm text-slate-600 truncate")}>
+              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.createdByName, TABLE_CELL_SECONDARY_CLASS, "truncate")}>
                 {session.createdByName}
               </TableCell>
-              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.progress, "text-center text-sm text-slate-700")}>
-                <span className="tabular-nums">
+              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.progress, "text-center", TABLE_CELL_NUMBER_CLASS)}>
+                <span className="tabular-nums font-mono">
                   {countedCount}/{session.items.length}
                 </span>
               </TableCell>
-              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.varianceHint, "text-center text-sm text-slate-700 tabular-nums")}>
+              <TableCell className={cn(AUDIT_SESSION_TABLE_COL.varianceHint, "text-center", TABLE_CELL_NUMBER_CLASS, "tabular-nums font-mono")}>
                 {varianceCount}
               </TableCell>
               <TableCell className={cn(AUDIT_SESSION_TABLE_COL.status, "text-center")}>

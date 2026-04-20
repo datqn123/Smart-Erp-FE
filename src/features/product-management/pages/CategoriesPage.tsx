@@ -111,36 +111,37 @@ export function CategoriesPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
+    <div className="p-4 md:p-6 lg:p-8 flex flex-col h-full min-h-0 gap-4 md:gap-5 overflow-hidden">
       {/* Header */}
       <div className="shrink-0">
         <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Danh mục sản phẩm</h1>
         <p className="text-sm text-slate-500 mt-1 font-medium">Phân loại sản phẩm theo cấu trúc cây phân cấp</p>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 bg-transparent rounded-lg">
-        {/* Toolbar */}
-        <CategoryToolbar 
-          searchStr={search}
-          onSearch={setSearch}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          selectedIds={selectedIds}
-          onAction={handleToolbarAction}
-        />
+      {/* Toolbar */}
+      <CategoryToolbar 
+        searchStr={search}
+        onSearch={setSearch}
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+        selectedIds={selectedIds}
+        onAction={handleToolbarAction}
+      />
         
-        {/* Data Table */}
-        <CategoryTable 
-          data={filtered}
-          selectedIds={selectedIds}
-          onSelect={handleSelect}
-          onSelectAll={handleSelectAll}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onAddSub={handleAddSub}
-        />
+      {/* Data Table */}
+      <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+        <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
+          <CategoryTable 
+            data={filtered}
+            selectedIds={selectedIds}
+            onSelect={handleSelect}
+            onSelectAll={handleSelectAll}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onAddSub={handleAddSub}
+          />
+        </div>
       </div>
 
       {/* Detail Dialog */}

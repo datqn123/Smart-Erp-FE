@@ -179,3 +179,19 @@ export const LEDGER_TABLE_COL = {
   credit: "w-[124px]",
   balance: "w-[140px]",
 } as const
+
+/**
+ * Typography Standards — đồng bộ với ADR-005.
+ * Dùng cho các thẻ <th>, <td>, <Label>, <Input>.
+ */
+
+export const TABLE_HEAD_CLASS = "text-[12px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200"
+
+export const TABLE_CELL_PRIMARY_CLASS = "text-sm font-semibold text-slate-900"
+export const TABLE_CELL_SECONDARY_CLASS = "text-sm text-slate-600"
+export const TABLE_CELL_MONO_CLASS = "text-[13px] font-mono font-medium text-slate-500"
+export const TABLE_CELL_NUMBER_CLASS = "text-sm font-medium text-slate-900 tabular-nums"
+
+export const FORM_LABEL_CLASS = "text-sm font-semibold text-slate-700 block mb-1.5"
+export const FORM_INPUT_CLASS = "h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+export const FORM_HELPER_CLASS = "text-xs text-slate-500 mt-1"

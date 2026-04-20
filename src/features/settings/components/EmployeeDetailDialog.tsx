@@ -10,6 +10,9 @@ import type { Employee } from "../types"
 import { User, Shield, Mail, Phone, Calendar, Activity, BadgeCheck, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+} from "@/lib/data-table-layout"
 
 interface EmployeeDetailDialogProps {
   employee: Employee | null;
@@ -60,8 +63,8 @@ export function EmployeeDetailDialog({ employee, isOpen, onClose }: EmployeeDeta
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div className="space-y-6">
                     <div>
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2">
-                            <User size={14} /> Thông tin liên hệ
+                        <h3 className={cn(FORM_LABEL_CLASS, "mb-4")}>
+                            <User size={14} className="inline mr-1" /> Thông tin liên hệ
                         </h3>
                         <div className="space-y-4">
                             <InfoCard icon={Mail} label="Địa chỉ Email" value={employee.email} />
@@ -73,8 +76,8 @@ export function EmployeeDetailDialog({ employee, isOpen, onClose }: EmployeeDeta
 
                 <div className="space-y-6">
                      <div>
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2">
-                            <Activity size={14} /> Hoạt động hệ thống
+                        <h3 className={cn(FORM_LABEL_CLASS, "mb-4")}>
+                            <Activity size={14} className="inline mr-1" /> Hoạt động hệ thống
                         </h3>
                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
                              <div className="flex items-center justify-between">
@@ -128,7 +131,7 @@ function InfoCard({ icon: Icon, label, value }: { icon: any, label: string, valu
                 <Icon size={16} />
             </div>
             <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1">{label}</p>
+                <p className={cn(FORM_LABEL_CLASS, "leading-none mb-1")}>{label}</p>
                 <p className="text-sm font-bold text-slate-900 leading-none">{value}</p>
             </div>
         </div>

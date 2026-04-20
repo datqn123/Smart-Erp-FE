@@ -22,6 +22,11 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import type { Employee } from "../types"
+import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+} from "@/lib/data-table-layout"
 
 const employeeSchema = z.object({
   fullName: z.string().min(1, "Vui lòng nhập họ tên"),
@@ -92,20 +97,20 @@ export function EmployeeForm({ open, onOpenChange, employee, onSubmit }: Employe
         <form onSubmit={form.handleSubmit(handleLocalSubmit)} className="p-8 space-y-6 bg-white">
           <div className="grid grid-cols-2 gap-x-6 gap-y-5">
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã nhân viên *</Label>
+                <Label className={FORM_LABEL_CLASS}>Mã nhân viên *</Label>
                 <Input 
                   {...form.register("employeeCode")} 
-                  className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-mono"
+                  className={cn(FORM_INPUT_CLASS, "h-11 font-mono")}
                 />
              </div>
 
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái</Label>
+                <Label className={FORM_LABEL_CLASS}>Trạng thái</Label>
                 <Select 
                   defaultValue={form.getValues("status")}
                   onValueChange={(val) => form.setValue("status", val as any)}
                 >
-                  <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900">
+                  <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-11 font-bold")}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -116,23 +121,23 @@ export function EmployeeForm({ open, onOpenChange, employee, onSubmit }: Employe
              </div>
 
              <div className="space-y-2 col-span-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Họ và tên nhân viên *</Label>
+                <Label className={FORM_LABEL_CLASS}>Họ và tên nhân viên *</Label>
                 <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("fullName")} 
-                        className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-bold" 
+                        className={cn(FORM_INPUT_CLASS, "h-11 pl-10 font-bold")} 
                     />
                 </div>
              </div>
 
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Vai trò / Quyền hạn *</Label>
+                <Label className={FORM_LABEL_CLASS}>Vai trò / Quyền hạn *</Label>
                 <Select 
                   defaultValue={form.getValues("role")}
                   onValueChange={(val) => form.setValue("role", val as any)}
                 >
-                  <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900">
+                  <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-11 font-bold")}>
                     <div className="flex items-center gap-2">
                         <Shield className="h-4 w-4 text-blue-500" />
                         <SelectValue />
@@ -148,23 +153,23 @@ export function EmployeeForm({ open, onOpenChange, employee, onSubmit }: Employe
              </div>
 
              <div className="space-y-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Số điện thoại *</Label>
+                <Label className={FORM_LABEL_CLASS}>Số điện thoại *</Label>
                 <div className="relative">
                     <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("phone")} 
-                        className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                        className={cn(FORM_INPUT_CLASS, "h-11 pl-10 font-mono")}
                     />
                 </div>
              </div>
 
              <div className="space-y-2 col-span-2">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Địa chỉ Email (ID đăng nhập) *</Label>
+                <Label className={FORM_LABEL_CLASS}>Địa chỉ Email (ID đăng nhập) *</Label>
                 <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <Input 
                         {...form.register("email")} 
-                        className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                        className={cn(FORM_INPUT_CLASS, "h-11 pl-10")}
                     />
                 </div>
              </div>

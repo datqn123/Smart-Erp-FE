@@ -7,7 +7,12 @@ import {
   DATA_TABLE_ROOT_CLASS, 
   DATA_TABLE_ACTION_HEAD_CLASS, 
   DATA_TABLE_ACTION_CELL_CLASS,
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
 } from "@/lib/data-table-layout"
+import { cn } from "@/lib/utils"
 import type { SystemLog } from "../log-types"
 
 interface LogTableProps {
@@ -36,20 +41,20 @@ export function LogTable({
         <Table className={DATA_TABLE_ROOT_CLASS}>
           <TableHeader className="sticky top-0 z-30 bg-slate-50 border-b">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[48px] px-4 text-center">
+              <TableHead className={cn("w-[48px] px-4 text-center", TABLE_HEAD_CLASS)}>
                 <Checkbox 
                   checked={allSelected ? true : someSelected ? "indeterminate" : false} 
                   onCheckedChange={(checked) => onSelectAll(checked as boolean)}
                   className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
                 />
               </TableHead>
-              <TableHead className="w-[180px] text-sm font-semibold text-slate-900 px-4">Thời gian</TableHead>
-              <TableHead className="w-[150px] text-sm font-semibold text-slate-900 px-4">Người thực hiện</TableHead>
-              <TableHead className="w-[120px] text-sm font-semibold text-slate-900 px-4">Hành động</TableHead>
-              <TableHead className="w-[120px] text-sm font-semibold text-slate-900 px-4">Module</TableHead>
-              <TableHead className="flex-1 text-sm font-semibold text-slate-900 px-4">Nội dung</TableHead>
-              <TableHead className="w-[100px] text-sm font-semibold text-slate-900 px-4">Mức độ</TableHead>
-              <TableHead className={DATA_TABLE_ACTION_HEAD_CLASS}>Thao tác</TableHead>
+              <TableHead className={cn("w-[180px] px-4", TABLE_HEAD_CLASS)}>Thời gian</TableHead>
+              <TableHead className={cn("w-[150px] px-4", TABLE_HEAD_CLASS)}>Người thực hiện</TableHead>
+              <TableHead className={cn("w-[120px] px-4 text-center", TABLE_HEAD_CLASS)}>Hành động</TableHead>
+              <TableHead className={cn("w-[120px] px-4", TABLE_HEAD_CLASS)}>Module</TableHead>
+              <TableHead className={cn("flex-1 px-4", TABLE_HEAD_CLASS)}>Nội dung</TableHead>
+              <TableHead className={cn("w-[100px] px-4 text-center", TABLE_HEAD_CLASS)}>Mức độ</TableHead>
+              <TableHead className={cn(DATA_TABLE_ACTION_HEAD_CLASS, TABLE_HEAD_CLASS)}>Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-slate-100">
@@ -75,19 +80,19 @@ export function LogTable({
                     <TableCell className="px-4">
                       <div className="flex items-center gap-2 text-slate-600">
                         <Clock className="h-3.5 w-3.5" />
-                        <span className="text-xs font-medium">{item.timestamp}</span>
+                        <span className={TABLE_CELL_MONO_CLASS}>{item.timestamp}</span>
                       </div>
                     </TableCell>
                     <TableCell className="px-4">
                       <div className="flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-slate-200 uppercase">
+                        <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-slate-200 uppercase shrink-0">
                           {item.user[0]}
                         </div>
-                        <span className="text-sm font-medium text-slate-900">{item.user}</span>
+                        <span className={cn(TABLE_CELL_PRIMARY_CLASS, "truncate")}>{item.user}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="px-4">
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                    <TableCell className="px-4 text-center">
+                      <span className={`text-[10px] font-bold uppercase tracking-tight px-2 py-0.5 rounded-full border h-5 inline-flex items-center ${
                         item.action === 'Delete' ? 'bg-red-50 text-red-700 border-red-100' :
                         item.action === 'Create' ? 'bg-green-50 text-green-700 border-green-100' :
                         'bg-blue-50 text-blue-700 border-blue-100'
@@ -95,16 +100,17 @@ export function LogTable({
                         {item.action}
                       </span>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-600 px-4">{item.module}</TableCell>
-                    <TableCell className="text-sm text-slate-500 px-4 truncate max-w-[300px]" title={item.description}>
+                    <TableCell className={cn(TABLE_CELL_SECONDARY_CLASS, "px-4")}>{item.module}</TableCell>
+                    <TableCell className={cn(TABLE_CELL_SECONDARY_CLASS, "px-4 truncate max-w-[300px]")} title={item.description}>
                       {item.description}
                     </TableCell>
-                    <TableCell className="px-4">
-                      <Badge className={`${
+                    <TableCell className="px-4 text-center">
+                      <Badge className={cn(
+                        "text-[10px] font-bold uppercase h-5 px-1.5 border-none",
                         item.severity === 'Info' ? 'bg-blue-50 text-blue-700' : 
                         item.severity === 'Warning' ? 'bg-orange-50 text-orange-700' :
                         'bg-red-50 text-red-700'
-                      } text-xs font-medium border-none shadow-none px-2.5 py-0.5`}>
+                      )}>
                         {item.severity}
                       </Badge>
                     </TableCell>

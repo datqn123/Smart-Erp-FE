@@ -34,7 +34,7 @@ export function LedgerPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 bg-transparent rounded-lg">
+      <div className="flex-1 flex flex-col min-h-0 gap-4 md:gap-5">
         {/* Toolbar */}
         <LedgerToolbar 
           searchStr={search}
@@ -43,7 +43,11 @@ export function LedgerPage() {
         />
         
         {/* Data Table */}
-        <LedgerTable data={filtered} />
+        <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+          <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
+            <LedgerTable data={filtered} />
+          </div>
+        </div>
       </div>
     </div>
   )

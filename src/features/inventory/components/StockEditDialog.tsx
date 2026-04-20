@@ -12,6 +12,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useState, useEffect } from "react"
 import type { InventoryItem } from "../types"
 import { Edit3 } from "lucide-react"
+import { cn } from "@/lib/utils"
+import {
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  FORM_INPUT_CLASS,
+  FORM_LABEL_CLASS,
+} from "@/lib/data-table-layout"
 
 interface StockEditDialogProps {
   isOpen: boolean
@@ -39,12 +48,12 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[95vw] max-w-[95vw] sm:max-w-[1700px] h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-none shadow-2xl">
+      <DialogContent className="w-[95vw] max-w-[95vw] sm:max-w-[1700px] h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-none shadow-2xl rounded-3xl">
         <DialogHeader className="p-8 border-b bg-white sticky top-0 z-20 shrink-0">
           <div className="flex justify-between items-start w-full">
             <div>
-              <DialogTitle className="text-2xl flex items-center gap-3 font-black text-slate-900 uppercase tracking-tight">
-                <Edit3 className="h-6 w-6 text-blue-600" /> Sửa thông tin tồn kho hàng loạt
+              <DialogTitle className="text-2xl flex items-center gap-3 font-black text-slate-900 tracking-tight">
+                <Edit3 className="h-6 w-6 text-slate-900" /> Sửa thông tin tồn kho
               </DialogTitle>
               <DialogDescription className="text-base text-slate-500 font-medium mt-2">
                 Cập nhật vị trí, định mức và giá vốn cho {items.length} mặt hàng đã chọn
@@ -57,14 +66,14 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
           <Table className="w-full table-fixed border-collapse">
             <TableHeader className="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
               <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[8%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px]">Mã SP</TableHead>
-                <TableHead className="w-[18%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px]">Tên sản phẩm</TableHead>
-                <TableHead className="w-[12%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px] text-center">Vị trí (Kho - Kệ)</TableHead>
-                <TableHead className="w-[10%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px] text-center">Định mức</TableHead>
-                <TableHead className="w-[8%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px] text-center">Đơn vị</TableHead>
-                <TableHead className="w-[12%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px] text-center">Giá vốn (VNĐ)</TableHead>
-                <TableHead className="w-[12%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px] text-center">Số lô</TableHead>
-                <TableHead className="w-[10%] py-4 px-4 font-black text-slate-900 uppercase tracking-wider text-[10px] text-center">Hạn SD</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[8%] px-4")}>Mã SP</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[18%] px-4")}>Tên sản phẩm</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[12%] px-4 text-center")}>Vị trí (Kho - Kệ)</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[10%] px-4 text-center")}>Định mức</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[8%] px-4 text-center")}>Đơn vị</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[12%] px-4 text-center")}>Giá vốn (VNĐ)</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[12%] px-4 text-center")}>Số lô</TableHead>
+                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[10%] px-4 text-center")}>Hạn SD</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -72,12 +81,12 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                 <TableRow key={item.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0">
                   {/* Mã SP */}
                   <TableCell className="px-4 py-3">
-                    <div className="text-[11px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 tracking-wide w-fit">{item.skuCode}</div>
+                    <div className={cn(TABLE_CELL_MONO_CLASS, "bg-slate-50 px-2 py-0.5 rounded border border-slate-100 w-fit")}>{item.skuCode}</div>
                   </TableCell>
                   
                   {/* Tên sản phẩm */}
                   <TableCell className="px-4 py-3">
-                    <div className="font-bold text-slate-900 text-sm truncate" title={item.productName}>{item.productName}</div>
+                    <div className={cn(TABLE_CELL_PRIMARY_CLASS, "truncate")} title={item.productName}>{item.productName}</div>
                   </TableCell>
 
                   {/* Vị trí */}
@@ -87,14 +96,14 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                         value={item.warehouseCode} 
                         onChange={(e) => handleChange(item.id, 'warehouseCode', e.target.value)}
                         placeholder="Kho"
-                        className="h-8 w-14 rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-bold text-center text-xs px-1"
+                        className={cn(FORM_INPUT_CLASS, "h-8 w-14 font-bold text-center text-xs")}
                       />
                       <span className="text-slate-300 font-bold">-</span>
                       <Input 
                         value={item.shelfCode} 
                         onChange={(e) => handleChange(item.id, 'shelfCode', e.target.value)}
                         placeholder="Kệ"
-                        className="h-8 w-14 rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-bold text-center text-xs px-1"
+                        className={cn(FORM_INPUT_CLASS, "h-8 w-14 font-bold text-center text-xs")}
                       />
                     </div>
                   </TableCell>
@@ -106,7 +115,7 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                       min="0"
                       value={item.minQuantity} 
                       onChange={(e) => handleChange(item.id, 'minQuantity', parseInt(e.target.value) || 0)}
-                      className="h-8 w-20 mx-auto rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-black text-center text-xs"
+                      className={cn(FORM_INPUT_CLASS, "h-8 w-20 mx-auto font-bold text-center text-xs")}
                     />
                   </TableCell>
 
@@ -115,7 +124,7 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                     <Input 
                       value={item.unitName} 
                       onChange={(e) => handleChange(item.id, 'unitName', e.target.value)}
-                      className="h-8 w-16 mx-auto rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-bold text-center text-xs px-1"
+                      className={cn(FORM_INPUT_CLASS, "h-8 w-16 mx-auto font-bold text-center text-xs")}
                     />
                   </TableCell>
 
@@ -126,7 +135,7 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                       min="0"
                       value={item.costPrice} 
                       onChange={(e) => handleChange(item.id, 'costPrice', parseInt(e.target.value) || 0)}
-                      className="h-8 w-full max-w-[120px] mx-auto rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-black text-center text-xs"
+                      className={cn(FORM_INPUT_CLASS, "h-8 w-full max-w-[120px] mx-auto font-bold text-center text-xs")}
                     />
                   </TableCell>
 
@@ -136,7 +145,7 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                       value={item.batchNumber || ""} 
                       onChange={(e) => handleChange(item.id, 'batchNumber', e.target.value)}
                       placeholder="Số lô"
-                      className="h-8 w-full max-w-[100px] mx-auto rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-bold text-xs text-center px-1"
+                      className={cn(FORM_INPUT_CLASS, "h-8 w-full max-w-[100px] mx-auto font-bold text-xs text-center")}
                     />
                   </TableCell>
 
@@ -146,7 +155,7 @@ export function StockEditDialog({ isOpen, onClose, onConfirm, items }: StockEdit
                       type="date"
                       value={item.expiryDate ? item.expiryDate.split('T')[0] : ""} 
                       onChange={(e) => handleChange(item.id, 'expiryDate', e.target.value)}
-                      className="h-8 w-full max-w-[130px] mx-auto rounded border-slate-200 focus-visible:ring-0 focus-visible:border-black transition-all font-bold px-1 text-[10px] text-center"
+                      className={cn(FORM_INPUT_CLASS, "h-8 w-full max-w-[130px] mx-auto font-bold text-[10px] text-center")}
                     />
                   </TableCell>
                 </TableRow>

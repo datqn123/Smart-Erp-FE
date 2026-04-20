@@ -214,7 +214,7 @@ export function StockPage() {
       </div>
       
       {/* Một bảng thead+tbody trong cùng vùng cuộn — chuẩn data-table-layout */}
-      <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+      <div className="flex-1 min-h-0 bg-white border border-slate-200/60 rounded-xl shadow-md overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
           <StockTable
             data={filteredItems}

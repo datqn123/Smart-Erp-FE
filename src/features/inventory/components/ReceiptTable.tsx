@@ -17,6 +17,11 @@ import {
   DATA_TABLE_ACTION_HEAD_CLASS,
   DATA_TABLE_ACTION_CELL_CLASS,
   RECEIPT_TABLE_COL,
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  TABLE_CELL_NUMBER_CLASS,
 } from "@/lib/data-table-layout"
 
 interface ReceiptTableProps {
@@ -32,17 +37,17 @@ interface ReceiptTableProps {
 export function ReceiptTable({ receipts, onAction, onEdit, onDelete }: ReceiptTableProps) {
   return (
     <Table data-testid="receipt-table" className={DATA_TABLE_ROOT_CLASS}>
-      <TableHeader className="sticky top-0 z-20 bg-slate-50 shadow-sm border-b">
+      <TableHeader className="sticky top-0 z-20 shadow-sm border-b">
         <TableRow className="hover:bg-transparent border-b border-slate-200">
-          <TableHead className={cn(RECEIPT_TABLE_COL.receiptCode, "bg-slate-50")}>Mã phiếu</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.supplierName, "bg-slate-50")}>Nhà cung cấp</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.receiptDate, "bg-slate-50")}>Ngày nhập</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.staffName, "bg-slate-50")}>Người tạo</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.invoiceNumber, "bg-slate-50")}>Số HĐ</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.lineCount, "text-center bg-slate-50")}>Dòng SP</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.totalAmount, "text-right bg-slate-50")}>Tổng tiền</TableHead>
-          <TableHead className={cn(RECEIPT_TABLE_COL.status, "text-center bg-slate-50")}>Trạng thái</TableHead>
-          <TableHead className={DATA_TABLE_ACTION_HEAD_CLASS}>Thao tác</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.receiptCode, TABLE_HEAD_CLASS)}>Mã phiếu</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.supplierName, TABLE_HEAD_CLASS)}>Nhà cung cấp</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.receiptDate, TABLE_HEAD_CLASS)}>Ngày nhập</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.staffName, TABLE_HEAD_CLASS)}>Người tạo</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.invoiceNumber, TABLE_HEAD_CLASS)}>Số HĐ</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.lineCount, "text-center", TABLE_HEAD_CLASS)}>Dòng SP</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.totalAmount, "text-right", TABLE_HEAD_CLASS)}>Tổng tiền</TableHead>
+          <TableHead className={cn(RECEIPT_TABLE_COL.status, "text-center", TABLE_HEAD_CLASS)}>Trạng thái</TableHead>
+          <TableHead className={cn(DATA_TABLE_ACTION_HEAD_CLASS, TABLE_HEAD_CLASS)}>Thao tác</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -53,25 +58,25 @@ export function ReceiptTable({ receipts, onAction, onEdit, onDelete }: ReceiptTa
             onClick={() => onAction(receipt)}
           >
             <TableCell
-              className={cn(RECEIPT_TABLE_COL.receiptCode, "font-mono text-xs font-semibold text-slate-900")}
+              className={cn(RECEIPT_TABLE_COL.receiptCode, TABLE_CELL_MONO_CLASS)}
             >
               {receipt.receiptCode}
             </TableCell>
-            <TableCell className={cn(RECEIPT_TABLE_COL.supplierName, "text-sm text-slate-700 truncate")}>
+            <TableCell className={cn(RECEIPT_TABLE_COL.supplierName, TABLE_CELL_PRIMARY_CLASS, "truncate")}>
               {receipt.supplierName}
             </TableCell>
-            <TableCell className={cn(RECEIPT_TABLE_COL.receiptDate, "text-sm text-slate-600")}>
+            <TableCell className={cn(RECEIPT_TABLE_COL.receiptDate, TABLE_CELL_SECONDARY_CLASS)}>
               {formatDate(receipt.receiptDate)}
             </TableCell>
-            <TableCell className={cn(RECEIPT_TABLE_COL.staffName, "text-sm text-slate-600")}>
+            <TableCell className={cn(RECEIPT_TABLE_COL.staffName, TABLE_CELL_SECONDARY_CLASS)}>
               <div className="flex items-center gap-2 min-w-0">
-                <div className="h-6 w-6 shrink-0 rounded-full bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-600 border border-indigo-100 uppercase">
+                <div className="h-6 w-6 shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600 border border-slate-200 uppercase">
                   {receipt.staffName.split(" ").map((n) => n[0]).join("")}
                 </div>
                 <span className="truncate">{receipt.staffName}</span>
               </div>
             </TableCell>
-            <TableCell className={cn(RECEIPT_TABLE_COL.invoiceNumber, "text-sm text-slate-500 italic")}>
+            <TableCell className={cn(RECEIPT_TABLE_COL.invoiceNumber, TABLE_CELL_SECONDARY_CLASS, "italic text-xs")}>
               {receipt.invoiceNumber || "—"}
             </TableCell>
             <TableCell className={cn(RECEIPT_TABLE_COL.lineCount, "text-center")}>
@@ -80,7 +85,7 @@ export function ReceiptTable({ receipts, onAction, onEdit, onDelete }: ReceiptTa
                 {receipt.details.length}
               </div>
             </TableCell>
-            <TableCell className={cn(RECEIPT_TABLE_COL.totalAmount, "text-right font-semibold text-slate-900")}>
+            <TableCell className={cn(RECEIPT_TABLE_COL.totalAmount, "text-right", TABLE_CELL_NUMBER_CLASS)}>
               {formatCurrency(receipt.totalAmount)}
             </TableCell>
             <TableCell className={cn(RECEIPT_TABLE_COL.status, "text-center")}>

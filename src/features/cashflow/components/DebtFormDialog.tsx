@@ -31,6 +31,10 @@ import {
 import { toast } from "sonner"
 import type { Debt } from "../types"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+} from "@/lib/data-table-layout"
 
 interface DebtFormDialogProps {
   isOpen: boolean;
@@ -116,25 +120,25 @@ export function DebtFormDialog({
           <div className="grid grid-cols-2 gap-x-10 gap-y-7">
             {/* Row 1 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <User size={12} /> Tên đối tác
+              <Label className={FORM_LABEL_CLASS}>
+                <User size={12} className="inline mr-1" /> Tên đối tác
               </Label>
               <Input 
                 {...register('partnerName')}
                 placeholder="Khách hàng hoặc NCC..."
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <ShieldCheck size={12} /> Phân loại
+              <Label className={FORM_LABEL_CLASS}>
+                <ShieldCheck size={12} className="inline mr-1" /> Phân loại
               </Label>
               <Select 
                 defaultValue={watch('partnerType')} 
                 onValueChange={(val) => setValue('partnerType', val as any)}
               >
-                <SelectTrigger className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold">
+                <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}>
                   <SelectValue placeholder="Chọn loại..." />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
@@ -146,59 +150,59 @@ export function DebtFormDialog({
 
             {/* Row 2 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <DollarSign size={12} /> Tổng giá trị nợ (VNĐ)
+              <Label className={FORM_LABEL_CLASS}>
+                <DollarSign size={12} className="inline mr-1" /> Tổng giá trị nợ (VNĐ)
               </Label>
               <Input 
                 type="number"
                 {...register('totalAmount', { valueAsNumber: true })}
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-black text-lg"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-black text-lg")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <PlusCircle size={12} /> Đã thanh toán
+              <Label className={FORM_LABEL_CLASS}>
+                <PlusCircle size={12} className="inline mr-1" /> Đã thanh toán
               </Label>
               <Input 
                 type="number"
                 {...register('paidAmount', { valueAsNumber: true })}
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-black text-lg text-emerald-600"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-black text-lg text-emerald-600")}
               />
             </div>
 
             {/* Row 3 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Calendar size={12} /> Ngày lập phiếu
+              <Label className={FORM_LABEL_CLASS}>
+                <Calendar size={12} className="inline mr-1" /> Ngày lập phiếu
               </Label>
               <Input 
                 type="date"
                 {...register('date')}
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Timer size={12} /> Thời hạn tất toán
+              <Label className={FORM_LABEL_CLASS}>
+                <Timer size={12} className="inline mr-1" /> Thời hạn tất toán
               </Label>
               <Input 
                 type="date"
                 {...register('dueDate')}
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}
               />
             </div>
 
             {/* Row 4: Description */}
             <div className="col-span-2 space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                    <FileText size={12} /> Nội dung ghi chú nợ
+                <Label className={FORM_LABEL_CLASS}>
+                    <FileText size={12} className="inline mr-1" /> Nội dung ghi chú nợ
                 </Label>
                 <Input 
                     {...register('description')}
                     placeholder="VD: Nợ tiền nhập hàng sơn..."
-                    className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-medium"
+                    className={cn(FORM_INPUT_CLASS, "h-14 font-medium")}
                 />
             </div>
           </div>

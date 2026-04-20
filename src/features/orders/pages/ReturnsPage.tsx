@@ -94,27 +94,31 @@ export function ReturnsPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 bg-transparent rounded-lg">
+      <div className="flex-1 min-h-0 bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden flex flex-col">
         {/* Toolbar */}
-        <OrderToolbar 
-          searchStr={search}
-          onSearch={setSearch}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          selectedIds={selectedIds}
-          onAction={handleToolbarAction}
-        />
+        <div className="p-4 border-b border-slate-200 bg-white shrink-0">
+          <OrderToolbar 
+            searchStr={search}
+            onSearch={setSearch}
+            statusFilter={statusFilter}
+            onStatusChange={setStatusFilter}
+            selectedIds={selectedIds}
+            onAction={handleToolbarAction}
+          />
+        </div>
         
         {/* Data Table */}
-        <OrderTable 
-          data={filtered}
-          selectedIds={selectedIds}
-          onSelect={handleSelect}
-          onSelectAll={handleSelectAll}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
+          <OrderTable 
+            data={filtered}
+            selectedIds={selectedIds}
+            onSelect={handleSelect}
+            onSelectAll={handleSelectAll}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </div>
       </div>
 
       <OrderDetailDialog 

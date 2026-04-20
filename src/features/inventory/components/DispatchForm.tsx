@@ -43,6 +43,15 @@ import {
 } from "@/components/ui/table"
 import type { StockDispatch } from "../types"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  TABLE_CELL_NUMBER_CLASS,
+} from "@/lib/data-table-layout"
 
 const dispatchSchema = z.object({
   orderCode: z.string().min(1, "Vui lòng nhập mã đơn đặt hàng"),
@@ -137,7 +146,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                 <span className="text-[10px] font-bold uppercase tracking-widest">Quy trình điều phối</span>
               </div>
               <DialogTitle className="text-2xl font-black text-slate-900 leading-none">
-                {dispatch ? (isEditable ? "Sửa phiếu điều phối" : "Chi tiết điều phối") : "Tạo phiếu điều phối xuất kho"}
+                {dispatch ? (isEditable ? "Sửa phiếu điều phối" : "Chi tiết điều phối") : "Tạo mới phiếu xuất kho"}
               </DialogTitle>
             </div>
             <div className="text-right">
@@ -157,39 +166,39 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="space-y-2">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mã đơn hàng *</label>
+                        <label className={FORM_LABEL_CLASS}>Mã đơn hàng *</label>
                         <Input 
                             placeholder="ORD-..."
                             {...form.register("orderCode")}
                             disabled={!isEditable}
-                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                            className={cn(FORM_INPUT_CLASS, "font-mono")}
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Khách hàng *</label>
+                        <label className={FORM_LABEL_CLASS}>Khách hàng *</label>
                         <Input 
                             placeholder="Tên khách hàng..."
                             {...form.register("customerName")}
                             disabled={!isEditable}
-                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                            className={cn(FORM_INPUT_CLASS, "font-semibold")}
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ngày xuất hàng *</label>
+                        <label className={FORM_LABEL_CLASS}>Ngày xuất hàng *</label>
                         <Input 
                             type="date" 
                             {...form.register("dispatchDate")}
                             disabled={!isEditable}
-                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                            className={FORM_INPUT_CLASS}
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ghi chú</label>
+                        <label className={FORM_LABEL_CLASS}>Ghi chú</label>
                         <Input 
                             placeholder="Nội dung/Yêu cầu..."
                             {...form.register("notes")}
                             disabled={!isEditable}
-                            className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                            className={FORM_INPUT_CLASS}
                         />
                     </div>
                 </div>
@@ -219,14 +228,14 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                     <Table>
                         <TableHeader className="bg-slate-50 h-12">
                             <TableRow className="hover:bg-transparent border-b border-slate-200">
-                                <TableHead className="w-[50px] text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">STT</TableHead>
-                                <TableHead className="min-w-[300px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Sản phẩm xuất</TableHead>
-                                <TableHead className="w-[100px] text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">ĐVT</TableHead>
-                                <TableHead className="w-[120px] text-right font-bold text-slate-500 uppercase text-[10px] tracking-wider">Số lượng</TableHead>
-                                <TableHead className="w-[150px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Kho xuất</TableHead>
-                                <TableHead className="w-[100px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Vị trí (Kệ)</TableHead>
-                                <TableHead className="w-[150px] font-bold text-slate-500 uppercase text-[10px] tracking-wider">Số lô</TableHead>
-                                <TableHead className="w-[60px] text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Xóa</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[50px] text-center")}>STT</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "min-w-[300px]")}>Sản phẩm xuất</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[100px] text-center")}>ĐVT</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[120px] text-right")}>Số lượng</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[150px]")}>Kho xuất</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[100px]")}>Vị trí (Kệ)</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[150px]")}>Số lô</TableHead>
+                                <TableHead className={cn(TABLE_HEAD_CLASS, "w-[60px] text-center")}>Xóa</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -236,25 +245,30 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
 
                                 return (
                                     <TableRow key={field.id} className="hover:bg-slate-50/30 transition-colors group h-14 border-b border-slate-100 last:border-0 text-slate-900">
-                                        <TableCell className="text-center text-xs font-mono text-slate-400">{index + 1}</TableCell>
+                                        <TableCell className={cn("text-center", TABLE_CELL_MONO_CLASS)}>{index + 1}</TableCell>
                                         <TableCell className="px-1">
                                             <Select
                                               value={selectedProductId?.toString() || ""}
                                               onValueChange={(val) => form.setValue(`items.${index}.productId`, parseInt(val))}
                                               disabled={!isEditable}
                                             >
-                                              <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                                              <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-10 group-hover:bg-white focus:bg-white transition-all shadow-none")}>
                                                 <SelectValue placeholder="Chọn sản phẩm xuất..." />
                                               </SelectTrigger>
                                               <SelectContent>
                                                 {mockProducts.map(p => (
-                                                  <SelectItem key={p.id} value={p.id.toString()}>{p.name} ({p.sku})</SelectItem>
+                                                  <SelectItem key={p.id} value={p.id.toString()}>
+                                                    <div className="flex flex-col text-left">
+                                                        <span className={TABLE_CELL_PRIMARY_CLASS}>{p.name}</span>
+                                                        <span className={cn(TABLE_CELL_MONO_CLASS, "text-[10px] text-slate-400")}>SKU: {p.sku}</span>
+                                                    </div>
+                                                  </SelectItem>
                                                 ))}
                                               </SelectContent>
                                             </Select>
                                         </TableCell>
                                         <TableCell className="text-center px-4">
-                                            <span className="text-xs font-medium text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
+                                            <span className={cn(TABLE_CELL_SECONDARY_CLASS, "bg-slate-50 px-2 py-1 rounded")}>
                                               {product?.unit || "—"}
                                             </span>
                                         </TableCell>
@@ -263,7 +277,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                                               type="number"
                                               {...form.register(`items.${index}.dispatchQty`, { valueAsNumber: true })}
                                               disabled={!isEditable}
-                                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900 font-semibold"
+                                              className={cn(FORM_INPUT_CLASS, "h-10 text-right group-hover:bg-white focus:bg-white")}
                                             />
                                         </TableCell>
                                         <TableCell className="px-1">
@@ -272,7 +286,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                                             onValueChange={(val) => form.setValue(`items.${index}.warehouseLocation`, val)}
                                             disabled={!isEditable}
                                           >
-                                            <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                                            <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-10 group-hover:bg-white focus:bg-white transition-all shadow-none")}>
                                               <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -288,7 +302,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                                             onValueChange={(val) => form.setValue(`items.${index}.shelfCode`, val)}
                                             disabled={!isEditable}
                                           >
-                                            <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                                            <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-10 group-hover:bg-white focus:bg-white transition-all shadow-none")}>
                                               <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -303,7 +317,7 @@ export function DispatchForm({ open, onOpenChange, dispatch, onSubmit }: Dispatc
                                               placeholder="BATCH..."
                                               {...form.register(`items.${index}.batchNumber`)}
                                               disabled={!isEditable}
-                                              className="h-10 font-mono text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900"
+                                              className={cn(FORM_INPUT_CLASS, "h-10 font-mono text-xs group-hover:bg-white focus:bg-white")}
                                             />
                                         </TableCell>
                                         <TableCell className="text-center">

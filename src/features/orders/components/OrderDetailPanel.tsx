@@ -5,6 +5,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { User, Package, CreditCard, Clock, FileText } from "lucide-react"
 import { formatCurrency } from "@/features/inventory/utils"
 import type { Order } from "../types"
+import { cn } from "@/lib/utils"
+import {
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  TABLE_CELL_NUMBER_CLASS,
+} from "@/lib/data-table-layout"
 
 interface OrderDetailPanelProps {
   order: Order | null
@@ -26,7 +34,7 @@ export function OrderDetailPanel({ order, isOpen, onClose }: OrderDetailPanelPro
       <SheetContent className="sm:max-w-2xl overflow-y-auto custom-scrollbar px-8 md:px-10">
         <SheetHeader className="space-y-2 pr-10"> {/* pr-10 to avoid close button */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <SheetTitle className="text-2xl font-bold font-mono text-slate-900">{order.orderCode}</SheetTitle>
+            <SheetTitle className="text-2xl font-black text-slate-900 tracking-tight">{order.orderCode}</SheetTitle>
             <div className="flex">
               <Badge className={
                 order.status === 'Completed' || order.status === 'Delivered' 
@@ -75,20 +83,20 @@ export function OrderDetailPanel({ order, isOpen, onClose }: OrderDetailPanelPro
               <Table>
                 <TableHeader className="bg-slate-50">
                   <TableRow>
-                    <TableHead className="text-xs font-bold uppercase py-4 pl-6 text-slate-500">Sản phẩm</TableHead>
-                    <TableHead className="text-right text-xs font-bold uppercase py-4 text-slate-500">Số lượng</TableHead>
-                    <TableHead className="text-right text-xs font-bold uppercase py-4 pr-6 text-slate-500">Thành tiền</TableHead>
+                    <TableHead className={cn(TABLE_HEAD_CLASS, "py-4 pl-6")}>Sản phẩm</TableHead>
+                    <TableHead className={cn(TABLE_HEAD_CLASS, "text-right py-4")}>Số lượng</TableHead>
+                    <TableHead className={cn(TABLE_HEAD_CLASS, "text-right py-4 pr-6")}>Thành tiền</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {mockItems.map((item) => (
                     <TableRow key={item.id} className="hover:bg-slate-50/50">
                       <TableCell className="py-5 pl-6">
-                        <p className="text-base font-bold text-slate-900 leading-tight">{item.name}</p>
-                        <p className="text-xs text-slate-400 font-mono mt-1">{item.sku}</p>
+                        <p className={cn(TABLE_CELL_PRIMARY_CLASS, "text-base")}>{item.name}</p>
+                        <p className={cn(TABLE_CELL_MONO_CLASS, "text-[10px] mt-1 text-slate-400")}>{item.sku}</p>
                       </TableCell>
-                      <TableCell className="text-right text-base font-bold text-slate-700">{item.qty}</TableCell>
-                      <TableCell className="text-right text-base font-black text-slate-900 pr-6">{formatCurrency(item.total)}</TableCell>
+                      <TableCell className={cn(TABLE_CELL_NUMBER_CLASS, "text-right text-base")}>{item.qty}</TableCell>
+                      <TableCell className={cn(TABLE_CELL_NUMBER_CLASS, "text-right text-base pr-6")}>{formatCurrency(item.total)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

@@ -106,40 +106,41 @@ export function ProductsPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 h-full flex flex-col">
+    <div className="p-4 md:p-6 lg:p-8 flex flex-col h-full min-h-0 gap-4 md:gap-5 overflow-hidden">
       {/* Header */}
       <div className="shrink-0">
         <h1 className="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Quản lý sản phẩm</h1>
         <p className="text-sm text-slate-500 mt-1">Quản lý danh sách sản phẩm, SKU, giá cả</p>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 bg-transparent rounded-lg">
-        {/* Toolbar */}
-        <ProductToolbar 
-          searchStr={search}
-          onSearch={setSearch}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          categoryFilter={categoryFilter}
-          onCategoryChange={setCategoryFilter}
-          categories={categories}
-          selectedIds={selectedIds}
-          onAction={handleToolbarAction}
-          fileInputRef={fileInputRef}
-          onFileChange={handleFileChange}
-        />
+      {/* Toolbar */}
+      <ProductToolbar 
+        searchStr={search}
+        onSearch={setSearch}
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+        categoryFilter={categoryFilter}
+        onCategoryChange={setCategoryFilter}
+        categories={categories}
+        selectedIds={selectedIds}
+        onAction={handleToolbarAction}
+        fileInputRef={fileInputRef}
+        onFileChange={handleFileChange}
+      />
         
-        {/* Data Table */}
-        <ProductTable 
-          data={filtered}
-          selectedIds={selectedIds}
-          onSelect={handleSelect}
-          onSelectAll={handleSelectAll}
-          onView={handleView}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+      {/* Data Table */}
+      <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+        <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
+          <ProductTable 
+            data={filtered}
+            selectedIds={selectedIds}
+            onSelect={handleSelect}
+            onSelectAll={handleSelectAll}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </div>
       </div>
 
       {/* Confirm Deletion */}

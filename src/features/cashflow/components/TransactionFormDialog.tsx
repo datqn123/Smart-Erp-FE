@@ -32,6 +32,10 @@ import {
 import { toast } from "sonner"
 import type { Transaction } from "../types"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+} from "@/lib/data-table-layout"
 
 interface TransactionFormDialogProps {
   isOpen: boolean;
@@ -107,14 +111,14 @@ export function TransactionFormDialog({
           <div className="grid grid-cols-2 gap-x-10 gap-y-7">
             {/* Row 1 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Tag size={12} /> Loại giao dịch
+              <Label className={FORM_LABEL_CLASS}>
+                <Tag size={12} className="inline mr-1" /> Loại giao dịch
               </Label>
               <Select 
                 defaultValue={watch('type')} 
                 onValueChange={(val) => setValue('type', val as any)}
               >
-                <SelectTrigger className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold">
+                <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}>
                   <SelectValue placeholder="Chọn loại..." />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
@@ -125,49 +129,49 @@ export function TransactionFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <FileText size={12} /> Nhóm phân loại
+              <Label className={FORM_LABEL_CLASS}>
+                <FileText size={12} className="inline mr-1" /> Nhóm phân loại
               </Label>
               <Input 
                 {...register('category')}
                 placeholder="VD: Bán hàng, Nhập hàng, Lương..."
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}
               />
             </div>
 
             {/* Row 2 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Wallet size={12} /> Số tiền (VNĐ)
+              <Label className={FORM_LABEL_CLASS}>
+                <Wallet size={12} className="inline mr-1" /> Số tiền (VNĐ)
               </Label>
               <Input 
                 type="number"
                 {...register('amount', { valueAsNumber: true })}
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-black text-lg"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-black text-lg")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Calendar size={12} /> Ngày giao dịch
+              <Label className={FORM_LABEL_CLASS}>
+                <Calendar size={12} className="inline mr-1" /> Ngày giao dịch
               </Label>
               <Input 
                 type="date"
                 {...register('date')}
-                className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold"
+                className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}
               />
             </div>
 
             {/* Row 3 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <CreditCard size={12} /> Phương thức
+              <Label className={FORM_LABEL_CLASS}>
+                <CreditCard size={12} className="inline mr-1" /> Phương thức
               </Label>
               <Select 
                  defaultValue={watch('paymentMethod')} 
                  onValueChange={(val) => setValue('paymentMethod', val as any)}
               >
-                <SelectTrigger className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold">
+                <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}>
                   <SelectValue placeholder="Chọn phương thức..." />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
@@ -179,14 +183,14 @@ export function TransactionFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Activity size={12} /> Trạng thái
+              <Label className={FORM_LABEL_CLASS}>
+                <Activity size={12} className="inline mr-1" /> Trạng thái
               </Label>
               <Select 
                  defaultValue={watch('status')} 
                  onValueChange={(val) => setValue('status', val as any)}
               >
-                <SelectTrigger className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-bold">
+                <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-14 font-bold")}>
                   <SelectValue placeholder="Chọn trạng thái..." />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
@@ -199,13 +203,13 @@ export function TransactionFormDialog({
 
             {/* Row 4: Full width description */}
             <div className="col-span-2 space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                    <FileText size={12} /> Nội dung diễn giải
+                <Label className={FORM_LABEL_CLASS}>
+                    <FileText size={12} className="inline mr-1" /> Nội dung diễn giải
                 </Label>
                 <Input 
                     {...register('description')}
                     placeholder="VD: Thu tiền bán hàng cho khách A..."
-                    className="h-14 border-slate-200 focus:ring-slate-100 focus:border-slate-900 rounded-2xl bg-white shadow-sm font-medium"
+                    className={cn(FORM_INPUT_CLASS, "h-14 font-medium")}
                 />
             </div>
           </div>

@@ -11,6 +11,11 @@ import {
   DATA_TABLE_ACTION_CELL_CLASS,
   DATA_TABLE_ACTION_HEAD_CLASS,
   DATA_TABLE_ROOT_CLASS,
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  TABLE_CELL_NUMBER_CLASS,
 } from "@/lib/data-table-layout"
 
 interface CategoryRowProps {
@@ -63,14 +68,14 @@ function CategoryRow({
             ) : (
               <span className="w-6 shrink-0" />
             )}
-            <span className="text-sm font-mono text-slate-600">{category.categoryCode}</span>
+            <span className={TABLE_CELL_MONO_CLASS}>{category.categoryCode}</span>
           </div>
         </TableCell>
-        <TableCell className="text-sm font-bold text-slate-900 px-4 truncate">{category.name}</TableCell>
-        <TableCell className="text-sm text-slate-600 px-4 text-center tabular-nums">{category.productCount ?? 0}</TableCell>
-        <TableCell className="text-sm text-slate-500 px-4 max-w-[200px] truncate">{category.description || '-'}</TableCell>
+        <TableCell className={cn(TABLE_CELL_PRIMARY_CLASS, "px-4 truncate")}>{category.name}</TableCell>
+        <TableCell className={cn(TABLE_CELL_NUMBER_CLASS, "px-4 text-center")}>{category.productCount ?? 0}</TableCell>
+        <TableCell className={cn(TABLE_CELL_SECONDARY_CLASS, "px-4 max-w-[200px] truncate")}>{category.description || '-'}</TableCell>
         <TableCell className="px-4">
-          <Badge className={`${category.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'} text-[10px] font-bold uppercase border-none`}>
+          <Badge className={`${category.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'} text-xs font-normal border-none`}>
             {category.status === 'Active' ? 'Hoạt động' : 'Ngưng'}
           </Badge>
         </TableCell>
@@ -147,54 +152,47 @@ export function CategoryTable({
   const someSelected = selectedIds.length > 0 && selectedIds.length < flatData.length;
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
-      {/* Scrollable Container (One Scroll Area) */}
-      <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
-        
-        {/* Table View */}
-        <Table className={DATA_TABLE_ROOT_CLASS}>
-          <TableHeader className="sticky top-0 z-30 bg-slate-50 border-b">
-            <TableRow className="hover:bg-transparent">
-              <TableHead className={`${CATEGORY_TABLE_COL.select} px-4 text-center`}>
-                <Checkbox 
-                  checked={allSelected ? true : someSelected ? "indeterminate" : false} 
-                  onCheckedChange={(checked) => onSelectAll(checked as boolean)}
-                  className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
-                />
-              </TableHead>
-              <TableHead className={`${CATEGORY_TABLE_COL.categoryCode} text-sm font-semibold text-slate-900 px-4`}>Mã phân loại</TableHead>
-              <TableHead className={`${CATEGORY_TABLE_COL.categoryName} text-sm font-semibold text-slate-900 px-4`}>Tên danh mục</TableHead>
-              <TableHead className={`${CATEGORY_TABLE_COL.productCount} text-sm font-semibold text-slate-900 px-4 text-center`}>SL SP</TableHead>
-              <TableHead className={`${CATEGORY_TABLE_COL.description} text-sm font-semibold text-slate-900 px-4`}>Mô tả</TableHead>
-              <TableHead className={`${CATEGORY_TABLE_COL.status} text-sm font-semibold text-slate-900 px-4`}>Trạng thái</TableHead>
-              <TableHead className={DATA_TABLE_ACTION_HEAD_CLASS}>Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="divide-y divide-slate-100">
-            {data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-slate-500 text-sm">
-                  Không tìm thấy danh mục nào.
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.map((item) => (
-                <CategoryRow 
-                  key={item.id} 
-                  category={item} 
-                  level={0} 
-                  selectedIds={selectedIds} 
-                  onSelect={onSelect} 
-                  onView={onView} 
-                  onEdit={onEdit} 
-                  onDelete={onDelete}
-                  onAddSub={onAddSub}
-                />
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    <Table className={DATA_TABLE_ROOT_CLASS}>
+      <TableHeader className="sticky top-0 z-30 bg-slate-50 shadow-sm border-b">
+        <TableRow className="hover:bg-transparent border-slate-200 border-b">
+          <TableHead className={cn(CATEGORY_TABLE_COL.select, "px-4 text-center", TABLE_HEAD_CLASS)}>
+            <Checkbox 
+              checked={allSelected ? true : someSelected ? "indeterminate" : false} 
+              onCheckedChange={(checked) => onSelectAll(checked as boolean)}
+              className="border-slate-300 data-[state=checked]:bg-white data-[state=checked]:text-blue-600 data-[state=checked]:border-blue-600"
+            />
+          </TableHead>
+          <TableHead className={cn(CATEGORY_TABLE_COL.categoryCode, TABLE_HEAD_CLASS, "px-4")}>Mã phân loại</TableHead>
+          <TableHead className={cn(CATEGORY_TABLE_COL.categoryName, TABLE_HEAD_CLASS, "px-4")}>Tên danh mục</TableHead>
+          <TableHead className={cn(CATEGORY_TABLE_COL.productCount, TABLE_HEAD_CLASS, "px-4 text-center")}>SL SP</TableHead>
+          <TableHead className={cn(CATEGORY_TABLE_COL.description, TABLE_HEAD_CLASS, "px-4")}>Mô tả</TableHead>
+          <TableHead className={cn(CATEGORY_TABLE_COL.status, TABLE_HEAD_CLASS, "px-4")}>Trạng thái</TableHead>
+          <TableHead className={cn(DATA_TABLE_ACTION_HEAD_CLASS, TABLE_HEAD_CLASS)}>Thao tác</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody className="divide-y divide-slate-100">
+        {data.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={7} className="h-24 text-center text-slate-500 text-sm">
+              Không tìm thấy danh mục nào.
+            </TableCell>
+          </TableRow>
+        ) : (
+          data.map((item) => (
+            <CategoryRow 
+              key={item.id} 
+              category={item} 
+              level={0} 
+              selectedIds={selectedIds} 
+              onSelect={onSelect} 
+              onView={onView} 
+              onEdit={onEdit} 
+              onDelete={onDelete}
+              onAddSub={onAddSub}
+            />
+          ))
+        )}
+      </TableBody>
+    </Table>
   )
 }

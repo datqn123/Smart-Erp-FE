@@ -37,6 +37,10 @@ import {
 } from "lucide-react"
 import type { Order } from "../types"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+} from "@/lib/data-table-layout"
 
 interface OrderFormDialogProps {
   order: Order | null
@@ -113,39 +117,39 @@ export function OrderFormDialog({ order, isOpen, onClose, onSave }: OrderFormDia
                 
                 {/* Row 1: Mã đơn & Khách hàng */}
                 <div className="grid grid-cols-2 gap-x-10 gap-y-7">
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <Hash size={12} /> Mã đơn hàng *
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <Hash size={12} className="inline mr-1" /> Mã đơn hàng *
                         </Label>
                         <Input 
                             {...form.register("orderCode")}
                             disabled={isEdit}
                             placeholder="Nhập mã đơn (Ví dụ: ORD-001)"
-                            className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold"
+                            className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}
                         />
                     </div>
 
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <User size={12} /> Khách hàng đại lý *
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <User size={12} className="inline mr-1" /> Khách hàng đại lý *
                         </Label>
                         <Input 
                             {...form.register("customerName")}
                             placeholder="Tên công ty / Khách hàng"
-                            className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold"
+                            className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}
                         />
                     </div>
 
                     {/* Row 2: Trạng thái & Thanh toán */}
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <Activity size={12} /> Trạng thái thực hiện
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <Activity size={12} className="inline mr-1" /> Trạng thái thực hiện
                         </Label>
                         <Select 
                             value={form.watch("status")}
                             onValueChange={(val) => form.setValue("status", val as any)}
                         >
-                            <SelectTrigger className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold">
+                            <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl border-slate-100 shadow-xl">
@@ -165,15 +169,15 @@ export function OrderFormDialog({ order, isOpen, onClose, onSave }: OrderFormDia
                         </Select>
                     </div>
 
-                    <div className="space-y-2.5">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <CreditCard size={12} /> Tình trạng thanh toán
+                    <div className="space-y-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <CreditCard size={12} className="inline mr-1" /> Tình trạng thanh toán
                         </Label>
                         <Select 
                             value={form.watch("paymentStatus")}
                             onValueChange={(val) => form.setValue("paymentStatus", val as any)}
                         >
-                            <SelectTrigger className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold">
+                            <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="rounded-xl border-slate-100 shadow-xl">
@@ -185,13 +189,13 @@ export function OrderFormDialog({ order, isOpen, onClose, onSave }: OrderFormDia
                     </div>
 
                     {/* Row 3: Địa chỉ & ... (Simulated symmetry) */}
-                    <div className="space-y-2.5 col-span-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 whitespace-nowrap px-1">
-                            <MapPin size={12} /> Địa chỉ nhận hàng
+                    <div className="space-y-2 col-span-2">
+                        <Label className={FORM_LABEL_CLASS}>
+                            <MapPin size={12} className="inline mr-1" /> Địa chỉ nhận hàng
                         </Label>
                         <Input 
                             placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành"
-                            className="h-12 border-slate-200 focus:ring-0 focus:border-slate-900 rounded-xl bg-slate-50/30 text-sm font-bold"
+                            className={cn(FORM_INPUT_CLASS, "h-12 font-bold")}
                         />
                     </div>
                 </div>

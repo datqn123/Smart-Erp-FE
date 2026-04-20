@@ -154,8 +154,9 @@ export default function PendingApprovalsPage() {
         </Button>
       </div>
 
-      {/* Table Container - Removed nested scroll to prevent overlapping */}
-      <div className="flex-1 flex flex-col min-h-0 bg-transparent rounded-2xl">
+      {/* Table Container */}
+      <div className="flex-1 flex flex-col min-h-0 bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-md">
+        <div className="flex-1 overflow-y-auto relative scroll-smooth [scrollbar-gutter:stable] min-h-0">
           <OrderTable 
             data={displayData}
             selectedIds={[]}
@@ -189,6 +190,7 @@ export default function PendingApprovalsPage() {
               </div>
             )}
           />
+        </div>
       </div>
 
       {/* Reject Reason Dialog - Refactored for symmetry */}

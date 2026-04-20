@@ -12,6 +12,9 @@ import type { Transaction } from "../types"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+} from "@/lib/data-table-layout"
 
 interface TransactionDetailDialogProps {
   transaction: Transaction | null
@@ -66,8 +69,8 @@ export function TransactionDetailDialog({ transaction, isOpen, onClose }: Transa
           <div className="grid grid-cols-2 gap-x-10 gap-y-7">
             {/* Row 1 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Tag size={12} /> Dòng tiền
+              <Label className={FORM_LABEL_CLASS}>
+                <Tag size={12} className="inline mr-1" /> Dòng tiền
               </Label>
               <div className="h-14 bg-white border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
                 {transaction.category}
@@ -75,8 +78,8 @@ export function TransactionDetailDialog({ transaction, isOpen, onClose }: Transa
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Calendar size={12} /> Ngày thực hiện
+              <Label className={FORM_LABEL_CLASS}>
+                <Calendar size={12} className="inline mr-1" /> Ngày thực hiện
               </Label>
               <div className="h-14 bg-white border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
                 {formatDate(transaction.date)}
@@ -85,8 +88,8 @@ export function TransactionDetailDialog({ transaction, isOpen, onClose }: Transa
 
             {/* Row 2 */}
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <CreditCard size={12} /> Hình thức thanh toán
+              <Label className={FORM_LABEL_CLASS}>
+                <CreditCard size={12} className="inline mr-1" /> Hình thức thanh toán
               </Label>
               <div className="h-14 bg-white border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
                 {transaction.paymentMethod === 'Cash' ? 'Tiền mặt' : 
@@ -95,8 +98,8 @@ export function TransactionDetailDialog({ transaction, isOpen, onClose }: Transa
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                <Activity size={12} /> Tình trạng phiếu
+              <Label className={FORM_LABEL_CLASS}>
+                <Activity size={12} className="inline mr-1" /> Tình trạng phiếu
               </Label>
               <div className="h-14 bg-white border border-slate-100 rounded-2xl flex items-center px-5 font-bold text-slate-900 shadow-sm">
                 {transaction.status === 'Completed' ? 'Đã hoàn thành' : 
@@ -106,8 +109,8 @@ export function TransactionDetailDialog({ transaction, isOpen, onClose }: Transa
 
             {/* Row 3 - Full Description */}
             <div className="col-span-2 space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">
-                    <FileText size={12} /> Nội dung diễn giải
+                <Label className={FORM_LABEL_CLASS}>
+                    <FileText size={12} className="inline mr-1" /> Nội dung diễn giải
                 </Label>
                 <div className="p-5 bg-slate-50/50 border border-slate-100 rounded-2xl font-medium text-slate-700 shadow-sm min-h-[100px] leading-relaxed italic">
                     {transaction.description || "Không có diễn giải chi tiết cho giao dịch này."}

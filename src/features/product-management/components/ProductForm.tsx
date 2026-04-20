@@ -22,6 +22,8 @@ import {
   SelectValue 
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import { FORM_LABEL_CLASS, FORM_INPUT_CLASS, FORM_HELPER_CLASS } from "@/lib/data-table-layout"
 import type { Product } from "../types"
 
 const productSchema = z.object({
@@ -101,31 +103,31 @@ export function ProductForm({ open, onOpenChange, product, categories = [], onSu
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             {/* Left: Image mock upload */}
             <div className="md:col-span-4 space-y-4">
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Hình ảnh sản phẩm</Label>
+                <Label className={FORM_LABEL_CLASS}>Hình ảnh sản phẩm</Label>
                 <div className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center text-slate-400 gap-2 cursor-pointer hover:bg-slate-100 transition-colors">
                     <ImageIcon size={32} />
                     <span className="text-xs font-medium">Tải ảnh lên</span>
                 </div>
-                <p className="text-[10px] text-center text-slate-400">Định dạng JPG, PNG. Tối đa 2MB.</p>
+                <p className={FORM_HELPER_CLASS}>Định dạng JPG, PNG. Tối đa 2MB.</p>
             </div>
 
             {/* Right: Info */}
             <div className="md:col-span-8 grid grid-cols-2 gap-x-6 gap-y-5">
-                <div className="space-y-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã SKU *</Label>
+                <div className="space-y-1">
+                    <Label className={FORM_LABEL_CLASS}>Mã SKU *</Label>
                     <Input 
                       {...form.register("skuCode")} 
-                      className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-mono"
+                      className={cn(FORM_INPUT_CLASS, "font-mono")}
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái</Label>
+                <div className="space-y-1">
+                    <Label className={FORM_LABEL_CLASS}>Trạng thái</Label>
                     <Select 
                       defaultValue={form.getValues("status")}
                       onValueChange={(val) => form.setValue("status", val as any)}
                     >
-                      <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900">
+                      <SelectTrigger className={FORM_INPUT_CLASS}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -136,20 +138,20 @@ export function ProductForm({ open, onOpenChange, product, categories = [], onSu
                 </div>
 
                 <div className="space-y-2 col-span-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tên sản phẩm *</Label>
+                    <Label className={FORM_LABEL_CLASS}>Tên sản phẩm *</Label>
                     <Input 
                         {...form.register("name")} 
-                        className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-semibold" 
+                        className={FORM_INPUT_CLASS} 
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Danh mục</Label>
+                <div className="space-y-1">
+                    <Label className={FORM_LABEL_CLASS}>Danh mục</Label>
                     <Select 
                       value={form.watch("categoryId")?.toString()}
                       onValueChange={(val) => form.setValue("categoryId", parseInt(val))}
                     >
-                      <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900">
+                      <SelectTrigger className={FORM_INPUT_CLASS}>
                         <SelectValue placeholder="Chọn danh mục..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -161,39 +163,37 @@ export function ProductForm({ open, onOpenChange, product, categories = [], onSu
                 </div>
 
                 <div className="space-y-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã vạch (Barcode)</Label>
+                    <Label className={FORM_LABEL_CLASS}>Mã vạch (Barcode)</Label>
                     <Input 
                         {...form.register("barcode")} 
-                        className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-mono"
+                        className={cn(FORM_INPUT_CLASS, "font-mono")}
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Giá bán lẻ (VNĐ) *</Label>
+                    <Label className={FORM_LABEL_CLASS}>Giá bán lẻ (VNĐ) *</Label>
                     <div className="relative">
                         <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         <Input 
                             type="number"
                             {...form.register("currentPrice", { valueAsNumber: true })} 
-                            className="h-11 pl-10 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-black"
+                            className={cn(FORM_INPUT_CLASS, "pl-10 font-semibold")}
                         />
                     </div>
-                </div>
 
-                <div className="space-y-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Khối lượng (Unit)</Label>
+                <div className="space-y-1">
+                    <Label className={FORM_LABEL_CLASS}>Khối lượng (Unit)</Label>
                     <Input 
                         type="number"
                         {...form.register("weight", { valueAsNumber: true })} 
-                        className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                        className={FORM_INPUT_CLASS}
                     />
                 </div>
 
                 <div className="space-y-2 col-span-2">
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mô tả sản phẩm</Label>
+                    <Label className={FORM_LABEL_CLASS}>Mô tả sản phẩm</Label>
                     <Textarea 
                       {...form.register("description")} 
-                      className="h-28 border-slate-200 focus:ring-slate-100 focus:border-slate-900"
+                      className={cn(FORM_INPUT_CLASS, "h-28 py-3")}
                     />
                 </div>
             </div>

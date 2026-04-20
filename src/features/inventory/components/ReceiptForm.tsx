@@ -13,6 +13,16 @@ import { Separator } from "@/components/ui/separator"
 import { formatCurrency } from "../utils"
 import type { StockReceipt } from "../types"
 import { calculateReceiptTotal, isExpiryValid } from "../inboundLogic"
+import { cn } from "@/lib/utils"
+import {
+  FORM_LABEL_CLASS,
+  FORM_INPUT_CLASS,
+  TABLE_HEAD_CLASS,
+  TABLE_CELL_PRIMARY_CLASS,
+  TABLE_CELL_SECONDARY_CLASS,
+  TABLE_CELL_MONO_CLASS,
+  TABLE_CELL_NUMBER_CLASS,
+} from "@/lib/data-table-layout"
 
 const receiptSchema = z.object({
   supplierId: z.number().min(1, "Vui lòng chọn nhà cung cấp"),
@@ -134,13 +144,13 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase px-1">Nhà cung cấp *</label>
+                    <label className={FORM_LABEL_CLASS}>Nhà cung cấp *</label>
                     <Select 
                         value={form.watch("supplierId")?.toString() || ""} 
                         onValueChange={(val) => form.setValue("supplierId", parseInt(val))}
                         disabled={!isEditable}
                     >
-                        <SelectTrigger className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium">
+                        <SelectTrigger className={FORM_INPUT_CLASS}>
                         <SelectValue placeholder="Chọn đối tác..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -155,12 +165,12 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                     </div>
 
                     <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase px-1">Ngày nhập thực tế *</label>
+                    <label className={FORM_LABEL_CLASS}>Ngày nhập thực tế *</label>
                     <Input 
                         type="date" 
                         {...form.register("receiptDate")}
                         disabled={!isEditable}
-                        className="h-11 border-slate-200 focus:ring-slate-100 focus:border-slate-900 font-medium"
+                        className={FORM_INPUT_CLASS}
                     />
                     {form.formState.errors.receiptDate && (
                         <p className="text-[10px] text-red-500 font-bold px-1">{form.formState.errors.receiptDate.message}</p>
@@ -168,22 +178,22 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                     </div>
 
                     <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase px-1">Số hóa đơn / Chứng từ</label>
+                    <label className={FORM_LABEL_CLASS}>Số hóa đơn / Chứng từ</label>
                     <Input 
                         placeholder="VD: INV-001..." 
                         {...form.register("invoiceNumber")}
                         disabled={!isEditable}
-                        className="h-11 border-slate-200 font-mono text-sm"
+                        className={cn(FORM_INPUT_CLASS, "font-mono")}
                     />
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase px-1">Ghi chú phiếu</label>
+                        <label className={FORM_LABEL_CLASS}>Ghi chú phiếu</label>
                         <Input 
                             placeholder="Mô tả ngắn..." 
                             {...form.register("notes")}
                             disabled={!isEditable}
-                            className="h-11 border-slate-200"
+                            className={FORM_INPUT_CLASS}
                         />
                     </div>
                 </div>
@@ -213,14 +223,14 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                 <Table className="border-collapse">
                   <TableHeader className="bg-slate-50/50">
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="w-[50px] text-center text-xs font-bold uppercase text-slate-400">#</TableHead>
-                      <TableHead className="min-w-[280px] text-xs font-bold uppercase text-slate-500">Sản phẩm *</TableHead>
-                      <TableHead className="w-[100px] text-xs font-bold uppercase text-slate-500 text-center">ĐVT</TableHead>
-                      <TableHead className="w-[120px] text-xs font-bold uppercase text-slate-500 text-right">Số lượng *</TableHead>
-                      <TableHead className="w-[150px] text-xs font-bold uppercase text-slate-500 text-right">Đơn giá *</TableHead>
-                      <TableHead className="w-[150px] text-xs font-bold uppercase text-slate-500">Số lô</TableHead>
-                      <TableHead className="w-[160px] text-xs font-bold uppercase text-slate-500">Hạn sử dụng</TableHead>
-                      <TableHead className="w-[150px] text-xs font-bold uppercase text-slate-500 text-right">Thành tiền</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[50px] text-center")}>#</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "min-w-[280px]")}>Sản phẩm *</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[100px] text-center")}>ĐVT</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[120px] text-right")}>Số lượng *</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[150px] text-right")}>Đơn giá *</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[150px]")}>Số lô</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[160px]")}>Hạn sử dụng</TableHead>
+                      <TableHead className={cn(TABLE_HEAD_CLASS, "w-[150px] text-right")}>Thành tiền</TableHead>
                       {isEditable && <TableHead className="w-[60px]"></TableHead>}
                     </TableRow>
                   </TableHeader>
@@ -232,7 +242,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
 
                       return (
                         <TableRow key={field.id} className="hover:bg-slate-50/30 transition-colors group h-14">
-                          <TableCell className="text-center text-slate-300 font-mono text-[10px]">
+                          <TableCell className={cn("text-center", TABLE_CELL_MONO_CLASS)}>
                             {index + 1}
                           </TableCell>
                           <TableCell className="px-2 py-1.5 focus-within:z-10">
@@ -241,15 +251,15 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               onValueChange={(val) => form.setValue(`details.${index}.productId`, parseInt(val))}
                               disabled={!isEditable}
                             >
-                              <SelectTrigger className="h-10 border-transparent bg-transparent group-hover:bg-white group-hover:border-slate-200 focus:bg-white focus:border-slate-900 transition-all shadow-none">
+                              <SelectTrigger className={cn(FORM_INPUT_CLASS, "h-10 group-hover:bg-white focus:bg-white transition-all shadow-none")}>
                                 <SelectValue placeholder="Chọn sản phẩm..." />
                               </SelectTrigger>
                               <SelectContent>
                                 {mockProducts.map(p => (
                                   <SelectItem key={p.id} value={p.id.toString()}>
                                     <div className="flex flex-col text-left">
-                                        <span className="font-bold">{p.name}</span>
-                                        <span className="text-[10px] text-slate-400 font-mono">SKU: {p.sku}</span>
+                                        <span className={TABLE_CELL_PRIMARY_CLASS}>{p.name}</span>
+                                        <span className={cn(TABLE_CELL_MONO_CLASS, "text-[10px] text-slate-400")}>SKU: {p.sku}</span>
                                     </div>
                                   </SelectItem>
                                 ))}
@@ -257,7 +267,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                             </Select>
                           </TableCell>
                           <TableCell className="text-center">
-                             <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded font-medium">
+                             <span className={cn(TABLE_CELL_SECONDARY_CLASS, "bg-slate-50 px-2 py-1 rounded")}>
                                 {product?.unit || "—"}
                              </span>
                           </TableCell>
@@ -266,7 +276,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               type="number"
                               {...form.register(`details.${index}.quantity`, { valueAsNumber: true })}
                               disabled={!isEditable}
-                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900 font-semibold"
+                              className={cn(FORM_INPUT_CLASS, "h-10 text-right group-hover:bg-white focus:bg-white")}
                             />
                           </TableCell>
                           <TableCell className="px-1">
@@ -274,7 +284,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               type="number"
                               {...form.register(`details.${index}.costPrice`, { valueAsNumber: true })}
                               disabled={!isEditable}
-                              className="h-10 text-right border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900"
+                              className={cn(FORM_INPUT_CLASS, "h-10 text-right group-hover:bg-white focus:bg-white")}
                             />
                           </TableCell>
                           <TableCell className="px-1">
@@ -282,7 +292,7 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               placeholder="BATCH..."
                               {...form.register(`details.${index}.batchNumber`)}
                               disabled={!isEditable}
-                              className="h-10 font-mono text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900"
+                              className={cn(FORM_INPUT_CLASS, "h-10 font-mono text-xs group-hover:bg-white focus:bg-white")}
                             />
                           </TableCell>
                           <TableCell className="px-1">
@@ -290,11 +300,11 @@ export function ReceiptForm({ open, onOpenChange, receipt, onSubmit }: ReceiptFo
                               type="date"
                               {...form.register(`details.${index}.expiryDate`)}
                               disabled={!isEditable}
-                              className="h-10 text-xs border-transparent bg-transparent hover:border-slate-200 focus:bg-white focus:border-slate-900 px-2"
+                              className={cn(FORM_INPUT_CLASS, "h-10 text-xs group-hover:bg-white focus:bg-white px-2")}
                             />
                           </TableCell>
                           <TableCell className="text-right pr-6">
-                             <span className="text-sm font-bold text-slate-900">{formatCurrency(lineTotal)}</span>
+                             <span className={TABLE_CELL_NUMBER_CLASS}>{formatCurrency(lineTotal)}</span>
                           </TableCell>
                           
                           {isEditable && (
