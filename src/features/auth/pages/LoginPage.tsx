@@ -19,18 +19,8 @@ export function LoginPage() {
           </div>
         </div>
         
-        {/* Login Form Component */}
+        {/* Login Form Component (một CTA gửi yêu cầu Owner nằm trong form) */}
         <LoginForm />
-        
-        {/* [C] Notify Owner link - Calm Alert Pill per Login.md spec */}
-        <footer className="mt-12 text-center w-full flex justify-center">
-          <button 
-            type="button"
-            className="flex items-center justify-center bg-[#f1f5f9] text-[#475569] hover:bg-[#e2e8f0] transition-colors duration-200 rounded-full px-6 h-11 text-sm font-medium"
-          >
-            Chưa có tài khoản? Gửi yêu cầu cho Chủ cửa hàng
-          </button>
-        </footer>
       </div>
     </main>
   )
